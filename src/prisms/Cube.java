@@ -28,8 +28,8 @@ public class Cube extends Prism {
 	
 	public void createShapes() {
 		super.clearShapes();
-		int biggerHalf = (int) Math.ceil((double) length / 2.0);
-		int smallHalf = (int) Math.ceil((double) length / 2.0);
+		int biggerHalf = (int) Math.ceil((double) this.length / 2.0);
+		int smallHalf = (int) Math.ceil((double) this.length / 2.0);
 		int middleX = 0;
 		int middleY = 0;
 		int middleZ = 0;
@@ -44,32 +44,32 @@ public class Cube extends Prism {
 		Vertex v2 = new Vertex(smallXCord, largeYCord, largeZCord);
 		Vertex v3 = new Vertex(smallXCord, smallYCord, largeZCord);
 		Vertex v4 = new Vertex(largeXCord, smallYCord, largeZCord);
-		super.addShape(new Rectangle(v1, v2, v3, v4, length, Color.RED));
+		super.addShape(new Rectangle(v1, v2, v3, v4, this.length, this.length, Color.RED));
 
 		v3 = new Vertex(smallXCord, largeYCord, smallZCord);
 		v4 = new Vertex(largeXCord, largeYCord, smallZCord);
-		super.addShape(new Rectangle(v1, v2, v3, v4, length, Color.GREEN));
+		super.addShape(new Rectangle(v1, v2, v3, v4, this.length, this.length, Color.GREEN));
 
 		v1 = new Vertex(largeXCord, smallYCord, smallZCord);
 		v2 = new Vertex(smallXCord, smallYCord, smallZCord);
-		super.addShape(new Rectangle(v1, v2, v3, v4, length, Color.ORANGE));
+		super.addShape(new Rectangle(v1, v2, v3, v4, this.length, this.length, Color.ORANGE));
 
 		v3 = new Vertex(smallXCord, smallYCord, largeZCord);
 		v4 = new Vertex(largeXCord, smallYCord, largeZCord);
-		super.addShape(new Rectangle(v1, v2, v3, v4, length, Color.YELLOW));
+		super.addShape(new Rectangle(v1, v2, v3, v4, this.length, this.length, Color.YELLOW));
 
 		v1 = new Vertex(smallXCord, smallYCord, smallZCord);
 		v2 = v3;
 		v3 = new Vertex(smallXCord, largeYCord, largeZCord);
 		v4 = new Vertex(smallXCord, largeYCord, smallZCord);
-		super.addShape(new Rectangle(v1, v2, v3, v4, length, Color.BLUE));
+		super.addShape(new Rectangle(v1, v2, v3, v4, this.length, this.length, Color.BLUE));
 
 		// LAST SQUARE WITH ALL large X
 		v1 = new Vertex(largeXCord, smallYCord, smallZCord);
 		v2 = new Vertex(largeXCord, smallYCord, largeZCord);
 		v3 = new Vertex(largeXCord, largeYCord, largeZCord);
 		v4 = new Vertex(largeXCord, largeYCord, smallZCord);
-		super.addShape(new Rectangle(v1, v2, v3, v4, length, Color.MAGENTA));
+		super.addShape(new Rectangle(v1, v2, v3, v4, this.length, this.length, Color.MAGENTA));
 	}
 
 }

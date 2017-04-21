@@ -1,25 +1,16 @@
 package tester;
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import prisms.Cube;
 import prisms.Equilateral;
-import prisms.Prism;
+import prisms.Pentagonal;
 
-import shapes.Rectangle;
 import shapes.Triangle;
 import userinterface.InterfaceActions;
 import userinterface.PrismManager;
 import userinterface.UserInterface;
-import util.PrismType;
 import util.Vertex;
-import util.Matrix3;
 
-import java.awt.*;
-import java.awt.geom.Path2D;
-import java.awt.image.BufferedImage;
+import java.awt.Color;
 import java.util.ArrayList;
 
 public class Tester {
@@ -35,22 +26,23 @@ public class Tester {
 	public static void main(String[] args) {
 		Tester.setupInterface();
 		
-		Tester.prismManager.addPrism(new Equilateral(150, 150, 200, Color.GREEN));
-		Tester.prismManager.addPrism(new Cube(100, 100, 150, Color.GREEN));
+		//Tester.prismManager.addPrism(new Equilateral(150, 150, 200, Color.GREEN));
+		//Tester.prismManager.addPrism(new Cube(100, 100, 150, Color.GREEN));
+		Tester.prismManager.addPrism(new Pentagonal(150, 150, 100, 75, Color.GREEN));
 	}
 
 	public static ArrayList<Triangle> inflate(ArrayList<Triangle> tris) {
 		ArrayList<Triangle> result = new ArrayList<Triangle>();
 		for (Triangle t : tris) {
-			Vertex m1 = new Vertex((t.getVertex1().x + t.getVertex2().x) / 2,
-					(t.getVertex1().y + t.getVertex2().y) / 2,
-					(t.getVertex1().z + t.getVertex2().z) / 2);
-			Vertex m2 = new Vertex((t.getVertex2().x + t.getVertex3().x) / 2,
-					(t.getVertex2().y + t.getVertex3().y) / 2,
-					(t.getVertex2().z + t.getVertex3().z) / 2);
-			Vertex m3 = new Vertex((t.getVertex1().x + t.getVertex3().x) / 2,
-					(t.getVertex1().y + t.getVertex3().y) / 2,
-					(t.getVertex1().z + t.getVertex3().z) / 2);
+			Vertex m1 = new Vertex((t.getVertex1().getX() + t.getVertex2().getX()) / 2,
+					(t.getVertex1().getY() + t.getVertex2().getY()) / 2,
+					(t.getVertex1().getZ() + t.getVertex2().getZ()) / 2);
+			Vertex m2 = new Vertex((t.getVertex2().getX() + t.getVertex3().getX()) / 2,
+					(t.getVertex2().getY() + t.getVertex3().getY()) / 2,
+					(t.getVertex2().getZ() + t.getVertex3().getZ()) / 2);
+			Vertex m3 = new Vertex((t.getVertex1().getX() + t.getVertex3().getX()) / 2,
+					(t.getVertex1().getY() + t.getVertex3().getY()) / 2,
+					(t.getVertex1().getZ() + t.getVertex3().getZ()) / 2);
 			Color color = t.getColor();
 			result.add(new Triangle(t.getVertex1(), m1, m3, color));
 			result.add(new Triangle(t.getVertex2(), m1, m2, color));
@@ -59,11 +51,11 @@ public class Tester {
 		}
 		for (Triangle t : result) {
 			for (Vertex v : new Vertex[] { t.getVertex1(), t.getVertex2(), t.getVertex3() }) {
-				double l = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
+				double l = Math.sqrt(v.getX() * v.getX() + v.getY() * v.getY() + v.getZ() * v.getZ())
 						/ Math.sqrt(30000);
-				v.x /= l;
-				v.y /= l;
-				v.z /= l;
+				v.setX(v.getX() / l);
+				v.setY(v.getY() / l);
+				v.setZ(v.getZ() / l);
 			}
 		}
 		return result;

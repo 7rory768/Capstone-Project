@@ -46,25 +46,21 @@ public class Equilateral extends Prism {
 		v2 = new Vertex(smallXCord, smallYCord, largeZCord);
 		v3 = new Vertex(smallXCord, largeYCord, smallZCord);
 		super.addShape(new Triangle(v1, v2, v3, super.getColor()));
-		System.out.println("(" + v1.x + ", " + v1.y + ", " + v1.z + "), (" + v2.x + ", " + v2.y + ", " + v2.z + "), (" + v3.x + ", " + v3.y + ", " + v3.z + ")");
 		
 		// TRAINGLE 2
 		v3 = new Vertex(largeXCord, smallYCord, smallZCord);
 		super.addShape(new Triangle(v1, v2, v3, super.getColor()));
-		System.out.println("(" + v1.x + ", " + v1.y + ", " + v1.z + "), (" + v2.x + ", " + v2.y + ", " + v2.z + "), (" + v3.x + ", " + v3.y + ", " + v3.z + ")");
 		
 		//TRIANGLE 3
 		v2 = v3;
 		v3 = v1;
 		v1 = new Vertex(smallXCord, largeYCord, smallZCord);
 		super.addShape(new Triangle(v1, v2, v3, super.getColor()));
-		System.out.println("(" + v1.x + ", " + v1.y + ", " + v1.z + "), (" + v2.x + ", " + v2.y + ", " + v2.z + "), (" + v3.x + ", " + v3.y + ", " + v3.z + ")");
 		
 		//TRIANGLE 4
 		v2 = new Vertex(smallXCord, smallYCord, largeZCord);
 		v3 = new Vertex(largeXCord, smallYCord, smallZCord);
 		super.addShape(new Triangle(v1, v2, v3, super.getColor()));
-		System.out.println("(" + v1.x + ", " + v1.y + ", " + v1.z + "), (" + v2.x + ", " + v2.y + ", " + v2.z + "), (" + v3.x + ", " + v3.y + ", " + v3.z + ")");
 	}
 
 }

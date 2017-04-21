@@ -21,8 +21,8 @@ public class Matrix3 {
 	}
 
 	public Vertex transform(Vertex in) {
-		return new Vertex(in.x * values[0] + in.y * values[3] + in.z * values[6], in.x
-				* values[1] + in.y * values[4] + in.z * values[7], in.x * values[2]
-				+ in.y * values[5] + in.z * values[8]);
+		return new Vertex(in.getX() * values[0] + in.getY() * values[3] + in.getZ() * values[6], in.getX()
+				* values[1] + in.getY() * values[4] + in.getZ() * values[7], in.getX() * values[2]
+				+ in.getY() * values[5] + in.getZ() * values[8]);
 	}
 }

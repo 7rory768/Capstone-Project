@@ -11,14 +11,16 @@ public class Rectangle extends Shape {
 	private Vertex v3;
 	private Vertex v4;
 	private int length;
+	private int width;
 
-	public Rectangle(Vertex v1, Vertex v2, Vertex v3, Vertex v4, int length, Color color) {
+	public Rectangle(Vertex v1, Vertex v2, Vertex v3, Vertex v4, int length, int width, Color color) {
 		super(color);
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;
 		this.v4 = v4;
 		this.length = length;
+		this.width = width;
 	}
 
 	public void setVertex1(Vertex v1) {
@@ -55,5 +57,9 @@ public class Rectangle extends Shape {
 	
 	public int getLength() {
 		return this.length;
+	}
+	
+	public int getWidth() {
+		return this.width;
 	}
 }

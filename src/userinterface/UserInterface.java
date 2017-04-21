@@ -17,8 +17,10 @@ import javax.swing.event.ChangeListener;
 
 import prisms.Cube;
 import prisms.Equilateral;
+import prisms.Pentagonal;
 import prisms.Prism;
 
+import shapes.Pentagon;
 import shapes.Rectangle;
 import shapes.Shape;
 import shapes.Triangle;
@@ -102,10 +104,10 @@ public class UserInterface {
 				// v4.addToXandY(xOrigin, yOrigin);
 				//
 				// Path2D path = new Path2D.Double();
-				// path.moveTo(v1.x, v1.y);
-				// path.lineTo(v2.x, v2.y);
-				// path.lineTo(v3.x, v3.y);
-				// path.lineTo(v4.x, v4.y);
+				// path.moveTo(v1.getX(), v1.getY());
+				// path.lineTo(v2.getX(), v2.getY());
+				// path.lineTo(v3.getX(), v3.getY());
+				// path.lineTo(v4.getX(), v4.getY());
 				// path.closePath();
 				// g2.draw(path);
 				//
@@ -155,12 +157,12 @@ public class UserInterface {
 
 							if (num == 1) {
 								System.out.println("BEFORE VERTEX MODIFICATION:");
-								System.out.println("V1: (" + sq.getVertex1().x + ", "
-										+ sq.getVertex1().y + ")");
-								System.out.println("V2: (" + sq.getVertex2().x + ", "
-										+ sq.getVertex2().y + ")");
-								System.out.println("V3: (" + sq.getVertex3().x + ", "
-										+ sq.getVertex3().y + ")");
+								System.out.println("V1: (" + sq.getVertex1().getX()
+										+ ", " + sq.getVertex1().getY() + ")");
+								System.out.println("V2: (" + sq.getVertex2().getX()
+										+ ", " + sq.getVertex2().getY() + ")");
+								System.out.println("V3: (" + sq.getVertex3().getX()
+										+ ", " + sq.getVertex3().getY() + ")");
 								System.out
 										.println("-------------------------------------------");
 							}
@@ -172,60 +174,75 @@ public class UserInterface {
 
 							if (num == 1) {
 								System.out.println("AFTER VERTEX TRANSFORMATION:");
-								System.out.println("V1: (" + v1.x + ", " + v1.y + ")");
-								System.out.println("V2: (" + v2.x + ", " + v2.y + ")");
-								System.out.println("V3: (" + v3.x + ", " + v3.y + ")");
+								System.out.println("V1: (" + v1.getX() + ", " + v1.getY()
+										+ ")");
+								System.out.println("V2: (" + v2.getX() + ", " + v2.getY()
+										+ ")");
+								System.out.println("V3: (" + v3.getX() + ", " + v3.getY()
+										+ ")");
 								System.out
 										.println("-------------------------------------------");
 							}
 
-							v1.x += xOrigin;
-							v1.y += yOrigin;
-							v2.x += xOrigin;
-							v2.y += yOrigin;
-							v3.x += xOrigin;
-							v3.y += yOrigin;
-							v4.x += xOrigin;
-							v4.y += yOrigin;
+							v1.setX(v1.getX() + xOrigin);
+							v1.setY(v1.getY() + yOrigin);
+							v2.setX(v2.getX() + xOrigin);
+							v2.setY(v2.getY() + yOrigin);
+							v3.setX(v3.getX() + xOrigin);
+							v3.setY(v3.getY() + yOrigin);
+							v4.setX(v4.getX() + xOrigin);
+							v4.setY(v4.getY() + yOrigin);
 
 							Path2D path = new Path2D.Double();
-							path.moveTo(v1.x, v1.y);
-							path.lineTo(v2.x, v2.y);
-							path.lineTo(v3.x, v3.y);
-							path.lineTo(v4.x, v4.y);
+							path.moveTo(v1.getX(), v1.getY());
+							path.lineTo(v2.getX(), v2.getY());
+							path.lineTo(v3.getX(), v3.getY());
+							path.lineTo(v4.getX(), v4.getY());
 							path.closePath();
 							g2.draw(path);
 
 							// compute rectangular bounds for square
 							int minX = (int) Math.max(
 									0,
-									Math.ceil(Math.min(v1.x,
-											Math.min(v2.x, Math.min(v3.x, v4.x)))));
+									Math.ceil(Math.min(
+											v1.getX(),
+											Math.min(v2.getX(),
+													Math.min(v3.getX(), v4.getX())))));
 							int maxX = (int) Math.min(
 									img.getWidth() - 1,
-									Math.floor(Math.max(v1.x,
-											Math.max(v2.x, Math.max(v3.x, v4.x)))));
+									Math.floor(Math.max(
+											v1.getX(),
+											Math.max(v2.getX(),
+													Math.max(v3.getX(), v4.getX())))));
 							int minY = (int) Math.max(
 									0,
-									Math.ceil(Math.min(v1.y,
-											Math.min(v2.y, Math.min(v3.y, v4.y)))));
+									Math.ceil(Math.min(
+											v1.getY(),
+											Math.min(v2.getY(),
+													Math.min(v3.getY(), v4.getY())))));
 							int maxY = (int) Math.min(
 									img.getHeight() - 1,
-									Math.floor(Math.max(v1.y,
-											Math.max(v2.y, Math.max(v3.y, v4.y)))));
+									Math.floor(Math.max(
+											v1.getY(),
+											Math.max(v2.getY(),
+													Math.max(v3.getY(), v4.getY())))));
 
 							double squareArea = (maxX - minX) * (maxY - minY);
 							// System.out.println("actual area: " + squareArea);
-							// squareArea = ((v1.y - v3.y) * (v2.x - v3.x) +
-							// (v2.y - v3.y)
-							// * (v3.x - v1.x));
+							// squareArea = ((v1.getY() - v3.getY()) *
+							// (v2.getX() - v3.getX()) +
+							// (v2.getY() - v3.getY())
+							// * (v3.getX() - v1.getX()));
 							// System.out.println("area calc: " + squareArea);
 
 							if (num == 1) {
 								System.out.println("AFTER ALL VERTEX MODIFICATION:");
-								System.out.println("V1: (" + v1.x + ", " + v1.y + ")");
-								System.out.println("V2: (" + v2.x + ", " + v2.y + ")");
-								System.out.println("V3: (" + v3.x + ", " + v3.y + ")");
+								System.out.println("V1: (" + v1.getX() + ", " + v1.getY()
+										+ ")");
+								System.out.println("V2: (" + v2.getX() + ", " + v2.getY()
+										+ ")");
+								System.out.println("V3: (" + v3.getX() + ", " + v3.getY()
+										+ ")");
 								System.out
 										.println("-------------------------------------------");
 							}
@@ -239,32 +256,37 @@ public class UserInterface {
 
 							for (int y = minY; y <= maxY; y++) {
 								for (int x = minX; x <= maxX; x++) {
-									double b1 = ((y - v3.y) * (v2.x - v3.x) + (v2.y - v3.y)
-											* (v3.x - x))
+									double b1 = ((y - v3.getY())
+											* (v2.getX() - v3.getX()) + (v2.getY() - v3
+											.getY()) * (v3.getX() - x))
 											/ squareArea;
-									double b2 = ((y - v1.y) * (v3.x - v1.x) + (v3.y - v1.y)
-											* (v1.x - x))
+									double b2 = ((y - v1.getY())
+											* (v3.getX() - v1.getX()) + (v3.getY() - v1
+											.getY()) * (v1.getX() - x))
 											/ squareArea;
 									// double b1 = (maxX - x) * (maxY - y)
 									// / squareArea;
 									// double b2 = (x - minX) * (y - minY)
 									// / squareArea;
-									// double b3 = ((y - v2.y) * (v1.x - v2.x) +
-									// (v1.y - v2.y)
-									// * (v2.x - x))
+									// double b3 = ((y - v2.getY()) * (v1.getX()
+									// - v2.getX()) +
+									// (v1.getY() - v2.getY())
+									// * (v2.getX() - x))
 									// / squareArea;
-									// double b4 = ((y - v4.y) * (v3.x - v4.x) +
-									// (v3.y - v4.y)
-									// * (v4.x - x));
+									// double b4 = ((y - v4.getY()) * (v3.getX()
+									// - v4.getX()) +
+									// (v3.getY() - v4.getY())
+									// * (v4.getX() - x));
 
 									// double b5 = ((y -
-									// v3.y) * (v4.x -
-									// v3.x) +
-									// (v4.y - v3.y)
-									// * (v3.x - x));
-									// double b6 = ((y - v2.y) * (v4.x - v2.x) +
-									// (v4.y - v2.y)
-									// * (v2.x - x));
+									// v3.getY()) * (v4.getX() -
+									// v3.getX()) +
+									// (v4.getY() - v3.getY())
+									// * (v3.getX() - x));
+									// double b6 = ((y - v2.getY()) * (v4.getX()
+									// - v2.getX()) +
+									// (v4.getY() - v2.getY())
+									// * (v2.getX() - x));
 
 									if (x < minX + 1 && y < minY + 1 && num == 1) {
 										System.out.println("B1: " + b1);
@@ -303,17 +325,17 @@ public class UserInterface {
 
 						int num = 0;
 						for (Shape shape : equilateral.getShapes()) {
-							Triangle t = (Triangle) shape;                          
+							Triangle t = (Triangle) shape;
 							num++;
 
 							if (num == 1) {
 								System.out.println("BEFORE VERTEX MODIFICATION:");
-								System.out.println("V1: (" + t.getVertex1().x + ", "
-										+ t.getVertex1().y + ")");
-								System.out.println("V2: (" + t.getVertex2().x + ", "
-										+ t.getVertex2().y + ")");
-								System.out.println("V3: (" + t.getVertex3().x + ", "
-										+ t.getVertex3().y + ")");
+								System.out.println("V1: (" + t.getVertex1().getX() + ", "
+										+ t.getVertex1().getY() + ")");
+								System.out.println("V2: (" + t.getVertex2().getX() + ", "
+										+ t.getVertex2().getY() + ")");
+								System.out.println("V3: (" + t.getVertex3().getX() + ", "
+										+ t.getVertex3().getY() + ")");
 								System.out
 										.println("-------------------------------------------");
 							}
@@ -324,37 +346,44 @@ public class UserInterface {
 
 							if (num == 1) {
 								System.out.println("AFTER VERTEX TRANSFORMATION:");
-								System.out.println("V1: (" + v1.x + ", " + v1.y + ")");
-								System.out.println("V2: (" + v2.x + ", " + v2.y + ")");
-								System.out.println("V3: (" + v3.x + ", " + v3.y + ")");
+								System.out.println("V1: (" + v1.getX() + ", " + v1.getY()
+										+ ")");
+								System.out.println("V2: (" + v2.getX() + ", " + v2.getY()
+										+ ")");
+								System.out.println("V3: (" + v3.getX() + ", " + v3.getY()
+										+ ")");
 								System.out
 										.println("-------------------------------------------");
 							}
 
-							v1.x += getWidth() / 2;
-							v1.y += getHeight() / 2;
-							v2.x += getWidth() / 2;
-							v2.y += getHeight() / 2;
-							v3.x += getWidth() / 2;
-							v3.y += getHeight() / 2;
+							v1.setX(v1.getX() + getWidth() / 2);
+							v1.setY(v1.getY() + getHeight() / 2);
+							v2.setX(v2.getX() + getWidth() / 2);
+							v2.setY(v2.getY() + getHeight() / 2);
+							v3.setX(v3.getX() + getWidth() / 2);
+							v3.setY(v3.getY() + getHeight() / 2);
 
-							Vertex ab = new Vertex(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
-							Vertex ac = new Vertex(v3.x - v1.x, v3.y - v1.y, v3.z - v1.z);
-							Vertex norm = new Vertex(ab.y * ac.z - ab.z * ac.y, ab.z
-									* ac.x - ab.x * ac.z, ab.x * ac.y - ab.y * ac.x);
+							Vertex ab = new Vertex(v2.getX() - v1.getX(), v2.getY()
+									- v1.getY(), v2.getZ() - v1.getZ());
+							Vertex ac = new Vertex(v3.getX() - v1.getX(), v3.getY()
+									- v1.getY(), v3.getZ() - v1.getZ());
+							Vertex norm = new Vertex(ab.getY() * ac.getZ() - ab.getZ()
+									* ac.getY(), ab.getZ() * ac.getX() - ab.getX()
+									* ac.getZ(), ab.getX() * ac.getY() - ab.getY()
+									* ac.getX());
 
-							double normalLength = Math.sqrt(norm.x * norm.x + norm.y
-									+ norm.z * norm.z);
-							norm.x /= normalLength;
-							norm.y /= normalLength;
-							norm.z /= normalLength;
+							double normalLength = Math.sqrt(norm.getX() * norm.getX()
+									+ norm.getY() + norm.getZ() * norm.getZ());
+							norm.setX(norm.getX() / normalLength);
+							norm.setY(norm.getY() / normalLength);
+							norm.setZ(norm.getZ() / normalLength);
 
-							double angleCos = Math.abs(norm.z);
+							double angleCos = Math.abs(norm.getZ());
 
 							Path2D path = new Path2D.Double();
-							path.moveTo(v1.x, v1.y);
-							path.lineTo(v2.x, v2.y);
-							path.lineTo(v3.x, v3.y);
+							path.moveTo(v1.getX(), v1.getY());
+							path.lineTo(v2.getX(), v2.getY());
+							path.lineTo(v3.getX(), v3.getY());
 							path.closePath();
 							g2.draw(path);
 
@@ -362,23 +391,35 @@ public class UserInterface {
 							// we have to do translation manually
 
 							// compute rectangular bounds for triangle
-							int minX = (int) Math.max(0,
-									Math.ceil(Math.min(v1.x, Math.min(v2.x, v3.x))));
-							int maxX = (int) Math.min(img.getWidth() - 1,
-									Math.floor(Math.max(v1.x, Math.max(v2.x, v3.x))));
-							int minY = (int) Math.max(0,
-									Math.ceil(Math.min(v1.y, Math.min(v2.y, v3.y))));
-							int maxY = (int) Math.min(img.getHeight() - 1,
-									Math.floor(Math.max(v1.y, Math.max(v2.y, v3.y))));
+							int minX = (int) Math.max(
+									0,
+									Math.ceil(Math.min(v1.getX(),
+											Math.min(v2.getX(), v3.getX()))));
+							int maxX = (int) Math.min(
+									img.getWidth() - 1,
+									Math.floor(Math.max(v1.getX(),
+											Math.max(v2.getX(), v3.getX()))));
+							int minY = (int) Math.max(
+									0,
+									Math.ceil(Math.min(v1.getY(),
+											Math.min(v2.getY(), v3.getY()))));
+							int maxY = (int) Math.min(
+									img.getHeight() - 1,
+									Math.floor(Math.max(v1.getY(),
+											Math.max(v2.getY(), v3.getY()))));
 
-							double triangleArea = (v1.y - v3.y) * (v2.x - v3.x)
-									+ (v2.y - v3.y) * (v3.x - v1.x);
+							double triangleArea = (v1.getY() - v3.getY())
+									* (v2.getX() - v3.getX()) + (v2.getY() - v3.getY())
+									* (v3.getX() - v1.getX());
 
 							if (num == 1) {
 								System.out.println("AFTER ALL VERTEX MODIFICATION:");
-								System.out.println("V1: (" + v1.x + ", " + v1.y + ")");
-								System.out.println("V2: (" + v2.x + ", " + v2.y + ")");
-								System.out.println("V3: (" + v3.x + ", " + v3.y + ")");
+								System.out.println("V1: (" + v1.getX() + ", " + v1.getY()
+										+ ")");
+								System.out.println("V2: (" + v2.getX() + ", " + v2.getY()
+										+ ")");
+								System.out.println("V3: (" + v3.getX() + ", " + v3.getY()
+										+ ")");
 								System.out
 										.println("-------------------------------------------");
 							}
@@ -392,14 +433,17 @@ public class UserInterface {
 
 							for (int y = minY; y <= maxY; y++) {
 								for (int x = minX; x <= maxX; x++) {
-									double b1 = ((y - v3.y) * (v2.x - v3.x) + (v2.y - v3.y)
-											* (v3.x - x))
+									double b1 = ((y - v3.getY())
+											* (v2.getX() - v3.getX()) + (v2.getY() - v3
+											.getY()) * (v3.getX() - x))
 											/ triangleArea;
-									double b2 = ((y - v1.y) * (v3.x - v1.x) + (v3.y - v1.y)
-											* (v1.x - x))
+									double b2 = ((y - v1.getY())
+											* (v3.getX() - v1.getX()) + (v3.getY() - v1
+											.getY()) * (v1.getX() - x))
 											/ triangleArea;
-									double b3 = ((y - v2.y) * (v1.x - v2.x) + (v1.y - v2.y)
-											* (v2.x - x))
+									double b3 = ((y - v2.getY())
+											* (v1.getX() - v2.getX()) + (v1.getY() - v2
+											.getY()) * (v2.getX() - x))
 											/ triangleArea;
 									if (x == minX && y == minY && num == 1) {
 										System.out.println("B1: " + b1);
@@ -408,7 +452,8 @@ public class UserInterface {
 									}
 									if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1
 											&& b3 >= 0 && b3 <= 1) {
-										double depth = b1 + v1.z + b2 * v2.z + b3 * v3.z;
+										double depth = b1 + v1.getZ() + b2 * v2.getZ()
+												+ b3 * v3.getZ();
 										int zIndex = y * img.getWidth() + x;
 										if (zBuffer[zIndex] < depth) {
 											img.setRGB(x, y,
@@ -422,12 +467,228 @@ public class UserInterface {
 
 							g2.drawImage(img, 0, 0, null);
 						}
+					} else if (prism.getType() == PrismType.PENTAGONAL) {
+						Pentagonal pentagonal = (Pentagonal) prism;
+
+						// double[] zBuffer = new double[img.getWidth() *
+						// img.getHeight()];
+						//
+						// for (int q = 0; q < zBuffer.length; q++) {
+						// zBuffer[q] = Double.NEGATIVE_INFINITY;
+						// }
+
+						BufferedImage img = new BufferedImage(getWidth(), getHeight(),
+								BufferedImage.TYPE_INT_ARGB);
+
+						int xOrigin = prism.getxOrigin();
+						int yOrigin = prism.getyOrigin();
+						int length = pentagonal.getSideLength();
+
+						int num = 0;
+						for (Shape shape : pentagonal.getShapes()) {
+							if (shape instanceof Rectangle) {
+								Rectangle sq = (Rectangle) shape;
+								num++;
+
+								if (num == 1) {
+									System.out.println("BEFORE VERTEX MODIFICATION:");
+									System.out.println("V1: (" + sq.getVertex1().getX()
+											+ ", " + sq.getVertex1().getY() + ")");
+									System.out.println("V2: (" + sq.getVertex2().getX()
+											+ ", " + sq.getVertex2().getY() + ")");
+									System.out.println("V3: (" + sq.getVertex3().getX()
+											+ ", " + sq.getVertex3().getY() + ")");
+									System.out
+											.println("-------------------------------------------");
+								}
+
+								Vertex v1 = transform.transform(sq.getVertex1());
+								Vertex v2 = transform.transform(sq.getVertex2());
+								Vertex v3 = transform.transform(sq.getVertex3());
+								Vertex v4 = transform.transform(sq.getVertex4());
+
+								if (num == 1) {
+									System.out.println("AFTER VERTEX TRANSFORMATION:");
+									System.out.println("V1: (" + v1.getX() + ", "
+											+ v1.getY() + ")");
+									System.out.println("V2: (" + v2.getX() + ", "
+											+ v2.getY() + ")");
+									System.out.println("V3: (" + v3.getX() + ", "
+											+ v3.getY() + ")");
+									System.out
+											.println("-------------------------------------------");
+								}
+
+								v1.setX(v1.getX() + xOrigin);
+								v1.setY(v1.getY() + yOrigin);
+								v2.setX(v2.getX() + xOrigin);
+								v2.setY(v2.getY() + yOrigin);
+								v3.setX(v3.getX() + xOrigin);
+								v3.setY(v3.getY() + yOrigin);
+								v4.setX(v4.getX() + xOrigin);
+								v4.setY(v4.getY() + yOrigin);
+
+								Path2D path = new Path2D.Double();
+								path.moveTo(v1.getX(), v1.getY());
+								path.lineTo(v2.getX(), v2.getY());
+								path.lineTo(v3.getX(), v3.getY());
+								path.lineTo(v4.getX(), v4.getY());
+								path.closePath();
+								g2.draw(path);
+
+								// compute rectangular bounds for square
+								int minX = (int) Math
+										.max(0,
+												Math.ceil(Math.min(
+														v1.getX(),
+														Math.min(
+																v2.getX(),
+																Math.min(v3.getX(),
+																		v4.getX())))));
+								int maxX = (int) Math
+										.min(img.getWidth() - 1,
+												Math.floor(Math.max(
+														v1.getX(),
+														Math.max(
+																v2.getX(),
+																Math.max(v3.getX(),
+																		v4.getX())))));
+								int minY = (int) Math
+										.max(0,
+												Math.ceil(Math.min(
+														v1.getY(),
+														Math.min(
+																v2.getY(),
+																Math.min(v3.getY(),
+																		v4.getY())))));
+								int maxY = (int) Math
+										.min(img.getHeight() - 1,
+												Math.floor(Math.max(
+														v1.getY(),
+														Math.max(
+																v2.getY(),
+																Math.max(v3.getY(),
+																		v4.getY())))));
+
+								double squareArea = (maxX - minX) * (maxY - minY);
+								// System.out.println("actual area: " +
+								// squareArea);
+								// squareArea = ((v1.getY() - v3.getY()) *
+								// (v2.getX() - v3.getX()) +
+								// (v2.getY() - v3.getY())
+								// * (v3.getX() - v1.getX()));
+								// System.out.println("area calc: " +
+								// squareArea);
+
+								if (num == 1) {
+									System.out.println("AFTER ALL VERTEX MODIFICATION:");
+									System.out.println("V1: (" + v1.getX() + ", "
+											+ v1.getY() + ")");
+									System.out.println("V2: (" + v2.getX() + ", "
+											+ v2.getY() + ")");
+									System.out.println("V3: (" + v3.getX() + ", "
+											+ v3.getY() + ")");
+									System.out
+											.println("-------------------------------------------");
+								}
+
+								if (num == 1) {
+									System.out.println("Min X: " + minX);
+									System.out.println("Max X: " + maxX);
+									System.out.println("Min Y: " + minY);
+									System.out.println("Max Y: " + maxY);
+								}
+
+								for (int y = minY; y <= maxY; y++) {
+									for (int x = minX; x <= maxX; x++) {
+										double b1 = ((y - v3.getY())
+												* (v2.getX() - v3.getX()) + (v2.getY() - v3
+												.getY()) * (v3.getX() - x))
+												/ squareArea;
+										double b2 = ((y - v1.getY())
+												* (v3.getX() - v1.getX()) + (v3.getY() - v1
+												.getY()) * (v1.getX() - x))
+												/ squareArea;
+										// double b1 = (maxX - x) * (maxY - y)
+										// / squareArea;
+										// double b2 = (x - minX) * (y - minY)
+										// / squareArea;
+										// double b3 = ((y - v2.getY()) *
+										// (v1.getX() - v2.getX()) +
+										// (v1.getY() - v2.getY())
+										// * (v2.getX() - x))
+										// / squareArea;
+										// double b4 = ((y - v4.getY()) *
+										// (v3.getX() - v4.getX()) +
+										// (v3.getY() - v4.getY())
+										// * (v4.getX() - x));
+
+										// double b5 = ((y -
+										// v3.getY()) * (v4.getX() -
+										// v3.getX()) +
+										// (v4.getY() - v3.getY())
+										// * (v3.getX() - x));
+										// double b6 = ((y - v2.getY()) *
+										// (v4.getX() - v2.getX()) +
+										// (v4.getY() - v2.getY())
+										// * (v2.getX() - x));
+
+										if (x < minX + 1 && y < minY + 1 && num == 1) {
+											System.out.println("B1: " + b1);
+											System.out.println("B2: " + b2);
+											// System.out.println("B3: " + b3);
+										}
+
+										if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1) { // &&
+																						// b3
+																						// >=
+																						// 0
+											// && b3 <= 1 && b4 <= 1 && b4 >= 0
+											// &&
+											// b5 <= 1 && b5 >= 0
+											// && b6 <= 1 && b6 >= 0) {
+											// img.setRGB(x, y,
+											// sq.getColor().getRGB());
+										}
+									}
+								}
+							}
+							
+							if (shape instanceof Pentagon) {
+								Pentagon pentagon = (Pentagon) shape;
+
+								Vertex v1 = transform.transform(pentagon.getVertex1());
+								Vertex v2 = transform.transform(pentagon.getVertex2());
+								Vertex v3 = transform.transform(pentagon.getVertex3());
+								Vertex v4 = transform.transform(pentagon.getVertex4());
+								
+								v1.setX(v1.getX() + xOrigin);
+								v1.setY(v1.getY() + yOrigin);
+								v2.setX(v2.getX() + xOrigin);
+								v2.setY(v2.getY() + yOrigin);
+								v3.setX(v3.getX() + xOrigin);
+								v3.setY(v3.getY() + yOrigin);
+								v4.setX(v4.getX() + xOrigin);
+								v4.setY(v4.getY() + yOrigin);
+
+								Path2D path = new Path2D.Double();
+								path.moveTo(v1.getX(), v1.getY());
+								path.lineTo(v2.getX(), v2.getY());
+								path.lineTo(v3.getX(), v3.getY());
+								path.lineTo(v4.getX(), v4.getY());
+								path.closePath();
+								g2.draw(path);
+
+							}
+
+							g2.drawImage(img, 0, 0, null);
+						}
 					}
 
 				}
 			}
 		};
-		
+
 		pane.add(renderPanel, BorderLayout.CENTER);
 		frame.setVisible(true);
 	}
