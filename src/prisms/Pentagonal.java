@@ -9,17 +9,18 @@ import util.Vertex;
 
 public class Pentagonal extends Prism {
 
-	private int sideLength, height;
+	private int radius, height;
+	private double sideLength;
 
-	public Pentagonal(int xOrigin, int yOrigin, int sideLength, int height, Color color) {
+	public Pentagonal(int xOrigin, int yOrigin, int radius, int height, Color color) {
 		super(PrismType.PENTAGONAL, xOrigin, yOrigin, color);
-		this.sideLength = sideLength;
+		this.radius = radius;
 		this.height = height;
 		this.createShapes();
 	}
 
-	public int getSideLength() {
-		return this.sideLength;
+	public int getRadius() {
+		return this.radius;
 	}
 
 	public int getHeight() {
@@ -28,6 +29,7 @@ public class Pentagonal extends Prism {
 
 	// 108 angle between each vertex
 	public void createShapes() {
+		this.sideLength = Math.sin(Math.toRadians(36.0)) * 2;
 		Vertex v1 = this.calculateLeftHorizontalVertex(), v2, v3, v4, v5;
 		System.out.println(v1);
 
@@ -48,7 +50,7 @@ public class Pentagonal extends Prism {
 		v5.setX(v5.getX() - this.sideLength);
 		v5.setY(v5.getY() - Math.tan(36) * this.sideLength);
 
-		super.addShape(new Pentagon(v1, v2, v3, v4, v5, this.sideLength, super.getColor()));
+		super.addShape(new Pentagon(v1, v2, v3, v4, v5, this.radius, super.getColor()));
 
 		v1 = v1.clone();
 		v1.setZ(v1.getZ() - this.height);
@@ -93,8 +95,8 @@ public class Pentagonal extends Prism {
 	}
 
 	public Vertex calculateLeftHorizontalVertex() {
-		int yDistance = (int) ((1.0 / Math.tan(Math.toRadians(36.0))) * Math
-				.ceil(this.sideLength / 2.0));
+		double yDistance = -1 * Math.abs((Math.cos(Math.toRadians(36.0)) * Math
+				.ceil(this.sideLength / 2.0)));
 		return new Vertex(0 - Math.floor(this.sideLength / 2.0), yDistance,
 				Math.ceil(this.height / 2.0));
 	}

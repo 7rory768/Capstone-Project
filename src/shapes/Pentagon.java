@@ -11,16 +11,16 @@ public class Pentagon extends Shape {
 	private Vertex v3;
 	private Vertex v4;
 	private Vertex v5;
-	private int length;
+	private int radius;
 
-	public Pentagon(Vertex v1, Vertex v2, Vertex v3, Vertex v4, Vertex v5, int length, Color color) {
+	public Pentagon(Vertex v1, Vertex v2, Vertex v3, Vertex v4, Vertex v5, int radius, Color color) {
 		super(color);
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;
 		this.v4 = v4;
 		this.v5 = v5;
-		this.length = length;
+		this.radius = radius;
 	}
 
 	public void setVertex1(Vertex v1) {
@@ -64,8 +64,8 @@ public class Pentagon extends Shape {
 	}
 	
 	
-	public int getLength() {
-		return this.length;
+	public int getRadius() {
+		return this.radius;
 	}
 
 }
