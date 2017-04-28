@@ -482,7 +482,6 @@ public class UserInterface {
 
 						int xOrigin = prism.getxOrigin();
 						int yOrigin = prism.getyOrigin();
-						int length = pentagonal.getSideLength();
 
 						int num = 0;
 						for (Shape shape : pentagonal.getShapes()) {

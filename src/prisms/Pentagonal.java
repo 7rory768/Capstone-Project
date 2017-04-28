@@ -29,7 +29,7 @@ public class Pentagonal extends Prism {
 
 	// 108 angle between each vertex
 	public void createShapes() {
-		this.sideLength = Math.sin(Math.toRadians(36.0)) * 2;
+		this.sideLength = Math.sin(Math.toRadians(36.0)) * this.radius;                          
 		Vertex v1 = this.calculateLeftHorizontalVertex(), v2, v3, v4, v5;
 		System.out.println(v1);
 
@@ -90,15 +90,18 @@ public class Pentagonal extends Prism {
 		v3.setZ(v3.getZ() + this.height);
 		Vertex v4 = v1.clone();
 		v4.setZ(v4.getZ() + this.height);
-		return new Rectangle(v1, v2, v3, v4, this.sideLength, this.height,
+		return new Rectangle(v1, v2, v3, v4, (int) this.sideLength, this.height,
 				super.getColor());
 	}
 
 	public Vertex calculateLeftHorizontalVertex() {
-		double yDistance = -1 * Math.abs((Math.cos(Math.toRadians(36.0)) * Math
+		double yDistance = Math.abs((Math.cos(Math.toRadians(36.0)) * Math
 				.ceil(this.sideLength / 2.0)));
+		System.out.println("R: " + this.radius);
+		System.out.println("H: " + yDistance);
+		System.out.println("C: " + Math.cos(Math.toRadians(72.0)) * this.radius);
 		return new Vertex(0 - Math.floor(this.sideLength / 2.0), yDistance,
-				Math.ceil(this.height / 2.0));
+				Math.ceil(this.height / 2.0));	
 	}
 
 }
