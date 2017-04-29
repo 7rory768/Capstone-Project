@@ -1,17 +1,17 @@
 package prisms;
 
-import java.awt.Color;
-
 import shapes.Rectangle;
 import util.PrismType;
 import util.Vertex;
+
+import java.awt.*;
 
 public class Cube extends Prism {
 	
 	private int length;
 
-	public Cube(int xOrigin, int yOrigin, int length, Color color) {
-		super (PrismType.CUBE, xOrigin, yOrigin, color);
+	public Cube(Vertex origin, int length, Color color) {
+		super (PrismType.CUBE, origin, color);
 		this.length = length;
 		this.createShapes();
 

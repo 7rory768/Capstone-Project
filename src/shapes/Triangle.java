@@ -1,8 +1,9 @@
 package shapes;
 
-import java.awt.Color;
-
+import util.ShapeType;
 import util.Vertex;
+
+import java.awt.*;
 
 public class Triangle extends Shape {
 	private Vertex v1;
@@ -10,7 +11,7 @@ public class Triangle extends Shape {
 	private Vertex v3;
 
 	public Triangle (Vertex v1, Vertex v2, Vertex v3, Color color) {
-		super(color);
+		super(ShapeType.TRIANGLE, color);
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;

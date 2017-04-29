@@ -1,19 +1,19 @@
 package prisms;
 
-import java.awt.Color;
-
 import shapes.Pentagon;
 import shapes.Rectangle;
 import util.PrismType;
 import util.Vertex;
+
+import java.awt.*;
 
 public class Pentagonal extends Prism {
 
 	private int radius, height;
 	private double sideLength;
 
-	public Pentagonal(int xOrigin, int yOrigin, int radius, int height, Color color) {
-		super(PrismType.PENTAGONAL, xOrigin, yOrigin, color);
+	public Pentagonal(Vertex origin, int radius, int height, Color color) {
+		super(PrismType.PENTAGONAL, origin, color);
 		this.radius = radius;
 		this.height = height;
 		this.createShapes();
@@ -23,12 +23,23 @@ public class Pentagonal extends Prism {
 		return this.radius;
 	}
 
+	public void setRadius(int radius) {
+		this.radius = radius;
+		createShapes();
+	}
+
 	public int getHeight() {
 		return this.height;
 	}
 
+	public void setHeight(int height) {
+		this.height = height;
+		createShapes();
+	}
+
 	// 108 angle between each vertex
 	public void createShapes() {
+		super.clearShapes();
 		this.sideLength = Math.sin(Math.toRadians(36.0)) * this.radius;                          
 		Vertex v1 = this.calculateLeftHorizontalVertex(), v2, v3, v4, v5;
 		System.out.println(v1);

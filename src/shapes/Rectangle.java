@@ -1,8 +1,9 @@
 package shapes;
 
-import java.awt.Color;
-
+import util.ShapeType;
 import util.Vertex;
+
+import java.awt.*;
 
 public class Rectangle extends Shape {
 
@@ -14,7 +15,7 @@ public class Rectangle extends Shape {
 	private int width;
 
 	public Rectangle(Vertex v1, Vertex v2, Vertex v3, Vertex v4, int length, int width, Color color) {
-		super(color);
+		super(ShapeType.RECTANGLE, color);
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;

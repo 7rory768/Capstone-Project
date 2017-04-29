@@ -1,16 +1,13 @@
-package userinterface;
+package managers;
+
+import prisms.Prism;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import prisms.Prism;
-
 public class PrismManager {
 	
 	private List<Prism> prisms = new ArrayList<Prism>();
-	
-	public PrismManager() {
-	}
 	
 	public List<Prism> getPrisms() {
 		return this.prisms;

@@ -1,22 +1,21 @@
 package tester;
 
-import prisms.Cube;
-import prisms.Equilateral;
+import managers.LightManager;
 import prisms.Pentagonal;
-
 import shapes.Triangle;
 import userinterface.InterfaceActions;
-import userinterface.PrismManager;
+import managers.PrismManager;
 import userinterface.UserInterface;
 import util.Vertex;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Tester {
 
 	private static final InterfaceActions interfaceActions = new InterfaceActions();
 	private static final PrismManager prismManager = new PrismManager();
+	private static final LightManager lightManager = new LightManager();
 	private static final UserInterface userInterface = new UserInterface(Tester.interfaceActions, Tester.prismManager);
 
 	public static void setupInterface() {
@@ -28,7 +27,7 @@ public class Tester {
 		
 		//Tester.prismManager.addPrism(new Equilateral(150, 150, 200, Color.GREEN));
 		//Tester.prismManager.addPrism(new Cube(100, 100, 150, Color.GREEN));
-		Tester.prismManager.addPrism(new Pentagonal(150, 150, 100, 75, Color.GREEN));
+		Tester.prismManager.addPrism(new Pentagonal(new Vertex(150, 150, 0), 100, 75, Color.GREEN));
 	}
 
 	public static ArrayList<Triangle> inflate(ArrayList<Triangle> tris) {

@@ -1,22 +1,24 @@
 package userinterface;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class InterfaceActions {
-	
-	public void registerHelloWorldAction(final Button helloWorldButton) {
-		helloWorldButton.setOnAction(new EventHandler<ActionEvent>() {
 
-			public void handle(ActionEvent arg0) {
-				System.out.println("Hello world!");
-				helloWorldButton.setRotate(helloWorldButton.getRotate() + 10);
-			}});
-	}
-	
-	public void registerAllActions(Button helloWorldButton) {
-		this.registerHelloWorldAction(helloWorldButton);
-	}
+    public ChangeListener getHeadingChangeListener() {
+        return new ChangeListener() {
+            public void stateChanged(ChangeEvent arg0) {
+                UserInterface.repaint();
+            }
+        };
+    }
+
+    public ChangeListener getPitchChangeListener() {
+        return new ChangeListener() {
+            public void stateChanged(ChangeEvent arg0) {
+                UserInterface.repaint();
+            }
+        };
+    }
 
 }

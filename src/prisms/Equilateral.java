@@ -1,17 +1,17 @@
 package prisms;
 
-import java.awt.Color;
-
 import shapes.Triangle;
 import util.PrismType;
 import util.Vertex;
+
+import java.awt.*;
 
 public class Equilateral extends Prism {
 
 	private int length;
 	
-	public Equilateral(int xOrigin, int yOrigin, int length, Color color) {
-		super(PrismType.EQUILATERAL, xOrigin, yOrigin, color);
+	public Equilateral(Vertex origin, int length, Color color) {
+		super(PrismType.EQUILATERAL, origin, color);
 		this.length = length;
 		this.createShapes();
 	}

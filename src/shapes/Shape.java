@@ -1,25 +1,34 @@
 package shapes;
 
-import java.awt.Color;
+import util.ShapeType;
+
+import java.awt.*;
 
 public class Shape {
-	
-	private Color color;
-	
-	public Shape() {
-		this.color = Color.GREEN;
-	}
-	
-	public Shape(Color color) {
-		this.color = color;
-	}
-	
-	public Color getColor() {
-		return this.color;
-	}
-	
-	public void setColor(Color color) {
-		this.color = color;
-	}
+
+    private final ShapeType type;
+
+    private Color color;
+
+    public Shape(ShapeType type) {
+        this(type, Color.GREEN);
+    }
+
+    public Shape(ShapeType type, Color color) {
+        this.type = type;
+        this.color = color;
+    }
+
+    public ShapeType getType() {
+        return this.type;
+    }
+
+    public Color getColor() {
+        return this.color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
 
 }

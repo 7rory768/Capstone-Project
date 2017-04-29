@@ -1,8 +1,9 @@
 package shapes;
 
-import java.awt.Color;
-
+import util.ShapeType;
 import util.Vertex;
+
+import java.awt.*;
 
 public class Pentagon extends Shape {
 
@@ -14,7 +15,7 @@ public class Pentagon extends Shape {
 	private int radius;
 
 	public Pentagon(Vertex v1, Vertex v2, Vertex v3, Vertex v4, Vertex v5, int radius, Color color) {
-		super(color);
+		super(ShapeType.PENTAGON, color);
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;
@@ -62,7 +63,6 @@ public class Pentagon extends Shape {
 	public Vertex getVertex5() {
 		return this.v5;
 	}
-	
 	
 	public int getRadius() {
 		return this.radius;

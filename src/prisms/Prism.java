@@ -1,24 +1,24 @@
 package prisms;
 
-import java.awt.Color;
+import shapes.Shape;
+import util.PrismType;
+import util.Vertex;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import shapes.Shape;
-import util.PrismType;
-
 public abstract class Prism {
-	
-	private int xOrigin, yOrigin;
+
+    private final PrismType type;
+
 	private List<Shape> shapes = new ArrayList<Shape>();
+	private Vertex origin;
+	private Color color;
 	
-	private final PrismType type;
-	private final Color color;
-	
-	public Prism(PrismType type, int xOrigin, int yOrigin, Color color) {
+	public Prism(PrismType type, Vertex origin, Color color) {
 		this.type = type;
-		this.xOrigin = xOrigin;
-		this.yOrigin = yOrigin;
+		this.origin = origin;
 		this.color = color;
 	}
 	
@@ -29,14 +29,19 @@ public abstract class Prism {
 	public Color getColor() {
 		return this.color;
 	}
+
+	public void setColor(Color color) {
+	    this.color = color;
+    }
 	
-	public int getxOrigin() {
-		return this.xOrigin;
+	public Vertex getOrigin() {
+		return this.origin;
 	}
-	
-	public int getyOrigin() {
-		return this.yOrigin;
-	}
+
+	public void setOrigin(Vertex origin) {
+	    this.origin = origin;
+	    this.createShapes();
+    }
 	
 	public List<Shape> getShapes() {
 		return this.shapes;
@@ -55,4 +60,6 @@ public abstract class Prism {
 	}
 	
 	public abstract void createShapes();
+
+
 }

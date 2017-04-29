@@ -9,11 +9,6 @@ public class Vertex {
 		this.z = z;
 	}
 
-	public void addToXandY(int xAdd, int yAdd) {
-		this.x += xAdd;
-		this.y += yAdd;
-	}
-
 	public double getX() {
 		return this.x;
 	}
