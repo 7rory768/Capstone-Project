@@ -41,39 +41,27 @@ public class Pentagonal extends Prism {
 	public void createShapes() {
 		super.clearShapes();
 
-		System.out.println("Radius: " + this.radius);
-
-		System.out.println(Math.sin(36.0));
-		System.out.println(Math.sin(Math.toRadians(36.0)));
 		this.sideLength = Math.sin(Math.toRadians(36.0)) * this.radius * 2;
-		System.out.println("L: " + this.sideLength);
 
 		double h = Math.cos(Math.toRadians(36.0)) * this.radius;
-		System.out.println("H: " + h);
 		double c = Math.cos(Math.toRadians(72.0)) * this.radius;
-		System.out.println("C: " + c);
 
 		Vertex v1 = new Vertex(-this.sideLength / 2.0, h, Math.ceil(this.height / 2.0)), v2, v3, v4, v5;
-		System.out.println(v1);
 
 		v2 = v1.clone();
 		v2.setX(v2.getX() + this.sideLength);
-		System.out.println(v2);
 
 		v3 = v2.clone();
 		v3.setX(0 + Math.sin(Math.toRadians(72.0)) * this.radius);
 		v3.setY(0 - c);
-		System.out.println(v3);
 
 		v4 = v1.clone();
 		v4.setX(0);
 		v4.setY(-h);
-		System.out.println(v4);
 
 		v5 = v1.clone();
 		v5.setX(0 - Math.sin(Math.toRadians(72.0)) * this.radius);
 		v5.setY(0 - c);
-		System.out.println(v5);
 
 		super.addShape(new Pentagon(v1, v2, v3, v4, v5, this.radius, super.getColor()));
 
@@ -83,12 +71,7 @@ public class Pentagonal extends Prism {
 		v2 = v2.clone();
 		v2.setZ(v1.getZ());
 
-		Rectangle rect = this.getSquare(v1, v2);
 		super.addShape(this.getSquare(v1, v2));
-		System.out.println(rect.getVertex1());
-		System.out.println(rect.getVertex2());
-		System.out.println(rect.getVertex3());
-		System.out.println(rect.getVertex4());
 
 		v3 = v3.clone();
 		v3.setZ(v1.getZ());
@@ -105,7 +88,7 @@ public class Pentagonal extends Prism {
 
 		super.addShape(this.getSquare(v4, v5));
 		super.addShape(this.getSquare(v5, v1));
-
+		
 		super.addShape(new Pentagon(v1, v2, v3, v4, v5, this.radius, super.getColor()));
 	}
 

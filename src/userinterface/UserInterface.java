@@ -7,6 +7,7 @@ import prisms.Prism;
 import shapes.Pentagon;
 import shapes.Rectangle;
 import shapes.Shape;
+import shapes.Square;
 import shapes.Triangle;
 import util.Matrix3;
 import util.PrismType;
@@ -113,37 +114,13 @@ public class UserInterface {
 
                         int num = 0;
                         for (Shape shape : cube.getShapes()) {
-                            Rectangle sq = (Rectangle) shape;
+                            Square sq = (Square) shape;
                             num++;
-
-                            if (num == 1) {
-                                System.out.println("BEFORE VERTEX MODIFICATION:");
-                                System.out.println("V1: (" + sq.getVertex1().getX()
-                                        + ", " + sq.getVertex1().getY() + ")");
-                                System.out.println("V2: (" + sq.getVertex2().getX()
-                                        + ", " + sq.getVertex2().getY() + ")");
-                                System.out.println("V3: (" + sq.getVertex3().getX()
-                                        + ", " + sq.getVertex3().getY() + ")");
-                                System.out
-                                        .println("-------------------------------------------");
-                            }
 
                             Vertex v1 = transform.transform(sq.getVertex1());
                             Vertex v2 = transform.transform(sq.getVertex2());
                             Vertex v3 = transform.transform(sq.getVertex3());
                             Vertex v4 = transform.transform(sq.getVertex4());
-
-                            if (num == 1) {
-                                System.out.println("AFTER VERTEX TRANSFORMATION:");
-                                System.out.println("V1: (" + v1.getX() + ", " + v1.getY()
-                                        + ")");
-                                System.out.println("V2: (" + v2.getX() + ", " + v2.getY()
-                                        + ")");
-                                System.out.println("V3: (" + v3.getX() + ", " + v3.getY()
-                                        + ")");
-                                System.out
-                                        .println("-------------------------------------------");
-                            }
 
                             v1.setX(v1.getX() + xOrigin);
                             v1.setY(v1.getY() + yOrigin);
@@ -189,31 +166,6 @@ public class UserInterface {
                                                     Math.max(v3.getY(), v4.getY())))));
 
                             double squareArea = (maxX - minX) * (maxY - minY);
-                            // System.out.println("actual area: " + squareArea);
-                            // squareArea = ((v1.getY() - v3.getY()) *
-                            // (v2.getX() - v3.getX()) +
-                            // (v2.getY() - v3.getY())
-                            // * (v3.getX() - v1.getX()));
-                            // System.out.println("area calc: " + squareArea);
-
-                            if (num == 1) {
-                                System.out.println("AFTER ALL VERTEX MODIFICATION:");
-                                System.out.println("V1: (" + v1.getX() + ", " + v1.getY()
-                                        + ")");
-                                System.out.println("V2: (" + v2.getX() + ", " + v2.getY()
-                                        + ")");
-                                System.out.println("V3: (" + v3.getX() + ", " + v3.getY()
-                                        + ")");
-                                System.out
-                                        .println("-------------------------------------------");
-                            }
-
-                            if (num == 1) {
-                                System.out.println("Min X: " + minX);
-                                System.out.println("Max X: " + maxX);
-                                System.out.println("Min Y: " + minY);
-                                System.out.println("Max Y: " + maxY);
-                            }
 
                             for (int y = minY; y <= maxY; y++) {
                                 for (int x = minX; x <= maxX; x++) {

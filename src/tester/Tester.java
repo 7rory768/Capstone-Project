@@ -1,6 +1,8 @@
 package tester;
 
 import managers.LightManager;
+import prisms.Cube;
+import prisms.Equilateral;
 import prisms.Pentagonal;
 import shapes.Triangle;
 import userinterface.InterfaceActions;
@@ -25,9 +27,9 @@ public class Tester {
 	public static void main(String[] args) {
 		Tester.setupInterface();
 		
-		//Tester.prismManager.addPrism(new Equilateral(150, 150, 200, Color.GREEN));
-		//Tester.prismManager.addPrism(new Cube(100, 100, 150, Color.GREEN));
-		Tester.prismManager.addPrism(new Pentagonal(new Vertex(150, 150, 0), 100, 75, Color.GREEN));
+		Tester.prismManager.addPrism(new Equilateral(new Vertex(400, 400, 0), 100, Color.GREEN));
+		Tester.prismManager.addPrism(new Cube(new Vertex(200, 200, 0), 100, Color.GREEN));
+		Tester.prismManager.addPrism(new Pentagonal(new Vertex(100, 100, 0), 75, 50, Color.GREEN));
 	}
 
 	public static ArrayList<Triangle> inflate(ArrayList<Triangle> tris) {
