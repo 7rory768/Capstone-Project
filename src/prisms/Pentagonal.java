@@ -40,8 +40,20 @@ public class Pentagonal extends Prism {
 	// 108 angle between each vertex
 	public void createShapes() {
 		super.clearShapes();
-		this.sideLength = Math.sin(Math.toRadians(36.0)) * this.radius;                          
-		Vertex v1 = this.calculateLeftHorizontalVertex(), v2, v3, v4, v5;
+
+		System.out.println("Radius: " + this.radius);
+
+		System.out.println(Math.sin(36.0));
+		System.out.println(Math.sin(Math.toRadians(36.0)));
+		this.sideLength = Math.sin(Math.toRadians(36.0)) * this.radius * 2;
+		System.out.println("L: " + this.sideLength);
+
+		double h = Math.cos(Math.toRadians(36.0)) * this.radius;
+		System.out.println("H: " + h);
+		double c = Math.cos(Math.toRadians(72.0)) * this.radius;
+		System.out.println("C: " + c);
+
+		Vertex v1 = new Vertex(-this.sideLength / 2.0, h, Math.ceil(this.height / 2.0)), v2, v3, v4, v5;
 		System.out.println(v1);
 
 		v2 = v1.clone();
@@ -49,17 +61,19 @@ public class Pentagonal extends Prism {
 		System.out.println(v2);
 
 		v3 = v2.clone();
-		v3.setX(v3.getX() - this.sideLength);
-		v3.setY(v3.getY() + Math.tan(18.0) * this.sideLength);
+		v3.setX(0 + Math.sin(Math.toRadians(72.0)) * this.radius);
+		v3.setY(0 - c);
 		System.out.println(v3);
 
-		v4 = v3.clone();
-		v4.setX(v4.getX() - this.sideLength);
-		v4.setY(v4.getY() - Math.tan(36.0) * this.sideLength);
+		v4 = v1.clone();
+		v4.setX(0);
+		v4.setY(-h);
+		System.out.println(v4);
 
-		v5 = v4.clone();
-		v5.setX(v5.getX() - this.sideLength);
-		v5.setY(v5.getY() - Math.tan(36) * this.sideLength);
+		v5 = v1.clone();
+		v5.setX(0 - Math.sin(Math.toRadians(72.0)) * this.radius);
+		v5.setY(0 - c);
+		System.out.println(v5);
 
 		super.addShape(new Pentagon(v1, v2, v3, v4, v5, this.radius, super.getColor()));
 
@@ -70,30 +84,29 @@ public class Pentagonal extends Prism {
 		v2.setZ(v1.getZ());
 
 		Rectangle rect = this.getSquare(v1, v2);
-		// super.addShape(this.getSquare(v1, v2));
-		// System.out.println(rect.getVertex1());
-		// System.out.println(rect.getVertex2());
-		// System.out.println(rect.getVertex3());
-		// System.out.println(rect.getVertex4());
+		super.addShape(this.getSquare(v1, v2));
+		System.out.println(rect.getVertex1());
+		System.out.println(rect.getVertex2());
+		System.out.println(rect.getVertex3());
+		System.out.println(rect.getVertex4());
 
 		v3 = v3.clone();
 		v3.setZ(v1.getZ());
 
-		// super.addShape(this.getSquare(v2, v3));
+		super.addShape(this.getSquare(v2, v3));
 
 		v4 = v4.clone();
 		v4.setZ(v1.getZ());
 
-		// super.addShape(this.getSquare(v3, v4));
+		super.addShape(this.getSquare(v3, v4));
 
 		v5 = v5.clone();
 		v5.setZ(v1.getZ());
 
-		// super.addShape(this.getSquare(v4, v5));
-		// super.addShape(this.getSquare(v5, v1));
+		super.addShape(this.getSquare(v4, v5));
+		super.addShape(this.getSquare(v5, v1));
 
-		// super.addShape(new Pentagon(v1, v2, v3, v4, v5, this.sideLength,
-		// super.getColor()));
+		super.addShape(new Pentagon(v1, v2, v3, v4, v5, this.radius, super.getColor()));
 	}
 
 	public Rectangle getSquare(Vertex v1, Vertex v2) {
@@ -103,16 +116,6 @@ public class Pentagonal extends Prism {
 		v4.setZ(v4.getZ() + this.height);
 		return new Rectangle(v1, v2, v3, v4, (int) this.sideLength, this.height,
 				super.getColor());
-	}
-
-	public Vertex calculateLeftHorizontalVertex() {
-		double yDistance = Math.abs((Math.cos(Math.toRadians(36.0)) * Math
-				.ceil(this.sideLength / 2.0)));
-		System.out.println("R: " + this.radius);
-		System.out.println("H: " + yDistance);
-		System.out.println("C: " + Math.cos(Math.toRadians(72.0)) * this.radius);
-		return new Vertex(0 - Math.floor(this.sideLength / 2.0), yDistance,
-				Math.ceil(this.height / 2.0));	
 	}
 
 }

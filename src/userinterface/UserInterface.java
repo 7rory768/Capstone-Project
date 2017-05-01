@@ -1,6 +1,5 @@
 package userinterface;
 
-import managers.PrismManager;
 import prisms.Cube;
 import prisms.Equilateral;
 import prisms.Pentagonal;
@@ -15,6 +14,9 @@ import util.ShapeType;
 import util.Vertex;
 
 import javax.swing.*;
+
+import managers.PrismManager;
+
 import java.awt.*;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
@@ -616,6 +618,7 @@ public class UserInterface {
                                 Vertex v2 = transform.transform(pentagon.getVertex2());
                                 Vertex v3 = transform.transform(pentagon.getVertex3());
                                 Vertex v4 = transform.transform(pentagon.getVertex4());
+                                Vertex v5 = transform.transform(pentagon.getVertex5());
 
                                 v1.setX(v1.getX() + xOrigin);
                                 v1.setY(v1.getY() + yOrigin);
@@ -625,12 +628,16 @@ public class UserInterface {
                                 v3.setY(v3.getY() + yOrigin);
                                 v4.setX(v4.getX() + xOrigin);
                                 v4.setY(v4.getY() + yOrigin);
+                                v5.setX(v5.getX() + xOrigin);
+                                v5.setY(v5.getY() + yOrigin);
 
                                 Path2D path = new Path2D.Double();
                                 path.moveTo(v1.getX(), v1.getY());
                                 path.lineTo(v2.getX(), v2.getY());
                                 path.lineTo(v3.getX(), v3.getY());
                                 path.lineTo(v4.getX(), v4.getY());
+                                path.lineTo(v5.getX(), v5.getY());
+                                path.lineTo(v1.getX(), v1.getY());
                                 path.closePath();
                                 g2.draw(path);
 
