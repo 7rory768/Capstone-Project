@@ -28,7 +28,7 @@ public class Equilateral extends Prism {
 	public void createShapes() {
 		super.clearShapes();
 		int biggerHalf = (int) Math.ceil((double) this.length / 2.0);
-		int smallHalf = (int) Math.ceil((double) this.length / 2.0);
+		int smallHalf = (int) Math.floor((double) this.length / 2.0);
 		int middleX = 0;
 		int middleY = 0;
 		int middleZ = 0;
