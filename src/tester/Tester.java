@@ -26,10 +26,10 @@ public class Tester {
 	
 	public static void main(String[] args) {
 		Tester.setupInterface();
-		
-		Tester.prismManager.addPrism(new Equilateral(new Vertex(400, 400, 0), 100, Color.GREEN));
-		Tester.prismManager.addPrism(new Cube(new Vertex(200, 200, 0), 100, Color.GREEN));
-		Tester.prismManager.addPrism(new Pentagonal(new Vertex(100, 100, 0), 75, 50, Color.GREEN));
+
+		Tester.prismManager.addPrism(new Cube(new Vertex(70, 300, 0), 100, Color.GREEN));
+		Tester.prismManager.addPrism(new Equilateral(new Vertex(245, 300, 0), 100, Color.GREEN));
+		Tester.prismManager.addPrism(new Pentagonal(new Vertex(420, 300, 0), 75, 50, Color.GREEN));
 	}
 
 	public static ArrayList<Triangle> inflate(ArrayList<Triangle> tris) {

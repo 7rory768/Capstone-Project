@@ -27,13 +27,17 @@ public class UserInterface {
 	private final InterfaceActions interfaceActions;
 	private final PrismManager prismManager;
 
-	private static JPanel jPanel;
+	private static JPanel paintPanel;
+	private JPanel buttonPanel;
+	private final static int MODEL_WIDTH = 800;
+	private final static int MODEL_HEIGHT = 700;
 
 	private JFrame frame;
-	private Container pane;
 	private JSlider pitchSlider;
 	private JSlider headingSlider;
 	private Matrix3 transform;
+	private JSplitPane paintSplit, buttonSplit;
+    private JButton button; 
 
 	public UserInterface(InterfaceActions interfaceActions, PrismManager prismManager) {
 		this.interfaceActions = interfaceActions;
@@ -42,40 +46,54 @@ public class UserInterface {
 
 	public void setupInterface() {
 		this.setupButtons();
-		this.setupPane();
+		this.setupPanels();
+		this.addButtons();
+		this.frame.pack();
+		this.frame.setVisible(true);
 	}
 
 	private void setupButtons() {
 		this.headingSlider = new JSlider(0, 360, 180);
 		this.pitchSlider = new JSlider(SwingConstants.VERTICAL, -90, 90, 0);
+		this.buttonSplit = new JSplitPane();
+		this.buttonSplit.setOrientation(JSplitPane.HORIZONTAL_SPLIT);  
+		this.buttonSplit.setDividerLocation(UserInterface.MODEL_WIDTH + 50);
+		this.paintSplit = new JSplitPane();
+		this.paintSplit.setOrientation(JSplitPane.HORIZONTAL_SPLIT);  
+		this.paintSplit.setDividerLocation(UserInterface.MODEL_HEIGHT + 50);
+		this.button = new JButton("button");
+	}
+	
+	private void addButtons() {
+		this.buttonPanel.add(this.button);
+		paintPanel.add(this.headingSlider, 1, 0);
+		paintPanel.add(this.pitchSlider, 0, 1);
+		this.buttonSplit.setLeftComponent(this.headingSlider);
+		this.buttonSplit.setRightComponent(buttonPanel);
+		this.paintSplit.setTopComponent(paintPanel);
+		this.paintSplit.setBottomComponent(pitchSlider);
 	}
 
 	public static void repaint() {
-		UserInterface.jPanel.repaint();
+		UserInterface.paintPanel.repaint();
 	}
 
-	private void setupPane() {
+	private void setupPanels() {
 		this.frame = new JFrame();
-		this.frame.setSize(750, 750);
+		this.frame.setPreferredSize(new Dimension(1250, UserInterface.MODEL_HEIGHT + 100));
+		this.frame.setResizable(false);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.pane = this.frame.getContentPane();
-		this.pane.setLayout(new BorderLayout());
-		
-		this.pane.add(this.headingSlider, BorderLayout.SOUTH);
-		this.pane.add(this.pitchSlider, BorderLayout.EAST);
-		JButton button = new JButton();
-		button.setSize(100, 50);
-		button.setName("test");
-		this.pane.add(button);
+		this.frame.getContentPane().setLayout(new GridLayout(2, 2));
+		this.frame.getContentPane().add(this.buttonSplit);
 
-		UserInterface.jPanel = new JPanel() {
+		this.buttonPanel = new JPanel();
+		UserInterface.paintPanel = new JPanel() {
 
 			public void paintComponent(Graphics g) {
 
 				Graphics2D g2 = (Graphics2D) g;
 				g2.setColor(Color.WHITE);
-				g2.fillRect(0, 0, 500, getHeight());
-
+				g2.fillRect(0, 0, UserInterface.MODEL_WIDTH, UserInterface.MODEL_HEIGHT);
 				g2.setColor(Color.BLACK);
 
 				double heading = Math.toRadians(headingSlider.getValue());
@@ -91,6 +109,11 @@ public class UserInterface {
 				transform = headingTransform.multiply(pitchTransform);
 
 				this.createPrisms(g2);
+				Path2D path = new Path2D.Double();
+				path.moveTo(UserInterface.MODEL_WIDTH, 0);
+				path.lineTo(UserInterface.MODEL_WIDTH, UserInterface.MODEL_HEIGHT);
+				path.closePath();
+				g2.draw(path);
 
 				// g2.translate(getWidth() / 2, getHeight() / 2);
 
@@ -243,13 +266,20 @@ public class UserInterface {
 							Vertex v1 = transform.transform(t.getVertex1());
 							Vertex v2 = transform.transform(t.getVertex2());
 							Vertex v3 = transform.transform(t.getVertex3());
+							
+							v1.setX(v1.getX() + xOrigin);
+							v1.setY(v1.getY() + yOrigin);
+							v2.setX(v2.getX() + xOrigin);
+							v2.setY(v2.getY() + yOrigin);
+							v3.setX(v3.getX() + xOrigin);
+							v3.setY(v3.getY() + yOrigin);
 
-							v1.setX(v1.getX() + getWidth() / 2);
+							/*v1.setX(v1.getX() + getWidth() / 2);
 							v1.setY(v1.getY() + getHeight() / 2);
 							v2.setX(v2.getX() + getWidth() / 2);
 							v2.setY(v2.getY() + getHeight() / 2);
 							v3.setX(v3.getX() + getWidth() / 2);
-							v3.setY(v3.getY() + getHeight() / 2);
+							v3.setY(v3.getY() + getHeight() / 2);*/
 
 							Vertex ab = new Vertex(v2.getX() - v1.getX(), v2.getY()
 									- v1.getY(), v2.getZ() - v1.getZ());
@@ -299,7 +329,6 @@ public class UserInterface {
 							double triangleArea = (v1.getY() - v3.getY())
 									* (v2.getX() - v3.getX()) + (v2.getY() - v3.getY())
 									* (v3.getX() - v1.getX());
-
 							for (int y = minY; y <= maxY; y++) {
 								for (int x = minX; x <= maxX; x++) {
 									double b1 = ((y - v3.getY())
@@ -329,6 +358,35 @@ public class UserInterface {
 									}
 								}
 							}
+/*							for (int y = minY; y <= maxY; y++) {
+								for (int x = minX; x <= maxX; x++) {
+									double b1 = ((y - v3.getY())
+											* (v2.getX() - v3.getX()) + (v2.getY() - v3
+											.getY()) * (v3.getX() - x))
+											/ triangleArea;
+									double b2 = ((y - v1.getY())
+											* (v3.getX() - v1.getX()) + (v3.getY() - v1
+											.getY()) * (v1.getX() - x))
+											/ triangleArea;
+									double b3 = ((y - v2.getY())
+											* (v1.getX() - v2.getX()) + (v1.getY() - v2
+											.getY()) * (v2.getX() - x))
+											/ triangleArea;
+
+									if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1
+											&& b3 >= 0 && b3 <= 1) {
+										double depth = b1 + v1.getZ() + b2 * v2.getZ()
+												+ b3 * v3.getZ();
+										int zIndex = y * img.getWidth() + x;
+										if (zBuffer[zIndex] < depth) {
+											img.setRGB(x, y,
+													getShade(t.getColor(), angleCos)
+															.getRGB());
+											zBuffer[zIndex] = depth;
+										}
+									}
+								}
+							}*/
 
 							g2.drawImage(img, 0, 0, null);
 						}
@@ -503,9 +561,6 @@ public class UserInterface {
 				}
 			}
 		};
-
-		this.pane.add(UserInterface.jPanel, BorderLayout.CENTER);
-		this.frame.setVisible(true);
 	}
 
 	private static Color getShade(Color color, double shade) {
