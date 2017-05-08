@@ -28,9 +28,11 @@ public class UserInterface {
 	private final PrismManager prismManager;
 
 	private static JPanel paintPanel;
-	private JPanel buttonPanel;
-	private final static int MODEL_WIDTH = 800;
-	private final static int MODEL_HEIGHT = 700;
+	private JPanel buttonPanel, pitchPanel, headingPanel;
+	private final static int WIDTH = 1000;
+	private final static int HEIGHT = 600;
+	private final static int HEADING_DIVIDER = 35;
+	private final static int PITCH_DIVIDER = HEIGHT - HEADING_DIVIDER;
 
 	private JFrame frame;
 	private JSlider pitchSlider;
@@ -50,28 +52,50 @@ public class UserInterface {
 		this.addButtons();
 		this.frame.pack();
 		this.frame.setVisible(true);
+		//repaint();
 	}
 
 	private void setupButtons() {
 		this.headingSlider = new JSlider(0, 360, 180);
 		this.pitchSlider = new JSlider(SwingConstants.VERTICAL, -90, 90, 0);
+		this.pitchPanel = new JPanel();
+		this.headingPanel = new JPanel();
 		this.buttonSplit = new JSplitPane();
-		this.buttonSplit.setOrientation(JSplitPane.HORIZONTAL_SPLIT);  
-		this.buttonSplit.setDividerLocation(UserInterface.MODEL_WIDTH + 50);
 		this.paintSplit = new JSplitPane();
-		this.paintSplit.setOrientation(JSplitPane.HORIZONTAL_SPLIT);  
-		this.paintSplit.setDividerLocation(UserInterface.MODEL_HEIGHT + 50);
 		this.button = new JButton("button");
+
+		this.headingSlider.setIgnoreRepaint(true);
+		this.pitchSlider.setIgnoreRepaint(true);
+		this.button.setIgnoreRepaint(true);
 	}
 	
 	private void addButtons() {
-		this.buttonPanel.add(this.button);
-		paintPanel.add(this.headingSlider, 1, 0);
-		paintPanel.add(this.pitchSlider, 0, 1);
-		this.buttonSplit.setLeftComponent(this.headingSlider);
-		this.buttonSplit.setRightComponent(buttonPanel);
+		this.paintSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);  
+		this.paintSplit.setDividerLocation(PITCH_DIVIDER);
 		this.paintSplit.setTopComponent(paintPanel);
-		this.paintSplit.setBottomComponent(pitchSlider);
+		this.paintSplit.setBottomComponent(headingPanel);
+		
+		this.buttonSplit.setOrientation(JSplitPane.HORIZONTAL_SPLIT);  
+		this.buttonSplit.setDividerLocation(HEADING_DIVIDER);
+		this.buttonSplit.setLeftComponent(this.pitchPanel);
+		this.buttonSplit.setRightComponent(buttonPanel);
+
+        // our topPanel doesn't need anymore for this example. Whatever you want it to contain, you can add it here
+        paintPanel.setLayout(new BoxLayout(paintPanel, BoxLayout.Y_AXIS)); // BoxLayout.Y_AXIS will arrange the content vertically
+        paintPanel.setMinimumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        buttonPanel.setMinimumSize(new Dimension(Integer.MAX_VALUE, 0));
+      
+        // let's set the maximum size of the inputPanel, so it doesn't get too big when the user resizes the window
+        pitchPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));     // we set the max height to 75 and the max width to (almost) unlimited
+
+        pitchPanel.add(pitchSlider);
+        
+        headingPanel.setMaximumSize(new Dimension(20, Integer.MAX_VALUE));
+        headingPanel.add(headingSlider);
+        
+        buttonPanel.add(button);
 	}
 
 	public static void repaint() {
@@ -80,10 +104,11 @@ public class UserInterface {
 
 	private void setupPanels() {
 		this.frame = new JFrame();
-		this.frame.setPreferredSize(new Dimension(1250, UserInterface.MODEL_HEIGHT + 100));
+		this.frame.setPreferredSize(new Dimension(UserInterface.WIDTH, UserInterface.HEIGHT));
 		this.frame.setResizable(false);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.frame.getContentPane().setLayout(new GridLayout(2, 2));
+		this.frame.getContentPane().setLayout(new GridLayout());
+		this.frame.getContentPane().add(this.paintSplit);
 		this.frame.getContentPane().add(this.buttonSplit);
 
 		this.buttonPanel = new JPanel();
@@ -93,7 +118,7 @@ public class UserInterface {
 
 				Graphics2D g2 = (Graphics2D) g;
 				g2.setColor(Color.WHITE);
-				g2.fillRect(0, 0, UserInterface.MODEL_WIDTH, UserInterface.MODEL_HEIGHT);
+				g2.fillRect(0, 0, UserInterface.WIDTH/2, UserInterface.HEIGHT);
 				g2.setColor(Color.BLACK);
 
 				double heading = Math.toRadians(headingSlider.getValue());
@@ -110,8 +135,8 @@ public class UserInterface {
 
 				this.createPrisms(g2);
 				Path2D path = new Path2D.Double();
-				path.moveTo(UserInterface.MODEL_WIDTH, 0);
-				path.lineTo(UserInterface.MODEL_WIDTH, UserInterface.MODEL_HEIGHT);
+				path.moveTo(UserInterface.WIDTH, 0);
+				path.lineTo(UserInterface.WIDTH, UserInterface.HEIGHT);
 				path.closePath();
 				g2.draw(path);
 
