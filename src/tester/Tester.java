@@ -5,7 +5,6 @@ import prisms.Cube;
 import prisms.Equilateral;
 import prisms.Pentagonal;
 import shapes.Triangle;
-import userinterface.InterfaceActions;
 import managers.PrismManager;
 import userinterface.UserInterface;
 import util.Vertex;
@@ -15,10 +14,9 @@ import java.util.ArrayList;
 
 public class Tester {
 
-	private static final InterfaceActions interfaceActions = new InterfaceActions();
 	private static final PrismManager prismManager = new PrismManager();
 	private static final LightManager lightManager = new LightManager();
-	private static final UserInterface userInterface = new UserInterface(Tester.interfaceActions, Tester.prismManager);
+	private static final UserInterface userInterface = new UserInterface(Tester.prismManager);
 
 	public static void setupInterface() {
 		Tester.userInterface.setupInterface();

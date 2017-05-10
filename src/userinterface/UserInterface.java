@@ -29,8 +29,8 @@ public class UserInterface {
 
 	private static JPanel paintPanel;
 	private JPanel buttonPanel, pitchPanel, headingPanel;
-	private final static int WIDTH = 1000;
-	private final static int HEIGHT = 600;
+	private final static int WIDTH = 1500;
+	private final static int HEIGHT = 900;
 	private final static int HEADING_DIVIDER = 35;
 	private final static int PITCH_DIVIDER = HEIGHT - HEADING_DIVIDER;
 
@@ -39,20 +39,23 @@ public class UserInterface {
 	private JSlider headingSlider;
 	private Matrix3 transform;
 	private JSplitPane paintSplit, buttonSplit;
-    private JButton button; 
+	private JButton addButton, removeButton, cubeButton, equilateralButton,
+			pentagonalButton;
+	private JTextArea selectPrismLabel;
 
-	public UserInterface(InterfaceActions interfaceActions, PrismManager prismManager) {
-		this.interfaceActions = interfaceActions;
+	public UserInterface(PrismManager prismManager) {
 		this.prismManager = prismManager;
+		this.interfaceActions = new InterfaceActions(this);
 	}
 
 	public void setupInterface() {
 		this.setupButtons();
 		this.setupPanels();
 		this.addButtons();
+		this.interfaceActions.registerEvents();
 		this.frame.pack();
 		this.frame.setVisible(true);
-		//repaint();
+		// repaint();
 	}
 
 	private void setupButtons() {
@@ -62,40 +65,79 @@ public class UserInterface {
 		this.headingPanel = new JPanel();
 		this.buttonSplit = new JSplitPane();
 		this.paintSplit = new JSplitPane();
-		this.button = new JButton("button");
+		this.addButton = new JButton("Add Prism");
+		this.removeButton = new JButton("Remove Prism");
+		this.selectPrismLabel = new JTextArea("select a prism type u nerd");
 
 		this.headingSlider.setIgnoreRepaint(true);
 		this.pitchSlider.setIgnoreRepaint(true);
-		this.button.setIgnoreRepaint(true);
+		this.addButton.setIgnoreRepaint(true);
+		this.removeButton.setIgnoreRepaint(true);
 	}
-	
+
 	private void addButtons() {
-		this.paintSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);  
+		this.paintSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		this.paintSplit.setDividerLocation(PITCH_DIVIDER);
 		this.paintSplit.setTopComponent(paintPanel);
-		this.paintSplit.setBottomComponent(headingPanel);
-		
-		this.buttonSplit.setOrientation(JSplitPane.HORIZONTAL_SPLIT);  
+		this.paintSplit.setBottomComponent(this.headingPanel);
+
+		this.buttonSplit.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		this.buttonSplit.setDividerLocation(HEADING_DIVIDER);
 		this.buttonSplit.setLeftComponent(this.pitchPanel);
-		this.buttonSplit.setRightComponent(buttonPanel);
+		this.buttonSplit.setRightComponent(this.buttonPanel);
 
-        // our topPanel doesn't need anymore for this example. Whatever you want it to contain, you can add it here
-        paintPanel.setLayout(new BoxLayout(paintPanel, BoxLayout.Y_AXIS)); // BoxLayout.Y_AXIS will arrange the content vertically
-        paintPanel.setMinimumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-        
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-        buttonPanel.setMinimumSize(new Dimension(Integer.MAX_VALUE, 0));
-      
-        // let's set the maximum size of the inputPanel, so it doesn't get too big when the user resizes the window
-        pitchPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));     // we set the max height to 75 and the max width to (almost) unlimited
+		// our topPanel doesn't need anymore for this example. Whatever you want
+		// it to contain, you can add it here
+		paintPanel.setLayout(new BoxLayout(paintPanel, BoxLayout.Y_AXIS)); // BoxLayout.Y_AXIS
+																			// will
+																			// arrange
+																			// the
+																			// content
+																			// vertically
+		paintPanel.setMinimumSize(new Dimension((int) (3 * WIDTH / 5.0),
+				Integer.MAX_VALUE));
 
-        pitchPanel.add(pitchSlider);
-        
-        headingPanel.setMaximumSize(new Dimension(20, Integer.MAX_VALUE));
-        headingPanel.add(headingSlider);
-        
-        buttonPanel.add(button);
+		this.buttonPanel.setLayout(new GridBagLayout());
+
+		// let's set the maximum size of the inputPanel, so it doesn't get too
+		// big when the user resizes the window
+		this.pitchPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25)); // we
+																				// set
+																				// the
+																				// max
+																				// height
+																				// to
+																				// 75
+																				// and
+																				// the
+																				// max
+																				// width
+																				// to
+																				// (almost)
+																				// unlimited
+
+		this.pitchPanel.add(this.pitchSlider);
+
+		this.headingPanel.setMaximumSize(new Dimension(20, Integer.MAX_VALUE));
+		this.headingPanel.add(this.headingSlider);
+
+		// INSETS: TOP, LEFT, BOTTOM, RIGHT
+		GridBagConstraints constraints = new GridBagConstraints();
+		// constraints.anchor = GridBagConstraints.NORTH;
+
+		constraints.insets = new Insets(-375, -75, 0, 100);
+		constraints.insets = new Insets((int) (-7 * HEIGHT / 8.0), 0, 0, 125);
+		this.buttonPanel.add(this.addButton, constraints);
+
+		// constraints.insets = new Insets(-375, 150, 0, 0);
+		constraints.insets = new Insets((int) (-7 * HEIGHT / 8.0), 125, 0, 0);
+		this.buttonPanel.add(this.removeButton, constraints);
+
+		constraints.insets = new Insets((int) (-6 * HEIGHT / 8.0), 0, 0, 0);
+		constraints.gridy = 1;
+		constraints.gridwidth = 2;
+		this.buttonPanel.add(this.selectPrismLabel, constraints);
+		this.selectPrismLabel.setVisible(false);
 	}
 
 	public static void repaint() {
@@ -104,7 +146,8 @@ public class UserInterface {
 
 	private void setupPanels() {
 		this.frame = new JFrame();
-		this.frame.setPreferredSize(new Dimension(UserInterface.WIDTH, UserInterface.HEIGHT));
+		this.frame.setPreferredSize(new Dimension(UserInterface.WIDTH,
+				UserInterface.HEIGHT));
 		this.frame.setResizable(false);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.frame.getContentPane().setLayout(new GridLayout());
@@ -118,7 +161,7 @@ public class UserInterface {
 
 				Graphics2D g2 = (Graphics2D) g;
 				g2.setColor(Color.WHITE);
-				g2.fillRect(0, 0, UserInterface.WIDTH/2, UserInterface.HEIGHT);
+				g2.fillRect(0, 0, UserInterface.WIDTH / 2, UserInterface.HEIGHT);
 				g2.setColor(Color.BLACK);
 
 				double heading = Math.toRadians(headingSlider.getValue());
@@ -142,10 +185,6 @@ public class UserInterface {
 
 				// g2.translate(getWidth() / 2, getHeight() / 2);
 
-				headingSlider.addChangeListener(interfaceActions
-						.getHeadingChangeListener());
-				pitchSlider.addChangeListener(interfaceActions.getPitchChangeListener());
-
 			}
 
 			public void createPrisms(Graphics2D g2) {
@@ -166,10 +205,8 @@ public class UserInterface {
 						BufferedImage img = new BufferedImage(getWidth(), getHeight(),
 								BufferedImage.TYPE_INT_ARGB);
 
-						int num = 0;
 						for (Shape shape : cube.getShapes()) {
 							Square sq = (Square) shape;
-							num++;
 
 							Vertex v1 = transform.transform(sq.getVertex1());
 							Vertex v2 = transform.transform(sq.getVertex2());
@@ -243,8 +280,9 @@ public class UserInterface {
 									// double b4 = ((y - v4.getY()) * (v3.getX()
 									// - v4.getX()) +
 									// (v3.getY() - v4.getY())
-									// * (v4.getX() - 
-									//this.pane.add(UserInterface.jPanel2, BorderLayout.CENTER);x));
+									// * (v4.getX() -
+									// this.pane.add(UserInterface.jPanel2,
+									// BorderLayout.CENTER);x));
 
 									// double b5 = ((y -
 									// v3.getY()) * (v4.getX() -
@@ -291,7 +329,7 @@ public class UserInterface {
 							Vertex v1 = transform.transform(t.getVertex1());
 							Vertex v2 = transform.transform(t.getVertex2());
 							Vertex v3 = transform.transform(t.getVertex3());
-							
+
 							v1.setX(v1.getX() + xOrigin);
 							v1.setY(v1.getY() + yOrigin);
 							v2.setX(v2.getX() + xOrigin);
@@ -299,12 +337,14 @@ public class UserInterface {
 							v3.setX(v3.getX() + xOrigin);
 							v3.setY(v3.getY() + yOrigin);
 
-							/*v1.setX(v1.getX() + getWidth() / 2);
-							v1.setY(v1.getY() + getHeight() / 2);
-							v2.setX(v2.getX() + getWidth() / 2);
-							v2.setY(v2.getY() + getHeight() / 2);
-							v3.setX(v3.getX() + getWidth() / 2);
-							v3.setY(v3.getY() + getHeight() / 2);*/
+							/*
+							 * v1.setX(v1.getX() + getWidth() / 2);
+							 * v1.setY(v1.getY() + getHeight() / 2);
+							 * v2.setX(v2.getX() + getWidth() / 2);
+							 * v2.setY(v2.getY() + getHeight() / 2);
+							 * v3.setX(v3.getX() + getWidth() / 2);
+							 * v3.setY(v3.getY() + getHeight() / 2);
+							 */
 
 							Vertex ab = new Vertex(v2.getX() - v1.getX(), v2.getY()
 									- v1.getY(), v2.getZ() - v1.getZ());
@@ -383,35 +423,25 @@ public class UserInterface {
 									}
 								}
 							}
-/*							for (int y = minY; y <= maxY; y++) {
-								for (int x = minX; x <= maxX; x++) {
-									double b1 = ((y - v3.getY())
-											* (v2.getX() - v3.getX()) + (v2.getY() - v3
-											.getY()) * (v3.getX() - x))
-											/ triangleArea;
-									double b2 = ((y - v1.getY())
-											* (v3.getX() - v1.getX()) + (v3.getY() - v1
-											.getY()) * (v1.getX() - x))
-											/ triangleArea;
-									double b3 = ((y - v2.getY())
-											* (v1.getX() - v2.getX()) + (v1.getY() - v2
-											.getY()) * (v2.getX() - x))
-											/ triangleArea;
-
-									if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1
-											&& b3 >= 0 && b3 <= 1) {
-										double depth = b1 + v1.getZ() + b2 * v2.getZ()
-												+ b3 * v3.getZ();
-										int zIndex = y * img.getWidth() + x;
-										if (zBuffer[zIndex] < depth) {
-											img.setRGB(x, y,
-													getShade(t.getColor(), angleCos)
-															.getRGB());
-											zBuffer[zIndex] = depth;
-										}
-									}
-								}
-							}*/
+							/*
+							 * for (int y = minY; y <= maxY; y++) { for (int x =
+							 * minX; x <= maxX; x++) { double b1 = ((y -
+							 * v3.getY()) (v2.getX() - v3.getX()) + (v2.getY() -
+							 * v3 .getY()) * (v3.getX() - x)) / triangleArea;
+							 * double b2 = ((y - v1.getY()) (v3.getX() -
+							 * v1.getX()) + (v3.getY() - v1 .getY()) *
+							 * (v1.getX() - x)) / triangleArea; double b3 = ((y
+							 * - v2.getY()) (v1.getX() - v2.getX()) + (v1.getY()
+							 * - v2 .getY()) * (v2.getX() - x)) / triangleArea;
+							 * 
+							 * if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 &&
+							 * b3 >= 0 && b3 <= 1) { double depth = b1 +
+							 * v1.getZ() + b2 * v2.getZ() + b3 * v3.getZ(); int
+							 * zIndex = y * img.getWidth() + x; if
+							 * (zBuffer[zIndex] < depth) { img.setRGB(x, y,
+							 * getShade(t.getColor(), angleCos) .getRGB());
+							 * zBuffer[zIndex] = depth; } } } }
+							 */
 
 							g2.drawImage(img, 0, 0, null);
 						}
@@ -600,6 +630,26 @@ public class UserInterface {
 		}
 		int blue = (int) Math.pow(blueLinear, 1 / 2.4);
 		return new Color(red, green, blue);
+	}
+
+	public JSlider getHeadingSlider() {
+		return this.headingSlider;
+	}
+	
+	public JSlider getPitchSlider() {
+		return this.pitchSlider;
+	}
+	
+	public JButton getAddButton() {
+		return this.addButton;
+	}
+	
+	public JButton getRemoveButton() {
+		return this.removeButton;
+	}
+	
+	public JTextArea getSelectPrismLabel() {
+		return this.selectPrismLabel;
 	}
 
 }
