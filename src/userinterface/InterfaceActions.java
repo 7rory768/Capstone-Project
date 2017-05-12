@@ -13,7 +13,7 @@ import javax.swing.event.ChangeListener;
 public class InterfaceActions {
 
 	private final UserInterface userInterface;
-	
+
 	private Component lastSelected;
 
 	public InterfaceActions(UserInterface userInterface) {
@@ -31,18 +31,45 @@ public class InterfaceActions {
 	private void registerAddEvent(final JButton button) {
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				hideOldComponents();
 				setLastSelected(button);
+				showNewComponents();
 			}
 		});
 	}
 	
+	private boolean isLastSelected(JButton button) {
+		return this.lastSelected != null && this.lastSelected.equals(button);
+	}
+
 	private void setLastSelected(JButton button) {
-		if (lastSelected != null) {
-			lastSelected.setBackground(null);
-			lastSelected = null;
+		boolean sameComponent = false;
+		if (this.lastSelected != null) {
+			sameComponent = this.lastSelected.equals(button);
+			this.lastSelected.setBackground(null);
+			this.lastSelected = null;
 		}
-		button.setBackground(Color.CYAN);
-		lastSelected = button;
+		if (!sameComponent) {
+			button.setBackground(Color.CYAN);
+			this.lastSelected = button;
+		}
+	}
+	
+	public void hideOldComponents() {
+		userInterface.getSelectPrismLabel().setVisible(false);
+		userInterface.getCubeButton().setVisible(false);
+		userInterface.getEquilaterialButton().setVisible(false);
+		userInterface.getPentagonalButton().setVisible(false);
+	}
+	
+	public void showNewComponents() {
+		Component newComponent = this.lastSelected;
+		if (newComponent.equals(this.userInterface.getAddButton())) {
+			userInterface.getSelectPrismLabel().setVisible(true);
+			userInterface.getCubeButton().setVisible(true);
+			userInterface.getEquilaterialButton().setVisible(true);
+			userInterface.getPentagonalButton().setVisible(true);
+		}
 	}
 
 	public void registerEvents() {

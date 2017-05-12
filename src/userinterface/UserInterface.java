@@ -67,7 +67,10 @@ public class UserInterface {
 		this.paintSplit = new JSplitPane();
 		this.addButton = new JButton("Add Prism");
 		this.removeButton = new JButton("Remove Prism");
-		this.selectPrismLabel = new JTextArea("select a prism type u nerd");
+		this.selectPrismLabel = new JTextArea("Select a prism type below");
+		this.cubeButton = new JButton("Cube");
+		this.equilateralButton = new JButton("Equilateral");
+		this.pentagonalButton = new JButton("CPentagonal");
 
 		this.headingSlider.setIgnoreRepaint(true);
 		this.pitchSlider.setIgnoreRepaint(true);
@@ -138,6 +141,18 @@ public class UserInterface {
 		constraints.gridwidth = 2;
 		this.buttonPanel.add(this.selectPrismLabel, constraints);
 		this.selectPrismLabel.setVisible(false);
+
+		constraints.insets = new Insets((int) (-5 * HEIGHT / 8.0), 0, 0, 0);
+		constraints.gridy = 2;
+		constraints.gridwidth = 1;
+		this.buttonPanel.add(this.cubeButton, constraints);
+		this.cubeButton.setVisible(false);
+		
+		this.buttonPanel.add(this.equilateralButton, constraints);
+		this.equilateralButton.setVisible(false);
+		
+		this.buttonPanel.add(this.pentagonalButton, constraints);
+		this.pentagonalButton.setVisible(false);
 	}
 
 	public static void repaint() {
@@ -650,6 +665,18 @@ public class UserInterface {
 	
 	public JTextArea getSelectPrismLabel() {
 		return this.selectPrismLabel;
+	}
+	
+	public JButton getCubeButton() {
+		return this.cubeButton;
+	}
+	
+	public JButton getEquilaterialButton() {
+		return this.equilateralButton;
+	}
+	
+	public JButton getPentagonalButton() {
+		return this.pentagonalButton;
 	}
 
 }
