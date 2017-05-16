@@ -18,7 +18,16 @@ import javax.swing.*;
 
 import managers.PrismManager;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.List;
+import java.awt.TextField;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
@@ -40,8 +49,10 @@ public class UserInterface {
 	private Matrix3 transform;
 	private JSplitPane paintSplit, buttonSplit;
 	private JButton addButton, removeButton, cubeButton, equilateralButton,
-			pentagonalButton;
-	private JTextArea selectPrismLabel;
+			pentagonalButton, createButton;
+	private JTextArea selectPrismLabel, lengthLabel, originLabel, xLabel, yLabel;
+	private TextField lengthField, xOriginField, yOriginField;
+	private List colorList;
 
 	public UserInterface(PrismManager prismManager) {
 		this.prismManager = prismManager;
@@ -55,7 +66,6 @@ public class UserInterface {
 		this.interfaceActions.registerEvents();
 		this.frame.pack();
 		this.frame.setVisible(true);
-		// repaint();
 	}
 
 	private void setupButtons() {
@@ -70,12 +80,43 @@ public class UserInterface {
 		this.selectPrismLabel = new JTextArea("Select a prism type below");
 		this.cubeButton = new JButton("Cube");
 		this.equilateralButton = new JButton("Equilateral");
-		this.pentagonalButton = new JButton("CPentagonal");
+		this.pentagonalButton = new JButton("Pentagonal");
+		this.colorList = new List();
+		this.colorList.add("BLACK");
+		this.colorList.add("BLUE");
+		this.colorList.add("CYAN");
+		this.colorList.add("GRAY");
+		this.colorList.add("DARK_GRAY");
+		this.colorList.add("LIGHT_GRAY");
+		this.colorList.add("GREEN");
+		this.colorList.add("MAGENTA");
+		this.colorList.add("ORANGE");
+		this.colorList.add("PINK");
+		this.colorList.add("RED");
+		this.colorList.add("WHITE");
+		this.colorList.add("YELLOW");
+		this.originLabel = new JTextArea("Origin: ");
+		this.xLabel = new JTextArea("X = ");
+		this.yLabel = new JTextArea("Y = ");
+		this.xOriginField = new TextField(" " + UserInterface.WIDTH/2);
+		this.yOriginField = new TextField(" " + UserInterface.HEIGHT/2);
+		this.createButton = new JButton("Create");
+		this.lengthLabel = new JTextArea("Length: ");
+		this.lengthField = new TextField("1");
+
+		this.selectPrismLabel.setEditable(false);
+		this.lengthLabel.setEditable(false);
+		this.originLabel.setEditable(false);
 
 		this.headingSlider.setIgnoreRepaint(true);
 		this.pitchSlider.setIgnoreRepaint(true);
 		this.addButton.setIgnoreRepaint(true);
 		this.removeButton.setIgnoreRepaint(true);
+		this.originLabel.setIgnoreRepaint(true);
+		this.xLabel.setIgnoreRepaint(true);
+		this.yLabel.setIgnoreRepaint(true);
+		this.createButton.setIgnoreRepaint(true);
+		this.lengthLabel.setIgnoreRepaint(true);
 	}
 
 	private void addButtons() {
@@ -89,35 +130,15 @@ public class UserInterface {
 		this.buttonSplit.setLeftComponent(this.pitchPanel);
 		this.buttonSplit.setRightComponent(this.buttonPanel);
 
-		// our topPanel doesn't need anymore for this example. Whatever you want
-		// it to contain, you can add it here
-		paintPanel.setLayout(new BoxLayout(paintPanel, BoxLayout.Y_AXIS)); // BoxLayout.Y_AXIS
-																			// will
-																			// arrange
-																			// the
-																			// content
-																			// vertically
+		paintPanel.setLayout(new BoxLayout(paintPanel, BoxLayout.Y_AXIS)); 
+		
 		paintPanel.setMinimumSize(new Dimension((int) (3 * WIDTH / 5.0),
 				Integer.MAX_VALUE));
 
 		this.buttonPanel.setLayout(new GridBagLayout());
 
-		// let's set the maximum size of the inputPanel, so it doesn't get too
-		// big when the user resizes the window
-		this.pitchPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25)); // we
-																				// set
-																				// the
-																				// max
-																				// height
-																				// to
-																				// 75
-																				// and
-																				// the
-																				// max
-																				// width
-																				// to
-																				// (almost)
-																				// unlimited
+		// stop pitch panel from becoming bigger than 25 pixels high
+		this.pitchPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
 
 		this.pitchPanel.add(this.pitchSlider);
 
@@ -126,33 +147,105 @@ public class UserInterface {
 
 		// INSETS: TOP, LEFT, BOTTOM, RIGHT
 		GridBagConstraints constraints = new GridBagConstraints();
-		// constraints.anchor = GridBagConstraints.NORTH;
 
-		constraints.insets = new Insets(-375, -75, 0, 100);
+		// add button
 		constraints.insets = new Insets((int) (-7 * HEIGHT / 8.0), 0, 0, 125);
 		this.buttonPanel.add(this.addButton, constraints);
 
-		// constraints.insets = new Insets(-375, 150, 0, 0);
+		// remove button
 		constraints.insets = new Insets((int) (-7 * HEIGHT / 8.0), 125, 0, 0);
+		constraints.gridx = 3;
 		this.buttonPanel.add(this.removeButton, constraints);
 
-		constraints.insets = new Insets((int) (-6 * HEIGHT / 8.0), 0, 0, 0);
+		constraints.gridwidth = 3;
+		
+		// select prism label
+		constraints.insets = new Insets((int) (-6 * HEIGHT / 8.0), -250, 0, 0);
+		constraints.gridx = 1;
 		constraints.gridy = 1;
-		constraints.gridwidth = 2;
 		this.buttonPanel.add(this.selectPrismLabel, constraints);
 		this.selectPrismLabel.setVisible(false);
 
-		constraints.insets = new Insets((int) (-5 * HEIGHT / 8.0), 0, 0, 0);
+		// cube button
+		constraints.insets = new Insets((int) (-5 * HEIGHT / 8.0), -600, 0, 0);
 		constraints.gridy = 2;
-		constraints.gridwidth = 1;
 		this.buttonPanel.add(this.cubeButton, constraints);
 		this.cubeButton.setVisible(false);
-		
+
+		// equilateral button
+		constraints.insets = new Insets((int) (-5 * HEIGHT / 8.0), -250, 0, 0);
+		constraints.gridx = 2;
 		this.buttonPanel.add(this.equilateralButton, constraints);
 		this.equilateralButton.setVisible(false);
-		
+
+		// pentagonal button
+		constraints.insets = new Insets((int) (-5 * HEIGHT / 8.0), 0, 0, -150);
+		constraints.gridx = 3;
 		this.buttonPanel.add(this.pentagonalButton, constraints);
 		this.pentagonalButton.setVisible(false);
+
+		constraints.gridx = 1;
+		
+		// color list
+		constraints.insets = new Insets((int) (-4 * HEIGHT / 8.0), -250, 0, 0);
+		constraints.gridy = 3;
+		this.buttonPanel.add(this.colorList, constraints);
+		this.colorList.setVisible(false);
+
+		constraints.gridy = 4;
+		
+		// origin label
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0), -500, 0, 0);
+		this.buttonPanel.add(this.originLabel, constraints);
+		this.originLabel.setVisible(false);
+
+		// x label
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0), -405, 0, 0);
+		this.buttonPanel.add(this.xLabel, constraints);
+		this.xLabel.setVisible(false);
+		
+		// x origin field
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0), -330, 0, 0);
+		constraints.gridx = 2;
+		this.buttonPanel.add(this.xOriginField, constraints);
+		this.xOriginField.setVisible(false);
+		//this.xOriginField.setText(" " + UserInterface.WIDTH/2);
+
+		// y label
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0), -250, 0, 0);
+		constraints.gridy = 4;
+		this.buttonPanel.add(this.yLabel, constraints);
+		this.yLabel.setVisible(false);
+		
+		// x origin field
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0), -175, 0, 0);
+		constraints.gridx = 3;
+		this.buttonPanel.add(this.yOriginField, constraints);
+		this.yOriginField.setVisible(false);
+		//this.yOriginField.setText(" " + UserInterface.HEIGHT/2);
+
+		// length label
+		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0), -800, 0, 0);
+		constraints.gridy = 5;
+		constraints.fill = GridBagConstraints.NONE;
+		this.buttonPanel.add(this.lengthLabel, constraints);
+		this.lengthLabel.setVisible(false);
+
+		// length field
+		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0), -200, 0, 0);
+		constraints.gridx = 3;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		this.buttonPanel.add(this.lengthField, constraints);
+		this.lengthField.setVisible(false);
+
+		// length field
+		constraints.insets = new Insets(0, -250, (int) (-7 * HEIGHT/ 8.0), 0);
+		constraints.gridy = 7;
+		constraints.gridx = 1;
+		this.buttonPanel.add(this.createButton, constraints);
+		this.createButton.setVisible(false);
+		
+		
 	}
 
 	public static void repaint() {
@@ -170,7 +263,9 @@ public class UserInterface {
 		this.frame.getContentPane().add(this.buttonSplit);
 
 		this.buttonPanel = new JPanel();
-		UserInterface.paintPanel = new JPanel() {
+		UserInterface.paintPanel = new JPanel() {  
+
+			
 
 			public void paintComponent(Graphics g) {
 
@@ -650,33 +745,69 @@ public class UserInterface {
 	public JSlider getHeadingSlider() {
 		return this.headingSlider;
 	}
-	
+
 	public JSlider getPitchSlider() {
 		return this.pitchSlider;
 	}
-	
+
 	public JButton getAddButton() {
 		return this.addButton;
 	}
-	
+
 	public JButton getRemoveButton() {
 		return this.removeButton;
 	}
-	
+
 	public JTextArea getSelectPrismLabel() {
 		return this.selectPrismLabel;
 	}
-	
+
 	public JButton getCubeButton() {
 		return this.cubeButton;
 	}
-	
-	public JButton getEquilaterialButton() {
+
+	public JButton getEquilateralButton() {
 		return this.equilateralButton;
 	}
-	
+
 	public JButton getPentagonalButton() {
 		return this.pentagonalButton;
+	}
+	
+	public List getColorList() {
+		return this.colorList;
+	}
+	
+	public JTextArea getOriginLabel() {
+		return this.originLabel;
+	}
+	
+	public JTextArea getXLabel() {
+		return this.xLabel;
+	}
+	
+	public JTextArea getYLabel() {
+		return this.yLabel;
+	}
+	
+	public TextField getXOriginField() {
+		return this.xOriginField;
+	}
+	
+	public TextField getYOriginField() {
+		return this.yOriginField;
+	}
+	
+	public JTextArea getLengthLabel() {
+		return this.lengthLabel;
+	}
+	
+	public TextField getLengthField() {
+		return this.lengthField;
+	}
+	
+	public JButton getCreateButton() {
+		return this.createButton;
 	}
 
 }
