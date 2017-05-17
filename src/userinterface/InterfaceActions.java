@@ -2,10 +2,8 @@ package userinterface;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JSlider;
@@ -33,6 +31,11 @@ public class InterfaceActions {
 	private void registerButtonEvent(final JButton button) {
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (button.equals(userInterface.getCreateButton())) {
+					String length, radius, height, xOrigin, yOrigin;
+					Color color;
+					// get values and create prism
+				}
 				setLastSelected(button);
 				hideOldComponents();
 				showNewComponents();
@@ -75,6 +78,10 @@ public class InterfaceActions {
 		this.userInterface.getYOriginField().setVisible(false);
 		this.userInterface.getLengthLabel().setVisible(false);
 		this.userInterface.getLengthField().setVisible(false);
+		this.userInterface.getRadiusLabel().setVisible(false);
+		this.userInterface.getRadiusField().setVisible(false);
+		this.userInterface.getHeightLabel().setVisible(false);
+		this.userInterface.getHeightField().setVisible(false);
 		this.userInterface.getCreateButton().setVisible(false);
 	}
 
@@ -103,7 +110,10 @@ public class InterfaceActions {
 				this.showPrismButtons();
 				this.showPrismCreationComponents();
 
-				// radius and height
+				this.userInterface.getRadiusLabel().setVisible(true);
+				this.userInterface.getRadiusField().setVisible(true);
+				this.userInterface.getHeightLabel().setVisible(true);
+				this.userInterface.getHeightField().setVisible(true);
 			}
 		}
 	}

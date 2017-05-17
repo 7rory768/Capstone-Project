@@ -50,8 +50,8 @@ public class UserInterface {
 	private JSplitPane paintSplit, buttonSplit;
 	private JButton addButton, removeButton, cubeButton, equilateralButton,
 			pentagonalButton, createButton;
-	private JTextArea selectPrismLabel, lengthLabel, originLabel, xLabel, yLabel;
-	private TextField lengthField, xOriginField, yOriginField;
+	private JTextArea selectPrismLabel, lengthLabel, originLabel, xLabel, yLabel, radiusLabel, heightLabel;
+	private TextField lengthField, xOriginField, yOriginField, radiusField, heightField;
 	private List colorList;
 
 	public UserInterface(PrismManager prismManager) {
@@ -100,13 +100,20 @@ public class UserInterface {
 		this.yLabel = new JTextArea("Y = ");
 		this.xOriginField = new TextField(" " + UserInterface.WIDTH/2);
 		this.yOriginField = new TextField(" " + UserInterface.HEIGHT/2);
-		this.createButton = new JButton("Create");
 		this.lengthLabel = new JTextArea("Length: ");
-		this.lengthField = new TextField("1");
+		this.lengthField = new TextField();
+		this.radiusLabel = new JTextArea("Radius: ");
+		this.radiusField = new TextField();
+		this.heightLabel = new JTextArea("Height: ");
+		this.heightField = new TextField();
+		
+		this.createButton = new JButton("Create");
 
 		this.selectPrismLabel.setEditable(false);
 		this.lengthLabel.setEditable(false);
 		this.originLabel.setEditable(false);
+		this.radiusLabel.setEditable(false);
+		this.heightLabel.setEditable(false);
 
 		this.headingSlider.setIgnoreRepaint(true);
 		this.pitchSlider.setIgnoreRepaint(true);
@@ -115,8 +122,11 @@ public class UserInterface {
 		this.originLabel.setIgnoreRepaint(true);
 		this.xLabel.setIgnoreRepaint(true);
 		this.yLabel.setIgnoreRepaint(true);
-		this.createButton.setIgnoreRepaint(true);
 		this.lengthLabel.setIgnoreRepaint(true);
+		this.radiusLabel.setIgnoreRepaint(true);
+		this.heightLabel.setIgnoreRepaint(true);
+		
+		this.createButton.setIgnoreRepaint(true);
 	}
 
 	private void addButtons() {
@@ -224,9 +234,10 @@ public class UserInterface {
 		this.yOriginField.setVisible(false);
 		//this.yOriginField.setText(" " + UserInterface.HEIGHT/2);
 
+		constraints.gridy = 5;
+		
 		// length label
 		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0), -800, 0, 0);
-		constraints.gridy = 5;
 		constraints.fill = GridBagConstraints.NONE;
 		this.buttonPanel.add(this.lengthLabel, constraints);
 		this.lengthLabel.setVisible(false);
@@ -237,6 +248,32 @@ public class UserInterface {
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		this.buttonPanel.add(this.lengthField, constraints);
 		this.lengthField.setVisible(false);
+
+		// radius label
+		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0), -800, 0, 0);
+		constraints.fill = GridBagConstraints.NONE;
+		this.buttonPanel.add(this.radiusLabel, constraints);
+		this.radiusLabel.setVisible(false);
+
+		// radius field
+		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0), -200, 0, 0);
+		constraints.gridx = 3;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		this.buttonPanel.add(this.radiusField, constraints);
+		this.radiusField.setVisible(false);
+
+		// height label
+		constraints.insets = new Insets((int) (-1 * HEIGHT / 8.0), -800, 0, 0);
+		constraints.fill = GridBagConstraints.NONE;
+		this.buttonPanel.add(this.heightLabel, constraints);
+		this.heightLabel.setVisible(false);
+
+		// height field
+		constraints.insets = new Insets((int) (-1 * HEIGHT / 8.0), -200, 0, 0);
+		constraints.gridx = 3;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
+		this.buttonPanel.add(this.heightField, constraints);
+		this.heightField.setVisible(false);
 
 		// length field
 		constraints.insets = new Insets(0, -250, (int) (-7 * HEIGHT/ 8.0), 0);
@@ -804,6 +841,22 @@ public class UserInterface {
 	
 	public TextField getLengthField() {
 		return this.lengthField;
+	}
+	
+	public JTextArea getRadiusLabel() {
+		return this.radiusLabel;
+	}
+	
+	public TextField getRadiusField() {
+		return this.radiusField;
+	}
+	
+	public JTextArea getHeightLabel() {
+		return this.heightLabel;
+	}
+	
+	public TextField getHeightField() {
+		return this.heightField;
 	}
 	
 	public JButton getCreateButton() {
