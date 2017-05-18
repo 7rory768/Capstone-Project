@@ -50,7 +50,7 @@ public class UserInterface {
 	private JSplitPane paintSplit, buttonSplit;
 	private JButton addButton, removeButton, cubeButton, equilateralButton, pentagonalButton, createButton;
 	private JTextArea selectPrismLabel, colorLabel, originLabel, xLabel, yLabel, lengthLabel, radiusLabel, heightLabel;
-	private JTextArea noColorLabel, noXOriginLabel, noYOriginLabel, noLengthLabel, noRadiusLabel, noHeightLabel;
+	private JTextArea noColorLabel, noOriginLabel, noLengthLabel, noRadiusLabel, noHeightLabel;
 	private JTextArea invalidXOriginLabel, invalidYOrginLabel, invalidLengthLabel, invalidRadiusLabel, invalidHeightLabel;
 	private TextField lengthField, xOriginField, yOriginField, radiusField, heightField;
 	private List colorList;
@@ -110,17 +110,10 @@ public class UserInterface {
 		this.heightField = new TextField();
 
 		this.noColorLabel = new JTextArea("Error: Missing parameter, please provide a color");
-		this.noColorLabel.setCaretColor(Color.RED);
-		this.noXOriginLabel = new JTextArea("Error: Missing parameter, please provide a x coordinate");
-		this.noXOriginLabel.setBackground(Color.RED);
-		this.noYOriginLabel = new JTextArea("Error: Missing parameter, please provide a y coordinate");
-		this.noYOriginLabel.setBackground(Color.RED);
+		this.noOriginLabel = new JTextArea("Error: Missing parameter, please provide both coordinates");
 		this.noLengthLabel = new JTextArea("Error: Missing parameter, please provide a length");
-		this.noLengthLabel.setBackground(Color.RED);
 		this.noRadiusLabel = new JTextArea("Error: Missing parameter, please provide a radius");
-		this.noRadiusLabel.setBackground(Color.RED);
 		this.noHeightLabel = new JTextArea("Error: Missing parameter, please provide a height");
-		this.noHeightLabel.setBackground(Color.RED);
 
 		this.createButton = new JButton("Create");
 
@@ -132,8 +125,7 @@ public class UserInterface {
 		this.colorLabel.setEditable(false);
 
 		this.noColorLabel.setEditable(false);
-		this.noXOriginLabel.setEditable(false);
-		this.noYOriginLabel.setEditable(false);
+		this.noOriginLabel.setEditable(false);
 		this.noLengthLabel.setEditable(false);
 		this.noRadiusLabel.setEditable(false);
 		this.noHeightLabel.setEditable(false);
@@ -246,31 +238,33 @@ public class UserInterface {
 		this.originLabel.setVisible(false);
 
 		// x label
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -405, 0, 0);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -375, 0, 0);
 		this.buttonPanel.add(this.xLabel, constraints);
 		this.xLabel.setVisible(false);
+
+		constraints.gridx = 2;
 		
-		// no x origin label
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing - 50, -330, 0, 0);
-		this.buttonPanel.add(this.noXOriginLabel, constraints);
-		this.noXOriginLabel.setVisible(false);
+		// no origin label
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing - 60, -245, 0, 0);
+		this.buttonPanel.add(this.noOriginLabel, constraints);
+		this.noOriginLabel.setVisible(false);
 		
 		// x origin field
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -330, 0, 0);
-		constraints.gridx = 2;
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -300, 0, 0);
 		this.buttonPanel.add(this.xOriginField, constraints);
 		this.xOriginField.setVisible(false);
 		// this.xOriginField.setText(" " + UserInterface.WIDTH/2);
 
 		// y label
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -250, 0, 0);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -220, 0, 0);
 		constraints.gridy = 4;
 		this.buttonPanel.add(this.yLabel, constraints);
 		this.yLabel.setVisible(false);
 
-		// x origin field
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -175, 0, 0);
 		constraints.gridx = 3;
+		
+		// y origin field
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -145, 0, 0);
 		this.buttonPanel.add(this.yOriginField, constraints);
 		this.yOriginField.setVisible(false);
 		// this.yOriginField.setText(" " + UserInterface.HEIGHT/2);
@@ -283,9 +277,15 @@ public class UserInterface {
 		this.buttonPanel.add(this.lengthLabel, constraints);
 		this.lengthLabel.setVisible(false);
 
+		constraints.gridx = 3;
+		
+		// no length label
+		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing - 50, -200, 0, 0);
+		this.buttonPanel.add(this.noLengthLabel, constraints);
+		this.noLengthLabel.setVisible(false);
+
 		// length field
 		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing, -200, 0, 0);
-		constraints.gridx = 3;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		this.buttonPanel.add(this.lengthField, constraints);
 		this.lengthField.setVisible(false);
@@ -296,9 +296,15 @@ public class UserInterface {
 		this.buttonPanel.add(this.radiusLabel, constraints);
 		this.radiusLabel.setVisible(false);
 
+		constraints.gridx = 3;
+		
+		// no radius label
+		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing - 50, -200, 0, 0);
+		this.buttonPanel.add(this.noRadiusLabel, constraints);
+		this.noRadiusLabel.setVisible(false);
+
 		// radius field
 		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing, -200, 0, 0);
-		constraints.gridx = 3;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		this.buttonPanel.add(this.radiusField, constraints);
 		this.radiusField.setVisible(false);
@@ -309,14 +315,20 @@ public class UserInterface {
 		this.buttonPanel.add(this.heightLabel, constraints);
 		this.heightLabel.setVisible(false);
 
+		constraints.gridx = 3;
+		
+		// no height label
+		constraints.insets = new Insets(-spacing + 30, -200, 0, 0);
+		this.buttonPanel.add(this.noHeightLabel, constraints);
+		this.noHeightLabel.setVisible(false);
+
 		// height field
 		constraints.insets = new Insets(-spacing + 80, -200, 0, 0);
-		constraints.gridx = 3;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		this.buttonPanel.add(this.heightField, constraints);
 		this.heightField.setVisible(false);
 
-		// length field
+		// create button
 		constraints.insets = new Insets(0, -250, (int) (-7 * HEIGHT / 8.0), 0);
 		constraints.gridy = 7;
 		constraints.gridx = 1;
@@ -773,16 +785,12 @@ public class UserInterface {
 		return this.yLabel;
 	}
 
-	public JTextArea getNoXOriginLabel() {
-		return this.noXOriginLabel;
+	public JTextArea getNoOriginLabel() {
+		return this.noOriginLabel;
 	}
 
 	public TextField getXOriginField() {
 		return this.xOriginField;
-	}
-
-	public JTextArea getNoYOriginLabel() {
-		return this.noYOriginLabel;
 	}
 
 	public TextField getYOriginField() {
@@ -827,6 +835,14 @@ public class UserInterface {
 
 	public JButton getCreateButton() {
 		return this.createButton;
+	}
+	
+	public static int getWidth() {
+		return UserInterface.WIDTH;
+	}
+	
+	public static int getHeight() {
+		return UserInterface.HEIGHT;
 	}
 
 }

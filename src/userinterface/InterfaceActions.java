@@ -47,36 +47,35 @@ public class InterfaceActions {
 						color = Color.getColor(colorString);
 					}
 
-					if (colorString == null) {
-						displayingWarnings = true;
-						userInterface.getNoColorLabel().setVisible(true);
-					}
-					
 					String xOriginString = userInterface.getXOriginField().getText();
-					if (xOriginString == null) {
-						userInterface.getNoXOriginLabel().setVisible(true);
-					}
-					
 					String yOriginString = userInterface.getYOriginField().getText();
-					if (yOriginString == null) {
-						userInterface.getNoYOriginLabel().setVisible(true);
+					if (xOriginString == null || xOriginString.equals("") || yOriginString == null || yOriginString.equals("")) {
+						displayingWarnings = true;
+						userInterface.getNoOriginLabel().setVisible(true);
 					}
-					
-					String lengthString = userInterface.getLengthField().getText();
-					if (lengthString == null) {
-						userInterface.getNoLengthLabel().setVisible(true);
+
+					if (lastSelected.equals(userInterface.getCubeButton()) || lastSelected.equals(userInterface.getEquilateralButton())) {
+						String lengthString = userInterface.getLengthField().getText();
+						if (lengthString == null || lengthString.equals("")) {
+							displayingWarnings = true;
+							userInterface.getNoLengthLabel().setVisible(true);
+						}
 					}
-					
-					String radiusString = userInterface.getRadiusField().getText();
-					if (radiusString == null) {
-						userInterface.getNoRadiusLabel().setVisible(true);
+
+					if (lastSelected.equals(userInterface.getPentagonalButton())) {
+						String radiusString = userInterface.getRadiusField().getText();
+						if (radiusString == null || radiusString.equals("")) {
+							displayingWarnings = true;
+							userInterface.getNoRadiusLabel().setVisible(true);
+						}
+
+						String heightString = userInterface.getHeightField().getText();
+						if (heightString == null || heightString.equals("")) {
+							displayingWarnings = true;
+							userInterface.getNoHeightLabel().setVisible(true);
+						}
 					}
-					
-					String heightString = userInterface.getHeightField().getText();
-					if (heightString == null) {
-						userInterface.getNoHeightLabel().setVisible(true);
-					}
-					
+
 				}
 
 				if (!displayingWarnings) {
@@ -111,8 +110,7 @@ public class InterfaceActions {
 
 	private void hideAllWarnings() {
 		this.userInterface.getNoColorLabel().setVisible(false);
-		this.userInterface.getNoXOriginLabel().setVisible(false);
-		this.userInterface.getNoYOriginLabel().setVisible(false);
+		this.userInterface.getNoOriginLabel().setVisible(false);
 		this.userInterface.getNoLengthLabel().setVisible(false);
 		this.userInterface.getNoRadiusLabel().setVisible(false);
 		this.userInterface.getNoHeightLabel().setVisible(false);
@@ -137,6 +135,16 @@ public class InterfaceActions {
 		this.userInterface.getHeightLabel().setVisible(false);
 		this.userInterface.getHeightField().setVisible(false);
 		this.userInterface.getCreateButton().setVisible(false);
+	}
+
+	private void resetFields() {
+		this.userInterface.getColorList().setEnabled(false);
+		this.userInterface.getColorList().setEnabled(true);
+		this.userInterface.getXOriginField().setText(" " + UserInterface.getWidth() / 2);
+		this.userInterface.getYOriginField().setText(" " + UserInterface.getHeight() / 2);
+		this.userInterface.getLengthField().setText("");
+		this.userInterface.getRadiusField().setText("");
+		this.userInterface.getHeightField().setText("");
 	}
 
 	private void showNewComponents() {
@@ -179,6 +187,7 @@ public class InterfaceActions {
 	}
 
 	private void showPrismCreationComponents() {
+		this.resetFields();
 		this.userInterface.getColorLabel().setVisible(true);
 		this.userInterface.getColorList().setVisible(true);
 		this.userInterface.getOriginLabel().setVisible(true);
@@ -187,6 +196,7 @@ public class InterfaceActions {
 		this.userInterface.getXOriginField().setVisible(true);
 		this.userInterface.getYOriginField().setVisible(true);
 		this.userInterface.getCreateButton().setVisible(true);
+		this.resetFields();
 	}
 
 	public void registerEvents() {
