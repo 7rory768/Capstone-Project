@@ -48,9 +48,10 @@ public class UserInterface {
 	private JSlider headingSlider;
 	private Matrix3 transform;
 	private JSplitPane paintSplit, buttonSplit;
-	private JButton addButton, removeButton, cubeButton, equilateralButton,
-			pentagonalButton, createButton;
-	private JTextArea selectPrismLabel, lengthLabel, originLabel, xLabel, yLabel, radiusLabel, heightLabel;
+	private JButton addButton, removeButton, cubeButton, equilateralButton, pentagonalButton, createButton;
+	private JTextArea selectPrismLabel, colorLabel, originLabel, xLabel, yLabel, lengthLabel, radiusLabel, heightLabel;
+	private JTextArea noColorLabel, noXOriginLabel, noYOriginLabel, noLengthLabel, noRadiusLabel, noHeightLabel;
+	private JTextArea invalidXOriginLabel, invalidYOrginLabel, invalidLengthLabel, invalidRadiusLabel, invalidHeightLabel;
 	private TextField lengthField, xOriginField, yOriginField, radiusField, heightField;
 	private List colorList;
 
@@ -81,6 +82,7 @@ public class UserInterface {
 		this.cubeButton = new JButton("Cube");
 		this.equilateralButton = new JButton("Equilateral");
 		this.pentagonalButton = new JButton("Pentagonal");
+		this.colorLabel = new JTextArea("Color: ");
 		this.colorList = new List();
 		this.colorList.add("BLACK");
 		this.colorList.add("BLUE");
@@ -98,15 +100,28 @@ public class UserInterface {
 		this.originLabel = new JTextArea("Origin: ");
 		this.xLabel = new JTextArea("X = ");
 		this.yLabel = new JTextArea("Y = ");
-		this.xOriginField = new TextField(" " + UserInterface.WIDTH/2);
-		this.yOriginField = new TextField(" " + UserInterface.HEIGHT/2);
+		this.xOriginField = new TextField(" " + UserInterface.WIDTH / 2);
+		this.yOriginField = new TextField(" " + UserInterface.HEIGHT / 2);
 		this.lengthLabel = new JTextArea("Length: ");
 		this.lengthField = new TextField();
 		this.radiusLabel = new JTextArea("Radius: ");
 		this.radiusField = new TextField();
 		this.heightLabel = new JTextArea("Height: ");
 		this.heightField = new TextField();
-		
+
+		this.noColorLabel = new JTextArea("Error: Missing parameter, please provide a color");
+		this.noColorLabel.setCaretColor(Color.RED);
+		this.noXOriginLabel = new JTextArea("Error: Missing parameter, please provide a x coordinate");
+		this.noXOriginLabel.setBackground(Color.RED);
+		this.noYOriginLabel = new JTextArea("Error: Missing parameter, please provide a y coordinate");
+		this.noYOriginLabel.setBackground(Color.RED);
+		this.noLengthLabel = new JTextArea("Error: Missing parameter, please provide a length");
+		this.noLengthLabel.setBackground(Color.RED);
+		this.noRadiusLabel = new JTextArea("Error: Missing parameter, please provide a radius");
+		this.noRadiusLabel.setBackground(Color.RED);
+		this.noHeightLabel = new JTextArea("Error: Missing parameter, please provide a height");
+		this.noHeightLabel.setBackground(Color.RED);
+
 		this.createButton = new JButton("Create");
 
 		this.selectPrismLabel.setEditable(false);
@@ -114,18 +129,27 @@ public class UserInterface {
 		this.originLabel.setEditable(false);
 		this.radiusLabel.setEditable(false);
 		this.heightLabel.setEditable(false);
+		this.colorLabel.setEditable(false);
+
+		this.noColorLabel.setEditable(false);
+		this.noXOriginLabel.setEditable(false);
+		this.noYOriginLabel.setEditable(false);
+		this.noLengthLabel.setEditable(false);
+		this.noRadiusLabel.setEditable(false);
+		this.noHeightLabel.setEditable(false);
 
 		this.headingSlider.setIgnoreRepaint(true);
 		this.pitchSlider.setIgnoreRepaint(true);
 		this.addButton.setIgnoreRepaint(true);
 		this.removeButton.setIgnoreRepaint(true);
+		this.colorLabel.setIgnoreRepaint(true);
 		this.originLabel.setIgnoreRepaint(true);
 		this.xLabel.setIgnoreRepaint(true);
 		this.yLabel.setIgnoreRepaint(true);
 		this.lengthLabel.setIgnoreRepaint(true);
 		this.radiusLabel.setIgnoreRepaint(true);
 		this.heightLabel.setIgnoreRepaint(true);
-		
+
 		this.createButton.setIgnoreRepaint(true);
 	}
 
@@ -140,10 +164,9 @@ public class UserInterface {
 		this.buttonSplit.setLeftComponent(this.pitchPanel);
 		this.buttonSplit.setRightComponent(this.buttonPanel);
 
-		paintPanel.setLayout(new BoxLayout(paintPanel, BoxLayout.Y_AXIS)); 
-		
-		paintPanel.setMinimumSize(new Dimension((int) (3 * WIDTH / 5.0),
-				Integer.MAX_VALUE));
+		paintPanel.setLayout(new BoxLayout(paintPanel, BoxLayout.Y_AXIS));
+
+		paintPanel.setMinimumSize(new Dimension((int) (3 * WIDTH / 5.0), Integer.MAX_VALUE));
 
 		this.buttonPanel.setLayout(new GridBagLayout());
 
@@ -168,7 +191,7 @@ public class UserInterface {
 		this.buttonPanel.add(this.removeButton, constraints);
 
 		constraints.gridwidth = 3;
-		
+
 		// select prism label
 		constraints.insets = new Insets((int) (-6 * HEIGHT / 8.0), -250, 0, 0);
 		constraints.gridx = 1;
@@ -195,94 +218,111 @@ public class UserInterface {
 		this.pentagonalButton.setVisible(false);
 
 		constraints.gridx = 1;
-		
-		// color list
-		constraints.insets = new Insets((int) (-4 * HEIGHT / 8.0), -250, 0, 0);
 		constraints.gridy = 3;
+
+		int spacing = 50; // 50
+
+		// color label
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) - 110 + spacing, -500, 0, 0);
+		this.buttonPanel.add(this.colorLabel, constraints);
+		this.colorLabel.setVisible(false);
+
+		// no color warning
+		constraints.insets = new Insets((int) (-4 * HEIGHT / 8.0) - 50, -250, 0, 0);
+		this.buttonPanel.add(this.noColorLabel, constraints);
+		this.noColorLabel.setVisible(false);
+
+		// color list
+		constraints.insets = new Insets((int) (-4 * HEIGHT / 8.0) + spacing, -250, 0, 0);
 		this.buttonPanel.add(this.colorList, constraints);
 		this.colorList.setVisible(false);
 
 		constraints.gridy = 4;
-		
+		spacing = 100; // 100
+
 		// origin label
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0), -500, 0, 0);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -500, 0, 0);
 		this.buttonPanel.add(this.originLabel, constraints);
 		this.originLabel.setVisible(false);
 
 		// x label
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0), -405, 0, 0);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -405, 0, 0);
 		this.buttonPanel.add(this.xLabel, constraints);
 		this.xLabel.setVisible(false);
 		
+		// no x origin label
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing - 50, -330, 0, 0);
+		this.buttonPanel.add(this.noXOriginLabel, constraints);
+		this.noXOriginLabel.setVisible(false);
+		
 		// x origin field
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0), -330, 0, 0);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -330, 0, 0);
 		constraints.gridx = 2;
 		this.buttonPanel.add(this.xOriginField, constraints);
 		this.xOriginField.setVisible(false);
-		//this.xOriginField.setText(" " + UserInterface.WIDTH/2);
+		// this.xOriginField.setText(" " + UserInterface.WIDTH/2);
 
 		// y label
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0), -250, 0, 0);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -250, 0, 0);
 		constraints.gridy = 4;
 		this.buttonPanel.add(this.yLabel, constraints);
 		this.yLabel.setVisible(false);
-		
+
 		// x origin field
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0), -175, 0, 0);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -175, 0, 0);
 		constraints.gridx = 3;
 		this.buttonPanel.add(this.yOriginField, constraints);
 		this.yOriginField.setVisible(false);
-		//this.yOriginField.setText(" " + UserInterface.HEIGHT/2);
+		// this.yOriginField.setText(" " + UserInterface.HEIGHT/2);
 
 		constraints.gridy = 5;
-		
+
 		// length label
-		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0), -800, 0, 0);
+		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing, -800, 0, 0);
 		constraints.fill = GridBagConstraints.NONE;
 		this.buttonPanel.add(this.lengthLabel, constraints);
 		this.lengthLabel.setVisible(false);
 
 		// length field
-		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0), -200, 0, 0);
+		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing, -200, 0, 0);
 		constraints.gridx = 3;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		this.buttonPanel.add(this.lengthField, constraints);
 		this.lengthField.setVisible(false);
 
 		// radius label
-		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0), -800, 0, 0);
+		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing, -800, 0, 0);
 		constraints.fill = GridBagConstraints.NONE;
 		this.buttonPanel.add(this.radiusLabel, constraints);
 		this.radiusLabel.setVisible(false);
 
 		// radius field
-		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0), -200, 0, 0);
+		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing, -200, 0, 0);
 		constraints.gridx = 3;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		this.buttonPanel.add(this.radiusField, constraints);
 		this.radiusField.setVisible(false);
 
 		// height label
-		constraints.insets = new Insets((int) (-1 * HEIGHT / 8.0), -800, 0, 0);
+		constraints.insets = new Insets(-spacing + 80, -800, 0, 0);
 		constraints.fill = GridBagConstraints.NONE;
 		this.buttonPanel.add(this.heightLabel, constraints);
 		this.heightLabel.setVisible(false);
 
 		// height field
-		constraints.insets = new Insets((int) (-1 * HEIGHT / 8.0), -200, 0, 0);
+		constraints.insets = new Insets(-spacing + 80, -200, 0, 0);
 		constraints.gridx = 3;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		this.buttonPanel.add(this.heightField, constraints);
 		this.heightField.setVisible(false);
 
 		// length field
-		constraints.insets = new Insets(0, -250, (int) (-7 * HEIGHT/ 8.0), 0);
+		constraints.insets = new Insets(0, -250, (int) (-7 * HEIGHT / 8.0), 0);
 		constraints.gridy = 7;
 		constraints.gridx = 1;
 		this.buttonPanel.add(this.createButton, constraints);
 		this.createButton.setVisible(false);
-		
-		
+
 	}
 
 	public static void repaint() {
@@ -291,8 +331,7 @@ public class UserInterface {
 
 	private void setupPanels() {
 		this.frame = new JFrame();
-		this.frame.setPreferredSize(new Dimension(UserInterface.WIDTH,
-				UserInterface.HEIGHT));
+		this.frame.setPreferredSize(new Dimension(UserInterface.WIDTH, UserInterface.HEIGHT));
 		this.frame.setResizable(false);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.frame.getContentPane().setLayout(new GridLayout());
@@ -300,9 +339,7 @@ public class UserInterface {
 		this.frame.getContentPane().add(this.buttonSplit);
 
 		this.buttonPanel = new JPanel();
-		UserInterface.paintPanel = new JPanel() {  
-
-			
+		UserInterface.paintPanel = new JPanel() {
 
 			public void paintComponent(Graphics g) {
 
@@ -312,14 +349,10 @@ public class UserInterface {
 				g2.setColor(Color.BLACK);
 
 				double heading = Math.toRadians(headingSlider.getValue());
-				Matrix3 headingTransform = new Matrix3(new double[] { Math.cos(heading),
-						0, Math.sin(heading), 0, 1, 0, -Math.sin(heading), 0,
-						Math.cos(heading) });
+				Matrix3 headingTransform = new Matrix3(new double[] { Math.cos(heading), 0, Math.sin(heading), 0, 1, 0, -Math.sin(heading), 0, Math.cos(heading) });
 
 				double pitch = Math.toRadians(pitchSlider.getValue());
-				Matrix3 pitchTransform = new Matrix3(new double[] { 1, 0, 0, 0,
-						Math.cos(pitch), Math.sin(pitch), 0, -Math.sin(pitch),
-						Math.cos(pitch) });
+				Matrix3 pitchTransform = new Matrix3(new double[] { 1, 0, 0, 0, Math.cos(pitch), Math.sin(pitch), 0, -Math.sin(pitch), Math.cos(pitch) });
 
 				transform = headingTransform.multiply(pitchTransform);
 
@@ -349,8 +382,7 @@ public class UserInterface {
 						// zBuffer[q] = Double.NEGATIVE_INFINITY;
 						// }
 
-						BufferedImage img = new BufferedImage(getWidth(), getHeight(),
-								BufferedImage.TYPE_INT_ARGB);
+						BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
 						for (Shape shape : cube.getShapes()) {
 							Square sq = (Square) shape;
@@ -378,43 +410,17 @@ public class UserInterface {
 							g2.draw(path);
 
 							// compute rectangular bounds for square
-							int minX = (int) Math.max(
-									0,
-									Math.ceil(Math.min(
-											v1.getX(),
-											Math.min(v2.getX(),
-													Math.min(v3.getX(), v4.getX())))));
-							int maxX = (int) Math.min(
-									img.getWidth() - 1,
-									Math.floor(Math.max(
-											v1.getX(),
-											Math.max(v2.getX(),
-													Math.max(v3.getX(), v4.getX())))));
-							int minY = (int) Math.max(
-									0,
-									Math.ceil(Math.min(
-											v1.getY(),
-											Math.min(v2.getY(),
-													Math.min(v3.getY(), v4.getY())))));
-							int maxY = (int) Math.min(
-									img.getHeight() - 1,
-									Math.floor(Math.max(
-											v1.getY(),
-											Math.max(v2.getY(),
-													Math.max(v3.getY(), v4.getY())))));
+							int minX = (int) Math.max(0, Math.ceil(Math.min(v1.getX(), Math.min(v2.getX(), Math.min(v3.getX(), v4.getX())))));
+							int maxX = (int) Math.min(img.getWidth() - 1, Math.floor(Math.max(v1.getX(), Math.max(v2.getX(), Math.max(v3.getX(), v4.getX())))));
+							int minY = (int) Math.max(0, Math.ceil(Math.min(v1.getY(), Math.min(v2.getY(), Math.min(v3.getY(), v4.getY())))));
+							int maxY = (int) Math.min(img.getHeight() - 1, Math.floor(Math.max(v1.getY(), Math.max(v2.getY(), Math.max(v3.getY(), v4.getY())))));
 
 							double squareArea = (maxX - minX) * (maxY - minY);
 
 							for (int y = minY; y <= maxY; y++) {
 								for (int x = minX; x <= maxX; x++) {
-									double b1 = ((y - v3.getY())
-											* (v2.getX() - v3.getX()) + (v2.getY() - v3
-											.getY()) * (v3.getX() - x))
-											/ squareArea;
-									double b2 = ((y - v1.getY())
-											* (v3.getX() - v1.getX()) + (v3.getY() - v1
-											.getY()) * (v1.getX() - x))
-											/ squareArea;
+									double b1 = ((y - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - x)) / squareArea;
+									double b2 = ((y - v1.getY()) * (v3.getX() - v1.getX()) + (v3.getY() - v1.getY()) * (v1.getX() - x)) / squareArea;
 									// double b1 = (maxX - x) * (maxY - y)
 									// / squareArea;
 									// double b2 = (x - minX) * (y - minY)
@@ -461,8 +467,7 @@ public class UserInterface {
 						Equilateral equilateral = (Equilateral) prism;
 
 						// g2.translate(getWidth() / 2, getHeight() / 2);
-						BufferedImage img = new BufferedImage(getWidth(), getHeight(),
-								BufferedImage.TYPE_INT_ARGB);
+						BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
 						double[] zBuffer = new double[img.getWidth() * img.getHeight()];
 
@@ -493,17 +498,12 @@ public class UserInterface {
 							 * v3.setY(v3.getY() + getHeight() / 2);
 							 */
 
-							Vertex ab = new Vertex(v2.getX() - v1.getX(), v2.getY()
-									- v1.getY(), v2.getZ() - v1.getZ());
-							Vertex ac = new Vertex(v3.getX() - v1.getX(), v3.getY()
-									- v1.getY(), v3.getZ() - v1.getZ());
-							Vertex norm = new Vertex(ab.getY() * ac.getZ() - ab.getZ()
-									* ac.getY(), ab.getZ() * ac.getX() - ab.getX()
-									* ac.getZ(), ab.getX() * ac.getY() - ab.getY()
-									* ac.getX());
+							Vertex ab = new Vertex(v2.getX() - v1.getX(), v2.getY() - v1.getY(), v2.getZ() - v1.getZ());
+							Vertex ac = new Vertex(v3.getX() - v1.getX(), v3.getY() - v1.getY(), v3.getZ() - v1.getZ());
+							Vertex norm = new Vertex(ab.getY() * ac.getZ() - ab.getZ() * ac.getY(), ab.getZ() * ac.getX() - ab.getX() * ac.getZ(), ab.getX() * ac.getY()
+									- ab.getY() * ac.getX());
 
-							double normalLength = Math.sqrt(norm.getX() * norm.getX()
-									+ norm.getY() + norm.getZ() * norm.getZ());
+							double normalLength = Math.sqrt(norm.getX() * norm.getX() + norm.getY() + norm.getZ() * norm.getZ());
 							norm.setX(norm.getX() / normalLength);
 							norm.setY(norm.getY() / normalLength);
 							norm.setZ(norm.getZ() / normalLength);
@@ -521,50 +521,23 @@ public class UserInterface {
 							// we have to do translation manually
 
 							// compute rectangular bounds for triangle
-							int minX = (int) Math.max(
-									0,
-									Math.ceil(Math.min(v1.getX(),
-											Math.min(v2.getX(), v3.getX()))));
-							int maxX = (int) Math.min(
-									img.getWidth() - 1,
-									Math.floor(Math.max(v1.getX(),
-											Math.max(v2.getX(), v3.getX()))));
-							int minY = (int) Math.max(
-									0,
-									Math.ceil(Math.min(v1.getY(),
-											Math.min(v2.getY(), v3.getY()))));
-							int maxY = (int) Math.min(
-									img.getHeight() - 1,
-									Math.floor(Math.max(v1.getY(),
-											Math.max(v2.getY(), v3.getY()))));
+							int minX = (int) Math.max(0, Math.ceil(Math.min(v1.getX(), Math.min(v2.getX(), v3.getX()))));
+							int maxX = (int) Math.min(img.getWidth() - 1, Math.floor(Math.max(v1.getX(), Math.max(v2.getX(), v3.getX()))));
+							int minY = (int) Math.max(0, Math.ceil(Math.min(v1.getY(), Math.min(v2.getY(), v3.getY()))));
+							int maxY = (int) Math.min(img.getHeight() - 1, Math.floor(Math.max(v1.getY(), Math.max(v2.getY(), v3.getY()))));
 
-							double triangleArea = (v1.getY() - v3.getY())
-									* (v2.getX() - v3.getX()) + (v2.getY() - v3.getY())
-									* (v3.getX() - v1.getX());
+							double triangleArea = (v1.getY() - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - v1.getX());
 							for (int y = minY; y <= maxY; y++) {
 								for (int x = minX; x <= maxX; x++) {
-									double b1 = ((y - v3.getY())
-											* (v2.getX() - v3.getX()) + (v2.getY() - v3
-											.getY()) * (v3.getX() - x))
-											/ triangleArea;
-									double b2 = ((y - v1.getY())
-											* (v3.getX() - v1.getX()) + (v3.getY() - v1
-											.getY()) * (v1.getX() - x))
-											/ triangleArea;
-									double b3 = ((y - v2.getY())
-											* (v1.getX() - v2.getX()) + (v1.getY() - v2
-											.getY()) * (v2.getX() - x))
-											/ triangleArea;
+									double b1 = ((y - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - x)) / triangleArea;
+									double b2 = ((y - v1.getY()) * (v3.getX() - v1.getX()) + (v3.getY() - v1.getY()) * (v1.getX() - x)) / triangleArea;
+									double b3 = ((y - v2.getY()) * (v1.getX() - v2.getX()) + (v1.getY() - v2.getY()) * (v2.getX() - x)) / triangleArea;
 
-									if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1
-											&& b3 >= 0 && b3 <= 1) {
-										double depth = b1 + v1.getZ() + b2 * v2.getZ()
-												+ b3 * v3.getZ();
+									if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 && b3 >= 0 && b3 <= 1) {
+										double depth = b1 + v1.getZ() + b2 * v2.getZ() + b3 * v3.getZ();
 										int zIndex = y * img.getWidth() + x;
 										if (zBuffer[zIndex] < depth) {
-											img.setRGB(x, y,
-													getShade(t.getColor(), angleCos)
-															.getRGB());
+											img.setRGB(x, y, getShade(t.getColor(), angleCos).getRGB());
 											zBuffer[zIndex] = depth;
 										}
 									}
@@ -602,8 +575,7 @@ public class UserInterface {
 						// zBuffer[q] = Double.NEGATIVE_INFINITY;
 						// }
 
-						BufferedImage img = new BufferedImage(getWidth(), getHeight(),
-								BufferedImage.TYPE_INT_ARGB);
+						BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
 						for (Shape shape : pentagonal.getShapes()) {
 							if (shape.getType() == ShapeType.RECTANGLE) {
@@ -632,38 +604,10 @@ public class UserInterface {
 								g2.draw(path);
 
 								// compute rectangular bounds for square
-								int minX = (int) Math
-										.max(0,
-												Math.ceil(Math.min(
-														v1.getX(),
-														Math.min(
-																v2.getX(),
-																Math.min(v3.getX(),
-																		v4.getX())))));
-								int maxX = (int) Math
-										.min(img.getWidth() - 1,
-												Math.floor(Math.max(
-														v1.getX(),
-														Math.max(
-																v2.getX(),
-																Math.max(v3.getX(),
-																		v4.getX())))));
-								int minY = (int) Math
-										.max(0,
-												Math.ceil(Math.min(
-														v1.getY(),
-														Math.min(
-																v2.getY(),
-																Math.min(v3.getY(),
-																		v4.getY())))));
-								int maxY = (int) Math
-										.min(img.getHeight() - 1,
-												Math.floor(Math.max(
-														v1.getY(),
-														Math.max(
-																v2.getY(),
-																Math.max(v3.getY(),
-																		v4.getY())))));
+								int minX = (int) Math.max(0, Math.ceil(Math.min(v1.getX(), Math.min(v2.getX(), Math.min(v3.getX(), v4.getX())))));
+								int maxX = (int) Math.min(img.getWidth() - 1, Math.floor(Math.max(v1.getX(), Math.max(v2.getX(), Math.max(v3.getX(), v4.getX())))));
+								int minY = (int) Math.max(0, Math.ceil(Math.min(v1.getY(), Math.min(v2.getY(), Math.min(v3.getY(), v4.getY())))));
+								int maxY = (int) Math.min(img.getHeight() - 1, Math.floor(Math.max(v1.getY(), Math.max(v2.getY(), Math.max(v3.getY(), v4.getY())))));
 
 								double squareArea = (maxX - minX) * (maxY - minY);
 								// System.out.println("actual area: " +
@@ -677,14 +621,8 @@ public class UserInterface {
 
 								for (int y = minY; y <= maxY; y++) {
 									for (int x = minX; x <= maxX; x++) {
-										double b1 = ((y - v3.getY())
-												* (v2.getX() - v3.getX()) + (v2.getY() - v3
-												.getY()) * (v3.getX() - x))
-												/ squareArea;
-										double b2 = ((y - v1.getY())
-												* (v3.getX() - v1.getX()) + (v3.getY() - v1
-												.getY()) * (v1.getX() - x))
-												/ squareArea;
+										double b1 = ((y - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) * (v3.getX() - x)) / squareArea;
+										double b2 = ((y - v1.getY()) * (v3.getX() - v1.getX()) + (v3.getY() - v1.getY()) * (v1.getX() - x)) / squareArea;
 										// double b1 = (maxX - x) * (maxY - y)
 										// / squareArea;
 										// double b2 = (x - minX) * (y - minY)
@@ -810,55 +748,83 @@ public class UserInterface {
 	public JButton getPentagonalButton() {
 		return this.pentagonalButton;
 	}
-	
+
+	public JTextArea getNoColorLabel() {
+		return this.noColorLabel;
+	}
+
+	public JTextArea getColorLabel() {
+		return this.colorLabel;
+	}
+
 	public List getColorList() {
 		return this.colorList;
 	}
-	
+
 	public JTextArea getOriginLabel() {
 		return this.originLabel;
 	}
-	
+
 	public JTextArea getXLabel() {
 		return this.xLabel;
 	}
-	
+
 	public JTextArea getYLabel() {
 		return this.yLabel;
 	}
-	
+
+	public JTextArea getNoXOriginLabel() {
+		return this.noXOriginLabel;
+	}
+
 	public TextField getXOriginField() {
 		return this.xOriginField;
 	}
-	
+
+	public JTextArea getNoYOriginLabel() {
+		return this.noYOriginLabel;
+	}
+
 	public TextField getYOriginField() {
 		return this.yOriginField;
 	}
-	
+
 	public JTextArea getLengthLabel() {
 		return this.lengthLabel;
 	}
-	
+
+	public JTextArea getNoLengthLabel() {
+		return this.noLengthLabel;
+	}
+
 	public TextField getLengthField() {
 		return this.lengthField;
 	}
-	
+
 	public JTextArea getRadiusLabel() {
 		return this.radiusLabel;
 	}
-	
+
+	public JTextArea getNoRadiusLabel() {
+		return this.noRadiusLabel;
+	}
+
 	public TextField getRadiusField() {
 		return this.radiusField;
 	}
-	
+
 	public JTextArea getHeightLabel() {
 		return this.heightLabel;
 	}
-	
+
+	public JTextArea getNoHeightLabel() {
+		return this.noHeightLabel;
+	}
+
 	public TextField getHeightField() {
 		return this.heightField;
 	}
-	
+
 	public JButton getCreateButton() {
 		return this.createButton;
 	}

@@ -31,14 +31,59 @@ public class InterfaceActions {
 	private void registerButtonEvent(final JButton button) {
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				hideAllWarnings();
+
+				boolean displayingWarnings = false;
+
 				if (button.equals(userInterface.getCreateButton())) {
-					String length, radius, height, xOrigin, yOrigin;
+					int length, radius, height, xOrigin, yOrigin;
 					Color color;
 					// get values and create prism
+					String colorString = userInterface.getColorList().getSelectedItem();
+					if (colorString == null) {
+						displayingWarnings = true;
+						userInterface.getNoColorLabel().setVisible(true);
+					} else {
+						color = Color.getColor(colorString);
+					}
+
+					if (colorString == null) {
+						displayingWarnings = true;
+						userInterface.getNoColorLabel().setVisible(true);
+					}
+					
+					String xOriginString = userInterface.getXOriginField().getText();
+					if (xOriginString == null) {
+						userInterface.getNoXOriginLabel().setVisible(true);
+					}
+					
+					String yOriginString = userInterface.getYOriginField().getText();
+					if (yOriginString == null) {
+						userInterface.getNoYOriginLabel().setVisible(true);
+					}
+					
+					String lengthString = userInterface.getLengthField().getText();
+					if (lengthString == null) {
+						userInterface.getNoLengthLabel().setVisible(true);
+					}
+					
+					String radiusString = userInterface.getRadiusField().getText();
+					if (radiusString == null) {
+						userInterface.getNoRadiusLabel().setVisible(true);
+					}
+					
+					String heightString = userInterface.getHeightField().getText();
+					if (heightString == null) {
+						userInterface.getNoHeightLabel().setVisible(true);
+					}
+					
 				}
-				setLastSelected(button);
-				hideOldComponents();
-				showNewComponents();
+
+				if (!displayingWarnings) {
+					setLastSelected(button);
+					hideOldComponents();
+					showNewComponents();
+				}
 			}
 		});
 	}
@@ -49,10 +94,9 @@ public class InterfaceActions {
 			sameComponent = this.lastSelected.equals(button);
 			this.lastSelected.setBackground(null);
 
-			if (sameComponent && (this.lastSelected.equals(this.userInterface.getCubeButton())
-					|| this.lastSelected
-							.equals(this.userInterface.getEquilateralButton())
-					|| this.lastSelected.equals(this.userInterface.getPentagonalButton()))) {
+			if (sameComponent
+					&& (this.lastSelected.equals(this.userInterface.getCubeButton()) || this.lastSelected.equals(this.userInterface.getEquilateralButton()) || this.lastSelected
+							.equals(this.userInterface.getPentagonalButton()))) {
 				this.lastSelected = this.userInterface.getAddButton();
 				this.lastSelected.setBackground(Color.CYAN);
 			} else {
@@ -65,11 +109,21 @@ public class InterfaceActions {
 		}
 	}
 
+	private void hideAllWarnings() {
+		this.userInterface.getNoColorLabel().setVisible(false);
+		this.userInterface.getNoXOriginLabel().setVisible(false);
+		this.userInterface.getNoYOriginLabel().setVisible(false);
+		this.userInterface.getNoLengthLabel().setVisible(false);
+		this.userInterface.getNoRadiusLabel().setVisible(false);
+		this.userInterface.getNoHeightLabel().setVisible(false);
+	}
+
 	private void hideOldComponents() {
 		this.userInterface.getSelectPrismLabel().setVisible(false);
 		this.userInterface.getCubeButton().setVisible(false);
 		this.userInterface.getEquilateralButton().setVisible(false);
 		this.userInterface.getPentagonalButton().setVisible(false);
+		this.userInterface.getColorLabel().setVisible(false);
 		this.userInterface.getColorList().setVisible(false);
 		this.userInterface.getOriginLabel().setVisible(false);
 		this.userInterface.getXLabel().setVisible(false);
@@ -125,6 +179,7 @@ public class InterfaceActions {
 	}
 
 	private void showPrismCreationComponents() {
+		this.userInterface.getColorLabel().setVisible(true);
 		this.userInterface.getColorList().setVisible(true);
 		this.userInterface.getOriginLabel().setVisible(true);
 		this.userInterface.getXLabel().setVisible(true);
@@ -143,5 +198,17 @@ public class InterfaceActions {
 		this.registerButtonEvent(this.userInterface.getEquilateralButton());
 		this.registerButtonEvent(this.userInterface.getPentagonalButton());
 		this.registerButtonEvent(this.userInterface.getCreateButton());
+	}
+
+	private boolean isInt(String arg) {
+		if (arg == null) {
+			return false;
+		}
+		try {
+			Integer.parseInt(arg);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		return true;
 	}
 }
