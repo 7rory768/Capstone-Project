@@ -10,14 +10,24 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import prisms.Cube;
+import prisms.Equilateral;
+import prisms.Pentagonal;
+
+import util.Vertex;
+
+import managers.PrismManager;
+
 public class InterfaceActions {
 
 	private final UserInterface userInterface;
+	private final PrismManager prismManager;
 
 	private Component lastSelected;
 
-	public InterfaceActions(UserInterface userInterface) {
+	public InterfaceActions(UserInterface userInterface, PrismManager prismManager) {
 		this.userInterface = userInterface;
+		this.prismManager = prismManager;
 	}
 
 	private void registerSlideEvent(JSlider jSlider) {
@@ -34,48 +44,8 @@ public class InterfaceActions {
 				hideAllWarnings();
 
 				boolean displayingWarnings = false;
-
 				if (button.equals(userInterface.getCreateButton())) {
-					int length, radius, height, xOrigin, yOrigin;
-					Color color;
-					// get values and create prism
-					String colorString = userInterface.getColorList().getSelectedItem();
-					if (colorString == null) {
-						displayingWarnings = true;
-						userInterface.getNoColorLabel().setVisible(true);
-					} else {
-						color = Color.getColor(colorString);
-					}
-
-					String xOriginString = userInterface.getXOriginField().getText();
-					String yOriginString = userInterface.getYOriginField().getText();
-					if (xOriginString == null || xOriginString.equals("") || yOriginString == null || yOriginString.equals("")) {
-						displayingWarnings = true;
-						userInterface.getNoOriginLabel().setVisible(true);
-					}
-
-					if (lastSelected.equals(userInterface.getCubeButton()) || lastSelected.equals(userInterface.getEquilateralButton())) {
-						String lengthString = userInterface.getLengthField().getText();
-						if (lengthString == null || lengthString.equals("")) {
-							displayingWarnings = true;
-							userInterface.getNoLengthLabel().setVisible(true);
-						}
-					}
-
-					if (lastSelected.equals(userInterface.getPentagonalButton())) {
-						String radiusString = userInterface.getRadiusField().getText();
-						if (radiusString == null || radiusString.equals("")) {
-							displayingWarnings = true;
-							userInterface.getNoRadiusLabel().setVisible(true);
-						}
-
-						String heightString = userInterface.getHeightField().getText();
-						if (heightString == null || heightString.equals("")) {
-							displayingWarnings = true;
-							userInterface.getNoHeightLabel().setVisible(true);
-						}
-					}
-
+					displayingWarnings = createPrism();
 				}
 
 				if (!displayingWarnings) {
@@ -114,6 +84,10 @@ public class InterfaceActions {
 		this.userInterface.getNoLengthLabel().setVisible(false);
 		this.userInterface.getNoRadiusLabel().setVisible(false);
 		this.userInterface.getNoHeightLabel().setVisible(false);
+		this.userInterface.getInvalidOriginLabel().setVisible(false);
+		this.userInterface.getInvalidLengthLabel().setVisible(false);
+		this.userInterface.getInvalidRadiusLabel().setVisible(false);
+		this.userInterface.getInvalidHeightLabel().setVisible(false);
 	}
 
 	private void hideOldComponents() {
@@ -135,16 +109,21 @@ public class InterfaceActions {
 		this.userInterface.getHeightLabel().setVisible(false);
 		this.userInterface.getHeightField().setVisible(false);
 		this.userInterface.getCreateButton().setVisible(false);
+		this.userInterface.getInvalidOriginLabel().setVisible(false);
+		this.userInterface.getInvalidLengthLabel().setVisible(false);
+		this.userInterface.getInvalidRadiusLabel().setVisible(false);
+		this.userInterface.getInvalidHeightLabel().setVisible(false);
 	}
 
 	private void resetFields() {
 		this.userInterface.getColorList().setEnabled(false);
 		this.userInterface.getColorList().setEnabled(true);
-		this.userInterface.getXOriginField().setText(" " + UserInterface.getWidth() / 2);
+		this.userInterface.getXOriginField().setText(" " + UserInterface.getWidth() / 4);
 		this.userInterface.getYOriginField().setText(" " + UserInterface.getHeight() / 2);
 		this.userInterface.getLengthField().setText("");
 		this.userInterface.getRadiusField().setText("");
 		this.userInterface.getHeightField().setText("");
+		UserInterface.repaint();
 	}
 
 	private void showNewComponents() {
@@ -199,6 +178,83 @@ public class InterfaceActions {
 		this.resetFields();
 	}
 
+	public boolean createPrism() {
+		boolean displayingWarnings = false;
+		int length = 0, radius = 0, height = 0, xOrigin = 0, yOrigin = 0;
+		Color color = null;
+		// get values and create prism
+		String colorString = this.userInterface.getColorList().getSelectedItem();
+		if (colorString == null) {
+			displayingWarnings = true;
+			this.userInterface.getNoColorLabel().setVisible(true);
+		} else {
+			color = this.parseColor(colorString.trim());
+		}
+
+		String xOriginString = this.userInterface.getXOriginField().getText();
+		String yOriginString = this.userInterface.getYOriginField().getText();
+		if (xOriginString == null || xOriginString.trim().equals("") || yOriginString == null || yOriginString.trim().equals("")) {
+			displayingWarnings = true;
+			this.userInterface.getNoOriginLabel().setVisible(true);
+		} else if (this.isInt(xOriginString.trim()) && this.isInt(xOriginString.trim())) {
+			xOrigin = Integer.parseInt(xOriginString.trim());
+			yOrigin = Integer.parseInt(yOriginString.trim());
+		} else {
+			displayingWarnings = true;
+			this.userInterface.getInvalidOriginLabel().setVisible(true);
+		}
+
+		if (this.lastSelected.equals(this.userInterface.getCubeButton()) || this.lastSelected.equals(this.userInterface.getEquilateralButton())) {
+			String lengthString = this.userInterface.getLengthField().getText().trim();
+			if (lengthString == null || lengthString.trim().equals("")) {
+				displayingWarnings = true;
+				this.userInterface.getNoLengthLabel().setVisible(true);
+			} else if (this.isInt(lengthString.trim())) {
+				length = Integer.parseInt(lengthString.trim());
+			} else {
+				displayingWarnings = true;
+				this.userInterface.getInvalidLengthLabel().setVisible(true);
+			}
+		}
+
+		if (this.lastSelected.equals(this.userInterface.getPentagonalButton())) {
+			String radiusString = this.userInterface.getRadiusField().getText().trim();
+			if (radiusString == null || radiusString.trim().equals("")) {
+				displayingWarnings = true;
+				this.userInterface.getNoRadiusLabel().setVisible(true);
+			} else if (this.isInt(radiusString.trim())) {
+				radius = Integer.parseInt(radiusString.trim());
+			} else {
+				displayingWarnings = true;
+				this.userInterface.getInvalidRadiusLabel().setVisible(true);
+			}
+
+			String heightString = this.userInterface.getHeightField().getText().trim();
+			if (heightString == null || heightString.trim().equals("")) {
+				displayingWarnings = true;
+				this.userInterface.getNoHeightLabel().setVisible(true);
+			} else if (this.isInt(heightString.trim())) {
+				height = Integer.parseInt(heightString.trim());
+			} else {
+				displayingWarnings = true;
+				this.userInterface.getInvalidHeightLabel().setVisible(true);
+			}
+		}
+
+		if (!displayingWarnings) {
+			if (this.lastSelected.equals(this.userInterface.getPentagonalButton())) {
+				this.prismManager.addPrism(new Pentagonal(new Vertex(xOrigin, yOrigin, 0), radius, height, color));
+			} else if (this.lastSelected.equals(this.userInterface.getCubeButton())) {
+				this.prismManager.addPrism(new Cube(new Vertex(xOrigin, yOrigin, 0), length, color));
+			} else if (this.lastSelected.equals(this.userInterface.getEquilateralButton())) {
+				this.prismManager.addPrism(new Equilateral(new Vertex(xOrigin, yOrigin, 0), length, color));
+			}
+			UserInterface.repaint();
+		}
+
+		return displayingWarnings;
+	}
+
 	public void registerEvents() {
 		this.registerSlideEvent(this.userInterface.getHeadingSlider());
 		this.registerSlideEvent(this.userInterface.getPitchSlider());
@@ -208,6 +264,39 @@ public class InterfaceActions {
 		this.registerButtonEvent(this.userInterface.getEquilateralButton());
 		this.registerButtonEvent(this.userInterface.getPentagonalButton());
 		this.registerButtonEvent(this.userInterface.getCreateButton());
+	}
+
+	private Color parseColor(String arg) {
+		switch (arg) {
+		case "BLACK":
+			return Color.BLACK;
+		case "BLUE":
+			return Color.BLUE;
+		case "CYAN":
+			return Color.CYAN;
+		case "GRAY":
+			return Color.GRAY;
+		case "DARK_GRAY":
+			return Color.DARK_GRAY;
+		case "LIGHT_GRAY":
+			return Color.LIGHT_GRAY;
+		case "GREEN":
+			return Color.GREEN;
+		case "MAGENTA":
+			return Color.MAGENTA;
+		case "ORANGE":
+			return Color.ORANGE;
+		case "PINK":
+			return Color.PINK;
+		case "WHITE":
+			return Color.WHITE;
+		case "YELLOW":
+			return Color.YELLOW;
+		case "RED":
+			return Color.RED;
+		default:
+			return null;
+		}
 	}
 
 	private boolean isInt(String arg) {

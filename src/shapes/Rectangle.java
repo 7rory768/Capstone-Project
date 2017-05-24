@@ -14,8 +14,8 @@ public class Rectangle extends Shape {
 	private int length;
 	private int width;
 
-	public Rectangle(Vertex v1, Vertex v2, Vertex v3, Vertex v4, int length, int width, Color color) {
-		super(ShapeType.RECTANGLE, color);
+	public Rectangle(Vertex v1, Vertex v2, Vertex v3, Vertex v4, int length, int width) {
+		super(ShapeType.RECTANGLE);
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;

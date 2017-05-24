@@ -44,32 +44,32 @@ public class Cube extends Prism {
 		Vertex v2 = new Vertex(smallXCord, largeYCord, largeZCord);
 		Vertex v3 = new Vertex(smallXCord, smallYCord, largeZCord);
 		Vertex v4 = new Vertex(largeXCord, smallYCord, largeZCord);
-		super.addShape(new Square(v1, v2, v3, v4, this.length, Color.RED));
+		super.addShape(new Square(v1, v2, v3, v4, this.length));
 
 		v3 = new Vertex(smallXCord, largeYCord, smallZCord);
 		v4 = new Vertex(largeXCord, largeYCord, smallZCord);
-		super.addShape(new Square(v1, v2, v3, v4, this.length, Color.GREEN));
+		super.addShape(new Square(v1, v2, v3, v4, this.length));
 
 		v1 = new Vertex(largeXCord, smallYCord, smallZCord);
 		v2 = new Vertex(smallXCord, smallYCord, smallZCord);
-		super.addShape(new Square(v1, v2, v3, v4, this.length, Color.ORANGE));
+		super.addShape(new Square(v1, v2, v3, v4, this.length));
 
 		v3 = new Vertex(smallXCord, smallYCord, largeZCord);
 		v4 = new Vertex(largeXCord, smallYCord, largeZCord);
-		super.addShape(new Square(v1, v2, v3, v4, this.length, Color.YELLOW));
+		super.addShape(new Square(v1, v2, v3, v4, this.length));
 
 		v1 = new Vertex(smallXCord, smallYCord, smallZCord);
 		v2 = v3;
 		v3 = new Vertex(smallXCord, largeYCord, largeZCord);
 		v4 = new Vertex(smallXCord, largeYCord, smallZCord);
-		super.addShape(new Square(v1, v2, v3, v4, this.length, Color.BLUE));
+		super.addShape(new Square(v1, v2, v3, v4, this.length));
 
 		// LAST SQUARE WITH ALL large X
 		v1 = new Vertex(largeXCord, smallYCord, smallZCord);
 		v2 = new Vertex(largeXCord, smallYCord, largeZCord);
 		v3 = new Vertex(largeXCord, largeYCord, largeZCord);
 		v4 = new Vertex(largeXCord, largeYCord, smallZCord);
-		super.addShape(new Square(v1, v2, v3, v4, this.length, Color.MAGENTA));
+		super.addShape(new Square(v1, v2, v3, v4, this.length));
 	}
 
 }

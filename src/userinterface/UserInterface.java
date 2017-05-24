@@ -28,6 +28,9 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.List;
 import java.awt.TextField;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
@@ -51,13 +54,13 @@ public class UserInterface {
 	private JButton addButton, removeButton, cubeButton, equilateralButton, pentagonalButton, createButton;
 	private JTextArea selectPrismLabel, colorLabel, originLabel, xLabel, yLabel, lengthLabel, radiusLabel, heightLabel;
 	private JTextArea noColorLabel, noOriginLabel, noLengthLabel, noRadiusLabel, noHeightLabel;
-	private JTextArea invalidXOriginLabel, invalidYOrginLabel, invalidLengthLabel, invalidRadiusLabel, invalidHeightLabel;
+	private JTextArea invalidOriginLabel, invalidLengthLabel, invalidRadiusLabel, invalidHeightLabel;
 	private TextField lengthField, xOriginField, yOriginField, radiusField, heightField;
 	private List colorList;
 
 	public UserInterface(PrismManager prismManager) {
 		this.prismManager = prismManager;
-		this.interfaceActions = new InterfaceActions(this);
+		this.interfaceActions = new InterfaceActions(this, this.prismManager);
 	}
 
 	public void setupInterface() {
@@ -95,12 +98,11 @@ public class UserInterface {
 		this.colorList.add("ORANGE");
 		this.colorList.add("PINK");
 		this.colorList.add("RED");
-		this.colorList.add("WHITE");
 		this.colorList.add("YELLOW");
 		this.originLabel = new JTextArea("Origin: ");
 		this.xLabel = new JTextArea("X = ");
 		this.yLabel = new JTextArea("Y = ");
-		this.xOriginField = new TextField(" " + UserInterface.WIDTH / 2);
+		this.xOriginField = new TextField(" " + UserInterface.WIDTH / 4);
 		this.yOriginField = new TextField(" " + UserInterface.HEIGHT / 2);
 		this.lengthLabel = new JTextArea("Length: ");
 		this.lengthField = new TextField();
@@ -114,6 +116,11 @@ public class UserInterface {
 		this.noLengthLabel = new JTextArea("Error: Missing parameter, please provide a length");
 		this.noRadiusLabel = new JTextArea("Error: Missing parameter, please provide a radius");
 		this.noHeightLabel = new JTextArea("Error: Missing parameter, please provide a height");
+
+		this.invalidOriginLabel = new JTextArea("Error: Invalid parameter, please provide integers");
+		this.invalidLengthLabel = new JTextArea("Error: Invalid parameter, please provide an integer");
+		this.invalidRadiusLabel = new JTextArea("Error: Invalid parameter, please provide an integer");
+		this.invalidHeightLabel = new JTextArea("Error: Invalid parameter, please provide an integer");
 
 		this.createButton = new JButton("Create");
 
@@ -129,6 +136,11 @@ public class UserInterface {
 		this.noLengthLabel.setEditable(false);
 		this.noRadiusLabel.setEditable(false);
 		this.noHeightLabel.setEditable(false);
+		
+		this.invalidOriginLabel.setEditable(false);
+		this.invalidLengthLabel.setEditable(false);
+		this.invalidRadiusLabel.setEditable(false);
+		this.invalidHeightLabel.setEditable(false);
 
 		this.headingSlider.setIgnoreRepaint(true);
 		this.pitchSlider.setIgnoreRepaint(true);
@@ -249,11 +261,14 @@ public class UserInterface {
 		this.buttonPanel.add(this.noOriginLabel, constraints);
 		this.noOriginLabel.setVisible(false);
 		
+		// invalid origin label
+		this.buttonPanel.add(this.invalidOriginLabel, constraints);
+		this.invalidOriginLabel.setVisible(false);
+		
 		// x origin field
 		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -300, 0, 0);
 		this.buttonPanel.add(this.xOriginField, constraints);
 		this.xOriginField.setVisible(false);
-		// this.xOriginField.setText(" " + UserInterface.WIDTH/2);
 
 		// y label
 		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -220, 0, 0);
@@ -267,7 +282,6 @@ public class UserInterface {
 		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -145, 0, 0);
 		this.buttonPanel.add(this.yOriginField, constraints);
 		this.yOriginField.setVisible(false);
-		// this.yOriginField.setText(" " + UserInterface.HEIGHT/2);
 
 		constraints.gridy = 5;
 
@@ -283,6 +297,10 @@ public class UserInterface {
 		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing - 50, -200, 0, 0);
 		this.buttonPanel.add(this.noLengthLabel, constraints);
 		this.noLengthLabel.setVisible(false);
+		
+		// invalid length label
+		this.buttonPanel.add(this.invalidLengthLabel, constraints);
+		this.invalidLengthLabel.setVisible(false);
 
 		// length field
 		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing, -200, 0, 0);
@@ -302,6 +320,10 @@ public class UserInterface {
 		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing - 50, -200, 0, 0);
 		this.buttonPanel.add(this.noRadiusLabel, constraints);
 		this.noRadiusLabel.setVisible(false);
+		
+		// invalid radius label
+		this.buttonPanel.add(this.invalidRadiusLabel, constraints);
+		this.invalidRadiusLabel.setVisible(false);
 
 		// radius field
 		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing, -200, 0, 0);
@@ -321,6 +343,10 @@ public class UserInterface {
 		constraints.insets = new Insets(-spacing + 30, -200, 0, 0);
 		this.buttonPanel.add(this.noHeightLabel, constraints);
 		this.noHeightLabel.setVisible(false);
+		
+		// invalid height label
+		this.buttonPanel.add(this.invalidHeightLabel, constraints);
+		this.invalidHeightLabel.setVisible(false);
 
 		// height field
 		constraints.insets = new Insets(-spacing + 80, -200, 0, 0);
@@ -349,7 +375,6 @@ public class UserInterface {
 		this.frame.getContentPane().setLayout(new GridLayout());
 		this.frame.getContentPane().add(this.paintSplit);
 		this.frame.getContentPane().add(this.buttonSplit);
-
 		this.buttonPanel = new JPanel();
 		UserInterface.paintPanel = new JPanel() {
 
@@ -369,14 +394,6 @@ public class UserInterface {
 				transform = headingTransform.multiply(pitchTransform);
 
 				this.createPrisms(g2);
-				Path2D path = new Path2D.Double();
-				path.moveTo(UserInterface.WIDTH, 0);
-				path.lineTo(UserInterface.WIDTH, UserInterface.HEIGHT);
-				path.closePath();
-				g2.draw(path);
-
-				// g2.translate(getWidth() / 2, getHeight() / 2);
-
 			}
 
 			public void createPrisms(Graphics2D g2) {
@@ -413,6 +430,7 @@ public class UserInterface {
 							v4.setX(v4.getX() + xOrigin);
 							v4.setY(v4.getY() + yOrigin);
 
+							g2.setColor(prism.getColor());
 							Path2D path = new Path2D.Double();
 							path.moveTo(v1.getX(), v1.getY());
 							path.lineTo(v2.getX(), v2.getY());
@@ -522,6 +540,7 @@ public class UserInterface {
 
 							double angleCos = Math.abs(norm.getZ());
 
+							g2.setColor(prism.getColor());
 							Path2D path = new Path2D.Double();
 							path.moveTo(v1.getX(), v1.getY());
 							path.lineTo(v2.getX(), v2.getY());
@@ -549,7 +568,7 @@ public class UserInterface {
 										double depth = b1 + v1.getZ() + b2 * v2.getZ() + b3 * v3.getZ();
 										int zIndex = y * img.getWidth() + x;
 										if (zBuffer[zIndex] < depth) {
-											img.setRGB(x, y, getShade(t.getColor(), angleCos).getRGB());
+											//img.setRGB(x, y, getShade(t.getColor(), angleCos).getRGB());
 											zBuffer[zIndex] = depth;
 										}
 									}
@@ -607,6 +626,7 @@ public class UserInterface {
 								v4.setX(v4.getX() + xOrigin);
 								v4.setY(v4.getY() + yOrigin);
 
+								g2.setColor(prism.getColor());
 								Path2D path = new Path2D.Double();
 								path.moveTo(v1.getX(), v1.getY());
 								path.lineTo(v2.getX(), v2.getY());
@@ -713,6 +733,15 @@ public class UserInterface {
 				}
 			}
 		};
+		
+		MouseListener[] mouseListeners = UserInterface.paintPanel.getMouseListeners();
+	
+		for (int i = 0; i < mouseListeners.length; i++) {
+			this.paintPanel.removeMouseListener(mouseListeners[i]);
+		}
+		
+		UserInterface.paintPanel.addMouseListener(new PrismMouseListener(this, this.prismManager));
+
 	}
 
 	private static Color getShade(Color color, double shade) {
@@ -789,6 +818,10 @@ public class UserInterface {
 		return this.noOriginLabel;
 	}
 
+	public JTextArea getInvalidOriginLabel() {
+		return this.invalidOriginLabel;
+	}
+
 	public TextField getXOriginField() {
 		return this.xOriginField;
 	}
@@ -805,6 +838,10 @@ public class UserInterface {
 		return this.noLengthLabel;
 	}
 
+	public JTextArea getInvalidLengthLabel() {
+		return this.invalidLengthLabel;
+	}
+
 	public TextField getLengthField() {
 		return this.lengthField;
 	}
@@ -817,6 +854,10 @@ public class UserInterface {
 		return this.noRadiusLabel;
 	}
 
+	public JTextArea getInvalidRadiusLabel() {
+		return this.invalidRadiusLabel;
+	}
+
 	public TextField getRadiusField() {
 		return this.radiusField;
 	}
@@ -827,6 +868,10 @@ public class UserInterface {
 
 	public JTextArea getNoHeightLabel() {
 		return this.noHeightLabel;
+	}
+
+	public JTextArea getInvalidHeightLabel() {
+		return this.invalidHeightLabel;
 	}
 
 	public TextField getHeightField() {
@@ -843,6 +888,10 @@ public class UserInterface {
 	
 	public static int getHeight() {
 		return UserInterface.HEIGHT;
+	}
+	
+	public Matrix3 getTransform() {
+		return this.transform;
 	}
 
 }

@@ -63,7 +63,7 @@ public class Pentagonal extends Prism {
 		v5.setX(0 - Math.sin(Math.toRadians(72.0)) * this.radius);
 		v5.setY(0 - c);
 
-		super.addShape(new Pentagon(v1, v2, v3, v4, v5, this.radius, super.getColor()));
+		super.addShape(new Pentagon(v1, v2, v3, v4, v5, this.radius));
 
 		v1 = v1.clone();
 		v1.setZ(v1.getZ() - this.height);
@@ -88,8 +88,8 @@ public class Pentagonal extends Prism {
 
 		super.addShape(this.getSquare(v4, v5));
 		super.addShape(this.getSquare(v5, v1));
-		
-		super.addShape(new Pentagon(v1, v2, v3, v4, v5, this.radius, super.getColor()));
+
+		super.addShape(new Pentagon(v1, v2, v3, v4, v5, this.radius));
 	}
 
 	public Rectangle getSquare(Vertex v1, Vertex v2) {
@@ -97,8 +97,7 @@ public class Pentagonal extends Prism {
 		v3.setZ(v3.getZ() + this.height);
 		Vertex v4 = v1.clone();
 		v4.setZ(v4.getZ() + this.height);
-		return new Rectangle(v1, v2, v3, v4, (int) this.sideLength, this.height,
-				super.getColor());
+		return new Rectangle(v1, v2, v3, v4, (int) this.sideLength, this.height);
 	}
 
 }

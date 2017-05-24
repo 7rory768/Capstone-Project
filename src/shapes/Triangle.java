@@ -10,8 +10,8 @@ public class Triangle extends Shape {
 	private Vertex v2;
 	private Vertex v3;
 
-	public Triangle (Vertex v1, Vertex v2, Vertex v3, Color color) {
-		super(ShapeType.TRIANGLE, color);
+	public Triangle (Vertex v1, Vertex v2, Vertex v3) {
+		super(ShapeType.TRIANGLE);
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;

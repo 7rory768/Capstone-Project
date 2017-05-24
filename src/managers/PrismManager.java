@@ -7,6 +7,8 @@ import java.util.List;
 
 public class PrismManager {
 	
+	private Prism selectedPrism;
+	
 	private List<Prism> prisms = new ArrayList<Prism>();
 	
 	public List<Prism> getPrisms() {
@@ -20,6 +22,14 @@ public class PrismManager {
 	
 	public void removePrism(Prism prism) {
 		this.prisms.remove(prism);
+	}
+	
+	public void setSelectedPrism(Prism prism) {
+		this.selectedPrism = prism;
+	}
+	
+	public Prism getSelectedPrism() {
+		return this.selectedPrism;
 	}
 
 }

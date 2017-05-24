@@ -45,22 +45,22 @@ public class Equilateral extends Prism {
 		v1 = new Vertex(largeXCord, largeYCord, largeZCord);
 		v2 = new Vertex(smallXCord, smallYCord, largeZCord);
 		v3 = new Vertex(smallXCord, largeYCord, smallZCord);
-		super.addShape(new Triangle(v1, v2, v3, super.getColor()));
+		super.addShape(new Triangle(v1, v2, v3));
 		
 		// TRAINGLE 2
 		v3 = new Vertex(largeXCord, smallYCord, smallZCord);
-		super.addShape(new Triangle(v1, v2, v3, super.getColor()));
+		super.addShape(new Triangle(v1, v2, v3));
 		
 		//TRIANGLE 3
 		v2 = v3;
 		v3 = v1;
 		v1 = new Vertex(smallXCord, largeYCord, smallZCord);
-		super.addShape(new Triangle(v1, v2, v3, super.getColor()));
+		super.addShape(new Triangle(v1, v2, v3));
 		
 		//TRIANGLE 4
 		v2 = new Vertex(smallXCord, smallYCord, largeZCord);
 		v3 = new Vertex(largeXCord, smallYCord, smallZCord);
-		super.addShape(new Triangle(v1, v2, v3, super.getColor()));
+		super.addShape(new Triangle(v1, v2, v3));
 	}
 
 }

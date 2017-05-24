@@ -12,8 +12,8 @@ public class Square extends Shape {
 	private Vertex v4;
 	private int length;
 
-	public Square(Vertex v1, Vertex v2, Vertex v3, Vertex v4, int length, Color color) {
-		super(ShapeType.SQUARE, color);
+	public Square(Vertex v1, Vertex v2, Vertex v3, Vertex v4, int length) {
+		super(ShapeType.SQUARE);
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;

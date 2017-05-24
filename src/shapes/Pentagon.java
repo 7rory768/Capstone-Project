@@ -14,8 +14,8 @@ public class Pentagon extends Shape {
 	private Vertex v5;
 	private int radius;
 
-	public Pentagon(Vertex v1, Vertex v2, Vertex v3, Vertex v4, Vertex v5, int radius, Color color) {
-		super(ShapeType.PENTAGON, color);
+	public Pentagon(Vertex v1, Vertex v2, Vertex v3, Vertex v4, Vertex v5, int radius) {
+		super(ShapeType.PENTAGON);
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;
