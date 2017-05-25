@@ -15,6 +15,8 @@ public abstract class Prism {
 	private List<Shape> shapes = new ArrayList<Shape>();
 	private Vertex origin;
 	private Color color;
+	private int headingValue = 180;
+	private int pitchValue = 0;
 	
 	public Prism(PrismType type, Vertex origin, Color color) {
 		this.type = type;
@@ -57,6 +59,22 @@ public abstract class Prism {
 	
 	public void removeShape(Shape shape) {
 		this.shapes.remove(shape);
+	}
+	
+	public void setHeadingValue(int value) {
+		this.headingValue = value;
+	}
+	
+	public int getHeadingValue() {
+		return this.headingValue;
+	}
+	
+	public void setPitchValue(int value) {
+		this.pitchValue = value;
+	}
+	
+	public int getPitchValue() {
+		return this.pitchValue;
 	}
 	
 	public abstract void createShapes();
