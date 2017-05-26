@@ -19,6 +19,7 @@ public class PrismMouseListener implements MouseListener {
 
 	private final UserInterface userInterface;
 	private final PrismManager prismManager;
+	private final InterfaceActions interfaceActions;
 
 	private final Timer timer = new Timer();
 
@@ -27,9 +28,10 @@ public class PrismMouseListener implements MouseListener {
 	private int oldScreenX;
 	private int oldScreenY;
 
-	public PrismMouseListener(UserInterface userInterface, PrismManager prismManager) {
+	public PrismMouseListener(UserInterface userInterface, PrismManager prismManager, InterfaceActions interfaceActions) {
 		this.prismManager = prismManager;
 		this.userInterface = userInterface;
+		this.interfaceActions = interfaceActions;
 		this.dragTask = new TimerTask() {
 			@Override
 			public void run() {
@@ -112,7 +114,7 @@ public class PrismMouseListener implements MouseListener {
 						this.userInterface.getHeadingSlider().setVisible(true);
 						this.userInterface.getPitchSlider().setVisible(true);
 						this.userInterface.getRemoveButton().setVisible(true);
-						this.userInterface.getInterfaceActions().switchToPrismSelected();
+						this.interfaceActions.switchToPrismSelected();
 						prism.setColor(prism.getColor().darker());
 						UserInterface.repaint();
 						
@@ -131,6 +133,7 @@ public class PrismMouseListener implements MouseListener {
 
 		if (selectedPrism != null) {
 			selectedPrism.setColor(selectedPrism.getColor().brighter());
+			this.interfaceActions.hideOldComponents();
 			UserInterface.repaint();
 		}
 		this.userInterface.getRemoveButton().setVisible(false);

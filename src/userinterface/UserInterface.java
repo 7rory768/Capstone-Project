@@ -340,8 +340,8 @@ public class UserInterface {
 		this.createButton.setVisible(false);
 
 		// remove button
-		this.buttonPanel.add(this.removeButton, constraints);
 		constraints.fill = GridBagConstraints.NONE;
+		this.buttonPanel.add(this.removeButton, constraints);
 		this.removeButton.setVisible(false);
 
 	}
@@ -392,7 +392,7 @@ public class UserInterface {
 						if (vertices.size() > 0) {
 							Vertex firstVertex = vertices.get(0);
 							int minX = (int) Math.max(0, firstVertex.getX());
-							int maxX = (int) Math.min(img.getWidth() - 1, firstVertex.getX());
+							int maxX = (int) Math.min(img.getWidth()/2 - 1, firstVertex.getX());
 							int minY = (int) Math.max(0, firstVertex.getY());
 							int maxY = (int) Math.min(img.getHeight() - 1, firstVertex.getY());
 
@@ -540,7 +540,7 @@ public class UserInterface {
 			this.paintPanel.removeMouseListener(mouseListeners[i]);
 		}
 
-		UserInterface.paintPanel.addMouseListener(new PrismMouseListener(this, this.prismManager));
+		UserInterface.paintPanel.addMouseListener(new PrismMouseListener(this, this.prismManager, this.interfaceActions));
 
 	}
 
@@ -555,10 +555,6 @@ public class UserInterface {
 	 * blue = (int) Math.pow(blueLinear, 1 / 2.4); return new Color(red, green,
 	 * blue); }
 	 */
-
-	public InterfaceActions getInterfaceActions() {
-		return this.interfaceActions;
-	}
 	
 	public JSlider getHeadingSlider() {
 		return this.headingSlider;
