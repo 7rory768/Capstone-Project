@@ -5,10 +5,6 @@ import util.Vertex;
 
 public class Rectangle extends Shape {
 
-	private Vertex v1;
-	private Vertex v2;
-	private Vertex v3;
-	private Vertex v4;
 	private int length;
 	private int width;
 

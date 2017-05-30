@@ -24,12 +24,13 @@ public class UserInterface {
 	private final static int HEIGHT = 900;
 	private final static int HEADING_DIVIDER = 35;
 	private final static int PITCH_DIVIDER = HEIGHT - HEADING_DIVIDER;
+	int num = 1;
 
 	private JFrame frame;
 	private JSlider pitchSlider;
 	private JSlider headingSlider;
 	private JSplitPane paintSplit, buttonSplit;
-	private JButton addButton, removeButton, cubeButton, equilateralButton, pentagonalButton, createButton;
+	private JButton addButton, removeButton, cubeButton, equilateralButton, pentagonalButton, createButton, confirmChangesButton;
 	private JTextArea selectPrismLabel, colorLabel, originLabel, xLabel, yLabel, lengthLabel, radiusLabel, heightLabel;
 	private JTextArea noColorLabel, noOriginLabel, noLengthLabel, noRadiusLabel, noHeightLabel;
 	private JTextArea invalidOriginLabel, invalidLengthLabel, invalidRadiusLabel, invalidHeightLabel;
@@ -80,14 +81,14 @@ public class UserInterface {
 		this.originLabel = new JTextArea("Origin: ");
 		this.xLabel = new JTextArea("X = ");
 		this.yLabel = new JTextArea("Y = ");
-		this.xOriginField = new TextField(" " + UserInterface.WIDTH / 4);
-		this.yOriginField = new TextField(" " + UserInterface.HEIGHT / 2);
+		this.xOriginField = new TextField(" " + UserInterface.WIDTH / 4 + "  ");
+		this.yOriginField = new TextField(" " + UserInterface.HEIGHT / 2 + "  ");
 		this.lengthLabel = new JTextArea("Length: ");
-		this.lengthField = new TextField();
+		this.lengthField = new TextField(" ");
 		this.radiusLabel = new JTextArea("Radius: ");
-		this.radiusField = new TextField();
+		this.radiusField = new TextField(" ");
 		this.heightLabel = new JTextArea("Height: ");
-		this.heightField = new TextField();
+		this.heightField = new TextField(" ");
 
 		this.noColorLabel = new JTextArea("Error: Missing parameter, please provide a color");
 		this.noOriginLabel = new JTextArea("Error: Missing parameter, please provide both coordinates");
@@ -100,6 +101,7 @@ public class UserInterface {
 		this.invalidRadiusLabel = new JTextArea("Error: Invalid parameter, please provide an integer");
 		this.invalidHeightLabel = new JTextArea("Error: Invalid parameter, please provide an integer");
 
+		this.confirmChangesButton = new JButton("Confirm Changes");
 		this.createButton = new JButton("Create");
 
 		this.selectPrismLabel.setEditable(false);
@@ -132,6 +134,7 @@ public class UserInterface {
 		this.radiusLabel.setIgnoreRepaint(true);
 		this.heightLabel.setIgnoreRepaint(true);
 
+		this.confirmChangesButton.setIgnoreRepaint(true);
 		this.createButton.setIgnoreRepaint(true);
 	}
 
@@ -152,9 +155,7 @@ public class UserInterface {
 
 		this.buttonPanel.setLayout(new GridBagLayout());
 
-		// stop pitch panel from becoming bigger than 25 pixels high
-		this.pitchPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 25));
-
+		this.pitchPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
 		this.pitchPanel.add(this.pitchSlider);
 		this.pitchSlider.setVisible(false);
 
@@ -166,7 +167,7 @@ public class UserInterface {
 		GridBagConstraints constraints = new GridBagConstraints();
 
 		constraints.gridwidth = 3;
-		
+
 		// add button
 		int centerFix = -250;
 		constraints.insets = new Insets((int) (-7 * HEIGHT / 8.0), 0, 0, 0);
@@ -220,15 +221,13 @@ public class UserInterface {
 		constraints.gridy = 4;
 		spacing = 100; // 100
 
-		//centerFix -= 50;
-		
 		// origin label
 		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -500, 0, 0 + centerFix);
 		this.buttonPanel.add(this.originLabel, constraints);
 		this.originLabel.setVisible(false);
 
 		// x label
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -375, 0, 0 + centerFix);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -400, 0, 0 + centerFix);
 		this.buttonPanel.add(this.xLabel, constraints);
 		this.xLabel.setVisible(false);
 
@@ -244,7 +243,7 @@ public class UserInterface {
 		this.invalidOriginLabel.setVisible(false);
 
 		// x origin field
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -300, 0, 0 + centerFix);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -325, 0, 0 + centerFix);
 		this.buttonPanel.add(this.xOriginField, constraints);
 		this.xOriginField.setVisible(false);
 
@@ -260,8 +259,6 @@ public class UserInterface {
 
 		constraints.gridy = 5;
 
-		//centerFix += 50;
-		
 		// length label
 		constraints.insets = new Insets((int) (-2 * HEIGHT / 8.0) + spacing, -800, 0, 0 + centerFix);
 		constraints.fill = GridBagConstraints.NONE;
@@ -308,7 +305,7 @@ public class UserInterface {
 
 		constraints.gridy = 6;
 		constraints.gridx = 1;
-		
+
 		// height label
 		constraints.insets = new Insets(-spacing + 80, -800, 0, 0 + centerFix);
 		constraints.fill = GridBagConstraints.NONE;
@@ -339,10 +336,16 @@ public class UserInterface {
 		this.buttonPanel.add(this.createButton, constraints);
 		this.createButton.setVisible(false);
 
-		// remove button
 		constraints.fill = GridBagConstraints.NONE;
+
+		// remove button
 		this.buttonPanel.add(this.removeButton, constraints);
 		this.removeButton.setVisible(false);
+
+		// confirm changes button
+		constraints.insets = new Insets(0, -250, (int) (-6 * HEIGHT / 8.0), 0 + centerFix);
+		this.buttonPanel.add(this.confirmChangesButton, constraints);
+		this.confirmChangesButton.setVisible(false);
 
 	}
 
@@ -360,12 +363,14 @@ public class UserInterface {
 		this.frame.getContentPane().add(this.buttonSplit);
 		this.buttonPanel = new JPanel();
 		UserInterface.paintPanel = new JPanel() {
+			private static final long serialVersionUID = 1L;
 
 			public void paintComponent(Graphics g) {
+				System.out.println(num++ + " REPAINT");
 
 				Graphics2D g2 = (Graphics2D) g;
 				g2.setColor(Color.WHITE);
-				g2.fillRect(0, 0, UserInterface.WIDTH / 2, UserInterface.HEIGHT);
+				g2.fillRect(0, 0, UserInterface.WIDTH, UserInterface.HEIGHT);
 				g2.setColor(Color.BLACK);
 
 				this.createPrisms(g2);
@@ -373,15 +378,20 @@ public class UserInterface {
 
 			public void createPrisms(Graphics2D g2) {
 
-				java.util.List<Path2D> paths = new ArrayList();
+				java.util.List<Path2D> paths = new ArrayList<Path2D>();
+				Prism selectedPrism = prismManager.getSelectedPrism();
 
 				for (Prism prism : prismManager.getPrisms()) {
-
+					
+					BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 					Matrix3 transform = getTransform(prism);
 
-					BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 					double xOrigin = prism.getOrigin().getX();
 					double yOrigin = prism.getOrigin().getY();
+					Color color = prism.getColor();
+					if (selectedPrism != null && selectedPrism.equals(prism)) {
+						color = prism.getColor().darker();
+					}
 
 					java.util.List<Shape> shapes = prism.getShapes();
 					for (int a = 0; a < shapes.size(); a++) {
@@ -389,12 +399,17 @@ public class UserInterface {
 
 						Path2D path = new Path2D.Double();
 						java.util.List<Vertex> vertices = shape.getVertices();
+
+						int minX = 0, maxX = 0, minY = 0, maxY = 0;
+
 						if (vertices.size() > 0) {
-							Vertex firstVertex = vertices.get(0);
-							int minX = (int) Math.max(0, firstVertex.getX());
-							int maxX = (int) Math.min(img.getWidth()/2 - 1, firstVertex.getX());
-							int minY = (int) Math.max(0, firstVertex.getY());
-							int maxY = (int) Math.min(img.getHeight() - 1, firstVertex.getY());
+							Vertex firstVertex = transform.transform(vertices.get(0));
+							firstVertex.setX(firstVertex.getX() + xOrigin);
+							firstVertex.setY(firstVertex.getY() + yOrigin);
+							minX = (int) firstVertex.getX();
+							maxX = (int) firstVertex.getX();
+							minY = (int) firstVertex.getY();
+							maxY = (int) firstVertex.getY();
 
 							for (int i = 0; i < shape.getVertices().size(); i++) {
 								Vertex vertex = transform.transform(vertices.get(i));
@@ -413,10 +428,19 @@ public class UserInterface {
 							path.closePath();
 							paths.add(path);
 
+							minX = (int) Math.max(0, minX);
+							maxX = (int) Math.min(UserInterface.WIDTH / 2 - 3, maxX);
+							minY = (int) Math.max(0, minY);
+							maxY = (int) Math.min(UserInterface.HEIGHT - UserInterface.HEADING_DIVIDER - 2, maxY);
+
 							for (int y = minY; y <= maxY; y++) {
 								for (int x = minX; x <= maxX; x++) {
 									if (path.contains(x, y)) {
-										img.setRGB(x, y, prism.getColor().getRGB());
+										try {
+											img.setRGB(x, y, color.getRGB());
+										} catch (ArrayIndexOutOfBoundsException e) {
+											
+										}
 									}
 								}
 							}
@@ -537,7 +561,7 @@ public class UserInterface {
 		MouseListener[] mouseListeners = UserInterface.paintPanel.getMouseListeners();
 
 		for (int i = 0; i < mouseListeners.length; i++) {
-			this.paintPanel.removeMouseListener(mouseListeners[i]);
+			UserInterface.paintPanel.removeMouseListener(mouseListeners[i]);
 		}
 
 		UserInterface.paintPanel.addMouseListener(new PrismMouseListener(this, this.prismManager, this.interfaceActions));
@@ -555,7 +579,7 @@ public class UserInterface {
 	 * blue = (int) Math.pow(blueLinear, 1 / 2.4); return new Color(red, green,
 	 * blue); }
 	 */
-	
+
 	public JSlider getHeadingSlider() {
 		return this.headingSlider;
 	}
@@ -674,6 +698,10 @@ public class UserInterface {
 
 	public TextField getHeightField() {
 		return this.heightField;
+	}
+	
+	public JButton getConfirmChangesButton() {
+		return this.confirmChangesButton;
 	}
 
 	public JButton getCreateButton() {

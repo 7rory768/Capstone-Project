@@ -28,7 +28,7 @@ public class PrismMouseListener implements MouseListener {
 	private int oldScreenX;
 	private int oldScreenY;
 
-	public PrismMouseListener(UserInterface userInterface, PrismManager prismManager, InterfaceActions interfaceActions) {
+	public PrismMouseListener(final UserInterface userInterface, PrismManager prismManager, InterfaceActions interfaceActions) {
 		this.prismManager = prismManager;
 		this.userInterface = userInterface;
 		this.interfaceActions = interfaceActions;
@@ -37,15 +37,19 @@ public class PrismMouseListener implements MouseListener {
 			public void run() {
 				if (movingPrism != null) {
 					Point mousePoint = MouseInfo.getPointerInfo().getLocation();
-					int newMouseX = mousePoint.x;
-					int newMouseY = mousePoint.y;
-					int xChange = newMouseX - oldScreenX;
-					int yChange = newMouseY - oldScreenY;
-					oldScreenX = newMouseX;
-					oldScreenY = newMouseY;
 					Vertex origin = movingPrism.getOrigin();
-					origin.setX(origin.getX() + xChange);
-					origin.setY(origin.getY() + yChange);
+					int xChange = mousePoint.x - oldScreenX;
+					int yChange = mousePoint.y - oldScreenY;
+					if (xChange + origin.getX() < UserInterface.getWidth() / 2 && xChange + origin.getX() >= 0) {
+						oldScreenX = mousePoint.x;
+						origin.setX(origin.getX() + xChange);
+						userInterface.getXOriginField().setText(" " + (int) origin.getX());
+					}
+					if (yChange + origin.getY() < UserInterface.getHeight() - 35 && yChange + origin.getY() >= 0) {
+						oldScreenY = mousePoint.y;
+						origin.setY(origin.getY() + yChange);
+						userInterface.getYOriginField().setText(" " + (int) origin.getY());
+					}
 					UserInterface.repaint();
 				}
 			}
@@ -54,27 +58,8 @@ public class PrismMouseListener implements MouseListener {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void mousePressed(MouseEvent e) {
-
-		Prism selectedPrism = prismManager.getSelectedPrism();
+		Prism selectedPrism = this.prismManager.getSelectedPrism();
 
 		for (Prism prism : this.prismManager.getPrisms()) {
 			Matrix3 transform = this.userInterface.getTransform(prism);
@@ -84,7 +69,7 @@ public class PrismMouseListener implements MouseListener {
 			double yOrigin = origin.getY();
 
 			for (Shape shape : prism.getShapes()) {
-				List<Vertex> vertexList = new ArrayList();
+				List<Vertex> vertexList = new ArrayList<Vertex>();
 
 				for (Vertex vertex : shape.getVertices()) {
 					vertexList.add(transform.transform(vertex));
@@ -105,9 +90,6 @@ public class PrismMouseListener implements MouseListener {
 
 				if (path.contains(e.getX(), e.getY())) {
 					if (selectedPrism == null || !selectedPrism.equals(prism)) {
-						if (selectedPrism != null) {
-							selectedPrism.setColor(selectedPrism.getColor().brighter());
-						}
 						this.prismManager.setSelectedPrism(prism);
 						this.userInterface.getHeadingSlider().setValue(prism.getHeadingValue());
 						this.userInterface.getPitchSlider().setValue(prism.getPitchValue());
@@ -115,9 +97,7 @@ public class PrismMouseListener implements MouseListener {
 						this.userInterface.getPitchSlider().setVisible(true);
 						this.userInterface.getRemoveButton().setVisible(true);
 						this.interfaceActions.switchToPrismSelected();
-						prism.setColor(prism.getColor().darker());
-						UserInterface.repaint();
-						
+
 						this.movingPrism = prism;
 						this.oldScreenX = e.getXOnScreen();
 						this.oldScreenY = e.getYOnScreen();
@@ -132,21 +112,32 @@ public class PrismMouseListener implements MouseListener {
 		}
 
 		if (selectedPrism != null) {
-			selectedPrism.setColor(selectedPrism.getColor().brighter());
 			this.interfaceActions.hideOldComponents();
 			UserInterface.repaint();
 		}
-		this.userInterface.getRemoveButton().setVisible(false);
-		this.prismManager.setSelectedPrism(null);
-		this.userInterface.getHeadingSlider().setVisible(false);
-		this.userInterface.getPitchSlider().setVisible(false);
+		this.interfaceActions.switchToNoPrismSelected();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (movingPrism != null) {
+		if (this.movingPrism != null) {
 			this.movingPrism = null;
 		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		
 	}
 
 }

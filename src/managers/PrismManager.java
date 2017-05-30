@@ -1,7 +1,6 @@
 package managers;
 
 import prisms.Prism;
-import userinterface.UserInterface;
 
 import java.util.ArrayList;
 import java.util.List;

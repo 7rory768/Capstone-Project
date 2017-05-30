@@ -50,10 +50,46 @@ public class InterfaceActions {
 
 				Prism selectedPrism = prismManager.getSelectedPrism();
 				if (selectedPrism != null) {
-					switchToNoPrismSelected();
-					prismManager.setSelectedPrism(null);
-					if (component.equals(userInterface.getRemoveButton())) {
-						prismManager.removePrism(selectedPrism);
+					if (component.equals(userInterface.getConfirmChangesButton()) && !checkAndDisplayWarnings()) {
+						Color color = parseColor(userInterface.getColorList().getSelectedItem());
+						int xOrigin = Integer.parseInt(userInterface.getXOriginField().getText().trim());
+						int yOrigin = Integer.parseInt(userInterface.getYOriginField().getText().trim());
+
+						selectedPrism.setColor(color);
+						Vertex origin = selectedPrism.getOrigin();
+						origin.setX(xOrigin);
+						origin.setY(yOrigin);
+
+						if (selectedPrism.getType() == PrismType.CUBE) {
+							Cube cube = (Cube) selectedPrism;
+							int newLength = Integer.parseInt(userInterface.getLengthField().getText().trim());
+							if (newLength != cube.getLength()) {
+								cube.setLength(newLength);
+							}
+						} else if (selectedPrism.getType() == PrismType.EQUILATERAL) {
+							Equilateral equilateral = (Equilateral) selectedPrism;
+							int newLength = Integer.parseInt(userInterface.getLengthField().getText().trim());
+							if (newLength != equilateral.getLength()) {
+								equilateral.setLength(newLength);
+							}
+						} else if (selectedPrism.getType() == PrismType.PENTAGONAL) {
+							Pentagonal pentagonal = (Pentagonal) selectedPrism;
+							int radius = Integer.parseInt(userInterface.getRadiusField().getText().trim());
+							int height = Integer.parseInt(userInterface.getHeightField().getText().trim());
+							if (radius != pentagonal.getRadius()) {
+								pentagonal.setRadius(radius);
+							}
+							if (height != pentagonal.getHeight()) {
+								pentagonal.setHeight(height);
+							}
+						}
+						UserInterface.repaint();
+						return;
+					} else {
+						switchToNoPrismSelected();
+						if (component.equals(userInterface.getRemoveButton())) {
+							prismManager.removePrism(selectedPrism);
+						}
 					}
 					UserInterface.repaint();
 				}
@@ -62,7 +98,10 @@ public class InterfaceActions {
 
 				boolean displayingWarnings = false;
 				if (component.equals(userInterface.getCreateButton())) {
-					displayingWarnings = createPrism();
+					displayingWarnings = checkAndDisplayWarnings();
+					if (!displayingWarnings) {
+						createPrism();
+					}
 					component = null;
 				}
 
@@ -112,11 +151,11 @@ public class InterfaceActions {
 		this.userInterface.getYLabel().setVisible(true);
 		this.userInterface.getXOriginField().setVisible(true);
 		this.userInterface.getYOriginField().setVisible(true);
+		this.userInterface.getConfirmChangesButton().setVisible(true);
 
 		Prism prism = this.prismManager.getSelectedPrism();
 		Vertex origin = prism.getOrigin();
 		String colorString = this.parseColorString(prism.getColor());
-		System.out.println(colorString);
 
 		this.userInterface.getColorList().select(-1);
 		if (colorString != null) {
@@ -130,8 +169,8 @@ public class InterfaceActions {
 			}
 		}
 
-		this.userInterface.getXOriginField().setText("" + origin.getX());
-		this.userInterface.getYOriginField().setText("" + origin.getY());
+		this.userInterface.getXOriginField().setText(" " + origin.getX());
+		this.userInterface.getYOriginField().setText(" " + origin.getY());
 
 		if (prism.getType() == PrismType.PENTAGONAL) {
 			this.userInterface.getRadiusLabel().setVisible(true);
@@ -140,16 +179,16 @@ public class InterfaceActions {
 			this.userInterface.getHeightField().setVisible(true);
 
 			Pentagonal pentagonal = (Pentagonal) prism;
-			this.userInterface.getRadiusField().setText("" + pentagonal.getRadius());
-			this.userInterface.getHeightField().setText("" + pentagonal.getRadius());
+			this.userInterface.getRadiusField().setText(" " + pentagonal.getRadius());
+			this.userInterface.getHeightField().setText(" " + pentagonal.getRadius());
 		} else {
 			this.userInterface.getLengthLabel().setVisible(true);
 			this.userInterface.getLengthField().setVisible(true);
 
 			if (prism.getType() == PrismType.CUBE) {
-				this.userInterface.getLengthField().setText("" + ((Cube) prism).getLength());
+				this.userInterface.getLengthField().setText(" " + ((Cube) prism).getLength());
 			} else if (prism.getType() == PrismType.EQUILATERAL) {
-				this.userInterface.getLengthField().setText("" + ((Equilateral) prism).getLength());
+				this.userInterface.getLengthField().setText(" " + ((Equilateral) prism).getLength());
 			}
 		}
 	}
@@ -157,8 +196,8 @@ public class InterfaceActions {
 	public void updateOriginFields(Prism prism) {
 		Vertex origin = prism.getOrigin();
 
-		this.userInterface.getXOriginField().setText("" + origin.getX());
-		this.userInterface.getYOriginField().setText("" + origin.getY());
+		this.userInterface.getXOriginField().setText(" " + origin.getX());
+		this.userInterface.getYOriginField().setText(" " + origin.getY());
 	}
 
 	public void updateSizeField(Prism prism) {
@@ -166,12 +205,9 @@ public class InterfaceActions {
 	}
 
 	public void switchToNoPrismSelected() {
-		Prism prism = this.prismManager.getSelectedPrism();
-		if (prism != null) {
-			this.prismManager.setSelectedPrism(null);
-			prism.setColor(prism.getColor().brighter());
-		}
+		this.prismManager.setSelectedPrism(null);
 		this.userInterface.getRemoveButton().setVisible(false);
+		this.userInterface.getConfirmChangesButton().setVisible(false);
 		this.userInterface.getHeadingSlider().setVisible(false);
 		this.userInterface.getPitchSlider().setVisible(false);
 	}
@@ -275,17 +311,15 @@ public class InterfaceActions {
 		}
 	}
 
-	public boolean createPrism() {
+	public boolean checkAndDisplayWarnings() {
 		boolean displayingWarnings = false;
-		int length = 0, radius = 0, height = 0, xOrigin = 0, yOrigin = 0;
-		Color color = null;
-		// get values and create prism
+
+		Prism selectedPrism = this.prismManager.getSelectedPrism();
+
 		String colorString = this.userInterface.getColorList().getSelectedItem();
 		if (colorString == null) {
 			displayingWarnings = true;
 			this.userInterface.getNoColorLabel().setVisible(true);
-		} else {
-			color = this.parseColor(colorString.trim());
 		}
 
 		String xOriginString = this.userInterface.getXOriginField().getText();
@@ -293,35 +327,31 @@ public class InterfaceActions {
 		if (xOriginString == null || xOriginString.trim().equals("") || yOriginString == null || yOriginString.trim().equals("")) {
 			displayingWarnings = true;
 			this.userInterface.getNoOriginLabel().setVisible(true);
-		} else if (this.isInt(xOriginString.trim()) && this.isInt(xOriginString.trim())) {
-			xOrigin = Integer.parseInt(xOriginString.trim());
-			yOrigin = Integer.parseInt(yOriginString.trim());
-		} else {
+		} else if (!(this.isInt(xOriginString.trim()) && this.isInt(xOriginString.trim()))) {
 			displayingWarnings = true;
 			this.userInterface.getInvalidOriginLabel().setVisible(true);
 		}
 
-		if (this.lastSelected.equals(this.userInterface.getCubeButton()) || this.lastSelected.equals(this.userInterface.getEquilateralButton())) {
+		if ((selectedPrism != null && (selectedPrism.getType() == PrismType.CUBE || selectedPrism.getType() == PrismType.EQUILATERAL))
+				|| ((this.lastSelected != null && (this.lastSelected.equals(this.userInterface.getCubeButton()) || this.lastSelected.equals(this.userInterface
+						.getEquilateralButton()))))) {
 			String lengthString = this.userInterface.getLengthField().getText().trim();
 			if (lengthString == null || lengthString.trim().equals("")) {
 				displayingWarnings = true;
 				this.userInterface.getNoLengthLabel().setVisible(true);
-			} else if (this.isInt(lengthString.trim())) {
-				length = Integer.parseInt(lengthString.trim());
-			} else {
+			} else if (!this.isInt(lengthString.trim())) {
 				displayingWarnings = true;
 				this.userInterface.getInvalidLengthLabel().setVisible(true);
 			}
 		}
 
-		if (this.lastSelected.equals(this.userInterface.getPentagonalButton())) {
+		if ((selectedPrism != null && selectedPrism.getType() == PrismType.PENTAGONAL)
+				|| (this.lastSelected != null && this.lastSelected.equals(this.userInterface.getPentagonalButton()))) {
 			String radiusString = this.userInterface.getRadiusField().getText().trim();
 			if (radiusString == null || radiusString.trim().equals("")) {
 				displayingWarnings = true;
 				this.userInterface.getNoRadiusLabel().setVisible(true);
-			} else if (this.isInt(radiusString.trim())) {
-				radius = Integer.parseInt(radiusString.trim());
-			} else {
+			} else if (!this.isInt(radiusString.trim())) {
 				displayingWarnings = true;
 				this.userInterface.getInvalidRadiusLabel().setVisible(true);
 			}
@@ -330,26 +360,48 @@ public class InterfaceActions {
 			if (heightString == null || heightString.trim().equals("")) {
 				displayingWarnings = true;
 				this.userInterface.getNoHeightLabel().setVisible(true);
-			} else if (this.isInt(heightString.trim())) {
-				height = Integer.parseInt(heightString.trim());
-			} else {
+			} else if (!this.isInt(heightString.trim())) {
 				displayingWarnings = true;
 				this.userInterface.getInvalidHeightLabel().setVisible(true);
 			}
 		}
 
-		if (!displayingWarnings) {
-			if (this.lastSelected.equals(this.userInterface.getPentagonalButton())) {
-				this.prismManager.addPrism(new Pentagonal(new Vertex(xOrigin, yOrigin, 0), radius, height, color));
-			} else if (this.lastSelected.equals(this.userInterface.getCubeButton())) {
-				this.prismManager.addPrism(new Cube(new Vertex(xOrigin, yOrigin, 0), length, color));
-			} else if (this.lastSelected.equals(this.userInterface.getEquilateralButton())) {
-				this.prismManager.addPrism(new Equilateral(new Vertex(xOrigin, yOrigin, 0), length, color));
-			}
-			UserInterface.repaint();
+		return displayingWarnings;
+	}
+
+	public void createPrism() {
+		int length = 0, radius = 0, height = 0;
+
+		String colorString = this.userInterface.getColorList().getSelectedItem();
+		Color color = this.parseColor(colorString.trim());
+
+		String xOriginString = this.userInterface.getXOriginField().getText();
+		String yOriginString = this.userInterface.getYOriginField().getText();
+
+		int xOrigin = Integer.parseInt(xOriginString.trim());
+		int yOrigin = Integer.parseInt(yOriginString.trim());
+
+		String lengthText = this.userInterface.getLengthField().getText();
+		if (this.lastSelected.equals(this.userInterface.getCubeButton()) || this.lastSelected.equals(this.userInterface.getEquilateralButton())) {
+			length = Integer.parseInt(lengthText.trim());
 		}
 
-		return displayingWarnings;
+		if (this.lastSelected.equals(this.userInterface.getPentagonalButton())) {
+			String radiusString = this.userInterface.getRadiusField().getText().trim();
+			radius = Integer.parseInt(radiusString.trim());
+
+			String heightString = this.userInterface.getHeightField().getText().trim();
+			height = Integer.parseInt(heightString.trim());
+		}
+
+		if (this.lastSelected.equals(this.userInterface.getPentagonalButton())) {
+			this.prismManager.addPrism(new Pentagonal(new Vertex(xOrigin, yOrigin, 0), radius, height, color));
+		} else if (this.lastSelected.equals(this.userInterface.getCubeButton())) {
+			this.prismManager.addPrism(new Cube(new Vertex(xOrigin, yOrigin, 0), length, color));
+		} else if (this.lastSelected.equals(this.userInterface.getEquilateralButton())) {
+			this.prismManager.addPrism(new Equilateral(new Vertex(xOrigin, yOrigin, 0), length, color));
+		}
+		UserInterface.repaint();
 	}
 
 	public void registerEvents() {
@@ -360,6 +412,7 @@ public class InterfaceActions {
 		this.registerButtonEvent(this.userInterface.getCubeButton());
 		this.registerButtonEvent(this.userInterface.getEquilateralButton());
 		this.registerButtonEvent(this.userInterface.getPentagonalButton());
+		this.registerButtonEvent(this.userInterface.getConfirmChangesButton());
 		this.registerButtonEvent(this.userInterface.getCreateButton());
 	}
 
@@ -397,11 +450,11 @@ public class InterfaceActions {
 	}
 
 	private String parseColorString(Color color) {
-		if (color == Color.BLACK.darker())
+		if (color == Color.BLACK)
 			return "BLACK";
-		if (color == Color.BLUE.darker())
+		if (color == Color.BLUE)
 			return "BLUE";
-		if (color == Color.CYAN.darker())
+		if (color == Color.CYAN)
 			return "CYAN";
 		if (color == Color.GRAY)
 			return "GRAY";

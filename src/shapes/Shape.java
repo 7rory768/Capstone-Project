@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Shape {
 
-    private List<Vertex> vertices = new ArrayList();
+    private List<Vertex> vertices = new ArrayList<Vertex>();
     private final ShapeType type;
 
     public Shape(ShapeType type) {
