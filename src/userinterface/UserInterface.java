@@ -17,9 +17,9 @@ public class UserInterface {
 
 	private final InterfaceActions interfaceActions;
 	private final PrismManager prismManager;
+	private final KeyboardListener keyboardListener;
 
 	private static JPanel paintPanel;
-	private JPanel buttonPanel, pitchPanel, headingPanel;
 	private final static int WIDTH = 1500;
 	private final static int HEIGHT = 900;
 	private final static int HEADING_DIVIDER = 35;
@@ -27,6 +27,7 @@ public class UserInterface {
 	int num = 1;
 
 	private JFrame frame;
+	private JPanel buttonPanel, pitchPanel, headingPanel;
 	private JSlider pitchSlider;
 	private JSlider headingSlider;
 	private JSplitPane paintSplit, buttonSplit;
@@ -34,12 +35,15 @@ public class UserInterface {
 	private JTextArea selectPrismLabel, colorLabel, originLabel, xLabel, yLabel, lengthLabel, radiusLabel, heightLabel;
 	private JTextArea noColorLabel, noOriginLabel, noLengthLabel, noRadiusLabel, noHeightLabel;
 	private JTextArea invalidOriginLabel, invalidLengthLabel, invalidRadiusLabel, invalidHeightLabel;
+	private JTextArea xCordLabel, yCordLabel;
 	private TextField lengthField, xOriginField, yOriginField, radiusField, heightField;
 	private List colorList;
+	private Vertex gridOrigin = new Vertex(0, 0, 0);
 
 	public UserInterface(PrismManager prismManager) {
 		this.prismManager = prismManager;
 		this.interfaceActions = new InterfaceActions(this, this.prismManager);
+		this.keyboardListener = new KeyboardListener();
 	}
 
 	public void setupInterface() {
@@ -89,6 +93,8 @@ public class UserInterface {
 		this.radiusField = new TextField(" ");
 		this.heightLabel = new JTextArea("Height: ");
 		this.heightField = new TextField(" ");
+		this.xCordLabel = new JTextArea("" + (int) this.gridOrigin.getX());
+		this.yCordLabel = new JTextArea("" + (int) this.gridOrigin.getY());
 
 		this.noColorLabel = new JTextArea("Error: Missing parameter, please provide a color");
 		this.noOriginLabel = new JTextArea("Error: Missing parameter, please provide both coordinates");
@@ -122,6 +128,9 @@ public class UserInterface {
 		this.invalidRadiusLabel.setEditable(false);
 		this.invalidHeightLabel.setEditable(false);
 
+		this.xCordLabel.setEditable(false); // might make editible to move to certain position with ease
+		this.yCordLabel.setEditable(false);
+
 		this.headingSlider.setIgnoreRepaint(true);
 		this.pitchSlider.setIgnoreRepaint(true);
 		this.addButton.setIgnoreRepaint(true);
@@ -149,7 +158,7 @@ public class UserInterface {
 		this.buttonSplit.setLeftComponent(this.pitchPanel);
 		this.buttonSplit.setRightComponent(this.buttonPanel);
 
-		paintPanel.setLayout(new BoxLayout(paintPanel, BoxLayout.Y_AXIS));
+		paintPanel.setLayout(new GridBagLayout());
 
 		paintPanel.setMinimumSize(new Dimension((int) (3 * WIDTH / 5.0), Integer.MAX_VALUE));
 
@@ -166,10 +175,19 @@ public class UserInterface {
 		// INSETS: TOP, LEFT, BOTTOM, RIGHT
 		GridBagConstraints constraints = new GridBagConstraints();
 
-		constraints.gridwidth = 3;
+		// x cord label
+		constraints.insets = new Insets((int) (-7.45 * HEIGHT / 8.0), -UserInterface.WIDTH/2 + 60, 0, 0);
+		UserInterface.paintPanel.add(this.xCordLabel, constraints);
+
+		// y cord label
+		constraints.gridy = 1;
+		constraints.insets = new Insets((int) (-7.15 * HEIGHT / 8.0), -UserInterface.WIDTH/2 + 40, 0, 0);
+        UserInterface.paintPanel.add(this.yCordLabel, constraints);
 
 		// add button
+		constraints.gridwidth = 3;
 		int centerFix = -250;
+		constraints.gridy = 0;
 		constraints.insets = new Insets((int) (-7 * HEIGHT / 8.0), 0, 0, 0);
 		this.buttonPanel.add(this.addButton, constraints);
 
@@ -361,6 +379,8 @@ public class UserInterface {
 		this.frame.getContentPane().setLayout(new GridLayout());
 		this.frame.getContentPane().add(this.paintSplit);
 		this.frame.getContentPane().add(this.buttonSplit);
+		this.frame.setFocusable(true);
+		this.frame.addKeyListener(this.keyboardListener);
 		this.buttonPanel = new JPanel();
 		UserInterface.paintPanel = new JPanel() {
 			private static final long serialVersionUID = 1L;
@@ -373,13 +393,16 @@ public class UserInterface {
 				g2.fillRect(0, 0, UserInterface.WIDTH, UserInterface.HEIGHT);
 				g2.setColor(Color.BLACK);
 
-				this.createPrisms(g2);
+				this.paintPrisms(g2);
 			}
 
-			public void createPrisms(Graphics2D g2) {
+			public void paintPrisms(Graphics2D g2) {
 
 				java.util.List<Path2D> paths = new ArrayList<Path2D>();
 				Prism selectedPrism = prismManager.getSelectedPrism();
+
+                double xGridOrigin = gridOrigin.getX();
+                double yGridOrigin = gridOrigin.getY();
 
 				for (Prism prism : prismManager.getPrisms()) {
 					
@@ -388,6 +411,7 @@ public class UserInterface {
 
 					double xOrigin = prism.getOrigin().getX();
 					double yOrigin = prism.getOrigin().getY();
+
 					Color color = prism.getColor();
 					if (selectedPrism != null && selectedPrism.equals(prism)) {
 						color = prism.getColor().darker();
@@ -404,8 +428,8 @@ public class UserInterface {
 
 						if (vertices.size() > 0) {
 							Vertex firstVertex = transform.transform(vertices.get(0));
-							firstVertex.setX(firstVertex.getX() + xOrigin);
-							firstVertex.setY(firstVertex.getY() + yOrigin);
+							firstVertex.setX(firstVertex.getX() + xOrigin + xGridOrigin);
+							firstVertex.setY(firstVertex.getY() + yOrigin + yGridOrigin);
 							minX = (int) firstVertex.getX();
 							maxX = (int) firstVertex.getX();
 							minY = (int) firstVertex.getY();
@@ -413,8 +437,8 @@ public class UserInterface {
 
 							for (int i = 0; i < shape.getVertices().size(); i++) {
 								Vertex vertex = transform.transform(vertices.get(i));
-								vertex.setX(vertex.getX() + xOrigin);
-								vertex.setY(vertex.getY() + yOrigin);
+								vertex.setX(vertex.getX() + xOrigin + xGridOrigin);
+								vertex.setY(vertex.getY() + yOrigin + yGridOrigin);
 								if (i == 0) {
 									path.moveTo(vertex.getX(), vertex.getY());
 								} else {
@@ -564,7 +588,7 @@ public class UserInterface {
 			UserInterface.paintPanel.removeMouseListener(mouseListeners[i]);
 		}
 
-		UserInterface.paintPanel.addMouseListener(new PrismMouseListener(this, this.prismManager, this.interfaceActions));
+		UserInterface.paintPanel.addMouseListener(new PrismMouseListener(this, this.prismManager, this.interfaceActions, this.keyboardListener));
 
 	}
 
@@ -707,6 +731,18 @@ public class UserInterface {
 	public JButton getCreateButton() {
 		return this.createButton;
 	}
+
+	public JTextArea getXCordLabel() {
+	    return this.xCordLabel;
+    }
+
+    public JTextArea getYCordLabel() {
+        return this.yCordLabel;
+    }
+
+    public Vertex getGridOrigin() {
+        return this.gridOrigin;
+    }
 
 	public static int getWidth() {
 		return UserInterface.WIDTH;

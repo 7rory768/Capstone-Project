@@ -17,127 +17,150 @@ import java.util.TimerTask;
 
 public class PrismMouseListener implements MouseListener {
 
-	private final UserInterface userInterface;
-	private final PrismManager prismManager;
-	private final InterfaceActions interfaceActions;
+    private final UserInterface userInterface;
+    private final PrismManager prismManager;
+    private final InterfaceActions interfaceActions;
 
-	private final Timer timer = new Timer();
+    private final Timer timer = new Timer();
 
-	private Prism movingPrism = null;
-	private TimerTask dragTask = null;
-	private int oldScreenX;
-	private int oldScreenY;
+    private boolean mouseDown = false;
+    private Prism movingPrism = null;
+    private TimerTask dragTask = null;
+    private int oldScreenX;
+    private int oldScreenY;
 
-	public PrismMouseListener(final UserInterface userInterface, PrismManager prismManager, InterfaceActions interfaceActions) {
-		this.prismManager = prismManager;
-		this.userInterface = userInterface;
-		this.interfaceActions = interfaceActions;
-		this.dragTask = new TimerTask() {
-			@Override
-			public void run() {
-				if (movingPrism != null) {
-					Point mousePoint = MouseInfo.getPointerInfo().getLocation();
-					Vertex origin = movingPrism.getOrigin();
-					int xChange = mousePoint.x - oldScreenX;
-					int yChange = mousePoint.y - oldScreenY;
-					if (xChange + origin.getX() < UserInterface.getWidth() / 2 && xChange + origin.getX() >= 0) {
-						oldScreenX = mousePoint.x;
-						origin.setX(origin.getX() + xChange);
-						userInterface.getXOriginField().setText(" " + (int) origin.getX());
-					}
-					if (yChange + origin.getY() < UserInterface.getHeight() - 35 && yChange + origin.getY() >= 0) {
-						oldScreenY = mousePoint.y;
-						origin.setY(origin.getY() + yChange);
-						userInterface.getYOriginField().setText(" " + (int) origin.getY());
-					}
-					UserInterface.repaint();
-				}
-			}
-		};
-		this.timer.schedule(this.dragTask, 30, 30);
-	}
+    public PrismMouseListener(final UserInterface userInterface, PrismManager prismManager, InterfaceActions interfaceActions, final KeyboardListener keyboardListener) {
+        this.prismManager = prismManager;
+        this.userInterface = userInterface;
+        this.interfaceActions = interfaceActions;
+        this.dragTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (mouseDown) {
+                    Point mousePoint = MouseInfo.getPointerInfo().getLocation();
+                    int xChange = mousePoint.x - oldScreenX;
+                    int yChange = mousePoint.y - oldScreenY;
+                    if (keyboardListener.holdingCtrl()) {
+                        Vertex gridOrigin = userInterface.getGridOrigin();
+                        gridOrigin.setX(gridOrigin.getX() + xChange);
+                        gridOrigin.setY(gridOrigin.getY() + yChange);
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		Prism selectedPrism = this.prismManager.getSelectedPrism();
+                        userInterface.getXCordLabel().setText("" + (int) gridOrigin.getX());
+                        userInterface.getYCordLabel().setText("" + (int) gridOrigin.getY());
 
-		for (Prism prism : this.prismManager.getPrisms()) {
-			Matrix3 transform = this.userInterface.getTransform(prism);
+                        oldScreenX = mousePoint.x;
+                        oldScreenY = mousePoint.y;
+                    } else if (movingPrism != null) {
+                        Vertex origin = movingPrism.getOrigin();
+                        if (xChange + origin.getX() < UserInterface.getWidth() / 2 && xChange + origin.getX() >= 0) {
+                            oldScreenX = mousePoint.x;
+                            origin.setX(origin.getX() + xChange);
+                            userInterface.getXOriginField().setText(" " + (int) origin.getX());
+                        }
+                        if (yChange + origin.getY() < UserInterface.getHeight() - 35 && yChange + origin.getY() >= 0) {
+                            oldScreenY = mousePoint.y;
+                            origin.setY(origin.getY() + yChange);
+                            userInterface.getYOriginField().setText(" " + (int) origin.getY());
+                        }
+                    } else {
+                        return;
+                    }
+                    UserInterface.repaint();
+                }
+            }
+        };
+        this.timer.schedule(this.dragTask, 30, 30);
+    }
 
-			Vertex origin = prism.getOrigin();
-			double xOrigin = origin.getX();
-			double yOrigin = origin.getY();
+    @Override
+    public void mousePressed(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            this.mouseDown = true;
+            Prism selectedPrism = this.prismManager.getSelectedPrism();
 
-			for (Shape shape : prism.getShapes()) {
-				List<Vertex> vertexList = new ArrayList<Vertex>();
+            double xGridOrigin = this.userInterface.getGridOrigin().getX();
+            double yGridOrigin = this.userInterface.getGridOrigin().getY();
 
-				for (Vertex vertex : shape.getVertices()) {
-					vertexList.add(transform.transform(vertex));
-				}
+            for (Prism prism : this.prismManager.getPrisms()) {
+                Matrix3 transform = this.userInterface.getTransform(prism);
 
-				Path2D path = new Path2D.Double();
-				for (int i = 0; i < vertexList.size(); i++) {
-					Vertex vertex = vertexList.get(i);
-					vertex.setX(vertex.getX() + xOrigin);
-					vertex.setY(vertex.getY() + yOrigin);
-					if (i == 0) {
-						path.moveTo(vertex.getX(), vertex.getY());
-					} else {
-						path.lineTo(vertex.getX(), vertex.getY());
-					}
-				}
-				path.closePath();
+                Vertex origin = prism.getOrigin();
+                double xOrigin = origin.getX();
+                double yOrigin = origin.getY();
 
-				if (path.contains(e.getX(), e.getY())) {
-					if (selectedPrism == null || !selectedPrism.equals(prism)) {
-						this.prismManager.setSelectedPrism(prism);
-						this.userInterface.getHeadingSlider().setValue(prism.getHeadingValue());
-						this.userInterface.getPitchSlider().setValue(prism.getPitchValue());
-						this.userInterface.getHeadingSlider().setVisible(true);
-						this.userInterface.getPitchSlider().setVisible(true);
-						this.userInterface.getRemoveButton().setVisible(true);
-						this.interfaceActions.switchToPrismSelected();
+                for (Shape shape : prism.getShapes()) {
+                    List<Vertex> vertexList = new ArrayList<Vertex>();
 
-						this.movingPrism = prism;
-						this.oldScreenX = e.getXOnScreen();
-						this.oldScreenY = e.getYOnScreen();
-					} else if (selectedPrism != null) {
-						this.movingPrism = prism;
-						this.oldScreenX = e.getXOnScreen();
-						this.oldScreenY = e.getYOnScreen();
-					}
-					return;
-				}
-			}
-		}
+                    for (Vertex vertex : shape.getVertices()) {
+                        vertexList.add(transform.transform(vertex));
+                    }
 
-		if (selectedPrism != null) {
-			this.interfaceActions.hideOldComponents();
-			UserInterface.repaint();
-		}
-		this.interfaceActions.switchToNoPrismSelected();
-	}
+                    Path2D path = new Path2D.Double();
+                    for (int i = 0; i < vertexList.size(); i++) {
+                        Vertex vertex = vertexList.get(i);
+                        vertex.setX(vertex.getX() + xOrigin + xGridOrigin);
+                        vertex.setY(vertex.getY() + yOrigin + yGridOrigin);
+                        if (i == 0) {
+                            path.moveTo(vertex.getX(), vertex.getY());
+                        } else {
+                            path.lineTo(vertex.getX(), vertex.getY());
+                        }
+                    }
+                    path.closePath();
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (this.movingPrism != null) {
-			this.movingPrism = null;
-		}
-	}
+                    if (path.contains(e.getX(), e.getY())) {
+                        if (selectedPrism == null || !selectedPrism.equals(prism)) {
+                            this.prismManager.setSelectedPrism(prism);
+                            this.userInterface.getHeadingSlider().setValue(prism.getHeadingValue());
+                            this.userInterface.getPitchSlider().setValue(prism.getPitchValue());
+                            this.userInterface.getHeadingSlider().setVisible(true);
+                            this.userInterface.getPitchSlider().setVisible(true);
+                            this.userInterface.getRemoveButton().setVisible(true);
+                            this.interfaceActions.switchToPrismSelected();
 
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		
-	}
+                            this.movingPrism = prism;
+                        } else if (selectedPrism != null) {
+                            this.movingPrism = prism;
+                        }
+                        return;
+                    }
+                }
+            }
 
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		
-	}
+            if (selectedPrism != null) {
+                this.interfaceActions.hideOldComponents();
+                UserInterface.repaint();
+            }
+            this.interfaceActions.switchToNoPrismSelected();
+        }
+        this.oldScreenX = e.getXOnScreen();
+        this.oldScreenY = e.getYOnScreen();
+    }
 
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		
-	}
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        if (this.movingPrism != null) {
+            this.movingPrism = null;
+        }
+
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            this.mouseDown = false;
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent arg0) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent arg0) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent arg0) {
+
+    }
 
 }
