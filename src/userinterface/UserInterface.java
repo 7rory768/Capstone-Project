@@ -32,6 +32,7 @@ public class UserInterface {
 	private JSlider headingSlider;
 	private JSplitPane paintSplit, buttonSplit;
 	private JButton addButton, removeButton, cubeButton, equilateralButton, pentagonalButton, createButton, confirmChangesButton;
+	private JLabel moveButton, rotateButton;
 	private JTextArea selectPrismLabel, colorLabel, originLabel, xLabel, yLabel, lengthLabel, radiusLabel, heightLabel;
 	private JTextArea noColorLabel, noOriginLabel, noLengthLabel, noRadiusLabel, noHeightLabel;
 	private JTextArea invalidOriginLabel, invalidLengthLabel, invalidRadiusLabel, invalidHeightLabel;
@@ -95,6 +96,10 @@ public class UserInterface {
 		this.heightField = new TextField(" ");
 		this.xCordLabel = new JTextArea("" + (int) this.gridOrigin.getX());
 		this.yCordLabel = new JTextArea("" + (int) this.gridOrigin.getY());
+		
+		// BufferedImage buttonIcon = ImageIO.read(new File("buttonIconPath"));
+		// button = new JButton(new ImageIcon(buttonIcon));
+		// TODO: move label and rotate label
 
 		this.noColorLabel = new JTextArea("Error: Missing parameter, please provide a color");
 		this.noOriginLabel = new JTextArea("Error: Missing parameter, please provide both coordinates");
@@ -128,7 +133,8 @@ public class UserInterface {
 		this.invalidRadiusLabel.setEditable(false);
 		this.invalidHeightLabel.setEditable(false);
 
-		this.xCordLabel.setEditable(false); // might make editible to move to certain position with ease
+		this.xCordLabel.setEditable(false); // might make editible to move to
+											// certain position with ease
 		this.yCordLabel.setEditable(false);
 
 		this.headingSlider.setIgnoreRepaint(true);
@@ -176,15 +182,16 @@ public class UserInterface {
 		GridBagConstraints constraints = new GridBagConstraints();
 
 		// x cord label
-		constraints.insets = new Insets((int) (-7.45 * HEIGHT / 8.0), -UserInterface.WIDTH/2 + 60, 0, 0);
+		constraints.insets = new Insets((int) (-7.45 * HEIGHT / 8.0), -UserInterface.WIDTH / 2 + 60, 0, 0);
 		UserInterface.paintPanel.add(this.xCordLabel, constraints);
 
 		// y cord label
 		constraints.gridy = 1;
-		constraints.insets = new Insets((int) (-7.15 * HEIGHT / 8.0), -UserInterface.WIDTH/2 + 40, 0, 0);
-        UserInterface.paintPanel.add(this.yCordLabel, constraints);
+		constraints.insets = new Insets((int) (-7.15 * HEIGHT / 8.0), -UserInterface.WIDTH / 2 + 40, 0, 0);
+		UserInterface.paintPanel.add(this.yCordLabel, constraints);
 
 		// add button
+		constraints.gridy = 0;
 		constraints.gridwidth = 3;
 		int centerFix = -250;
 		constraints.gridy = 0;
@@ -382,6 +389,7 @@ public class UserInterface {
 		this.frame.setFocusable(true);
 		this.frame.addKeyListener(this.keyboardListener);
 		this.buttonPanel = new JPanel();
+		
 		UserInterface.paintPanel = new JPanel() {
 			private static final long serialVersionUID = 1L;
 
@@ -723,7 +731,7 @@ public class UserInterface {
 	public TextField getHeightField() {
 		return this.heightField;
 	}
-	
+
 	public JButton getConfirmChangesButton() {
 		return this.confirmChangesButton;
 	}
@@ -733,16 +741,20 @@ public class UserInterface {
 	}
 
 	public JTextArea getXCordLabel() {
-	    return this.xCordLabel;
-    }
+		return this.xCordLabel;
+	}
 
-    public JTextArea getYCordLabel() {
-        return this.yCordLabel;
-    }
+	public JTextArea getYCordLabel() {
+		return this.yCordLabel;
+	}
 
-    public Vertex getGridOrigin() {
-        return this.gridOrigin;
-    }
+	public Vertex getGridOrigin() {
+		return this.gridOrigin;
+	}
+
+	public JPanel getPaintPanel() {
+		return paintPanel;
+	}
 
 	public static int getWidth() {
 		return UserInterface.WIDTH;
@@ -764,5 +776,4 @@ public class UserInterface {
 
 		return headingTransform.multiply(pitchTransform);
 	}
-
 }
