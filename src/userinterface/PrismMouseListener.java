@@ -54,8 +54,8 @@ public class PrismMouseListener implements MouseListener {
 //						int newXPlaces = String.valueOf((int) Math.abs(gridOrigin.getX())).length();
 //						int newYPlaces = String.valueOf((int) Math.abs(gridOrigin.getY())).length();
 
-						userInterface.getXCordLabel().setText("" + (int) gridOrigin.getX());
-						userInterface.getYCordLabel().setText("" + (int) gridOrigin.getY());
+						userInterface.getXCordLabel().setText("X: " + (int) gridOrigin.getX());
+						userInterface.getYCordLabel().setText("Y: " + (int) gridOrigin.getY());
 
 /*						System.out.println("oldxPlaces: " + oldXPlaces);
 						System.out.println("newXPlaces: " + newXPlaces);

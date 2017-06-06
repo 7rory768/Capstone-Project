@@ -6,11 +6,14 @@ import shapes.Shape;
 import util.Matrix3;
 import util.Vertex;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class UserInterface {
@@ -32,7 +35,7 @@ public class UserInterface {
 	private JSlider headingSlider;
 	private JSplitPane paintSplit, buttonSplit;
 	private JButton addButton, removeButton, cubeButton, equilateralButton, pentagonalButton, createButton, confirmChangesButton;
-	private JLabel moveButton, rotateButton;
+	private JButton moveButton, rotateButton;
 	private JTextArea selectPrismLabel, colorLabel, originLabel, xLabel, yLabel, lengthLabel, radiusLabel, heightLabel;
 	private JTextArea noColorLabel, noOriginLabel, noLengthLabel, noRadiusLabel, noHeightLabel;
 	private JTextArea invalidOriginLabel, invalidLengthLabel, invalidRadiusLabel, invalidHeightLabel;
@@ -94,12 +97,30 @@ public class UserInterface {
 		this.radiusField = new TextField(" ");
 		this.heightLabel = new JTextArea("Height: ");
 		this.heightField = new TextField(" ");
-		this.xCordLabel = new JTextArea("" + (int) this.gridOrigin.getX());
-		this.yCordLabel = new JTextArea("" + (int) this.gridOrigin.getY());
-		
-		// BufferedImage buttonIcon = ImageIO.read(new File("buttonIconPath"));
-		// button = new JButton(new ImageIcon(buttonIcon));
-		// TODO: move label and rotate label
+		this.xCordLabel = new JTextArea("X: " + (int) this.gridOrigin.getX());
+		this.yCordLabel = new JTextArea("Y: " + (int) this.gridOrigin.getY());
+
+		this.moveButton = new JButton();
+		this.moveButton.setPreferredSize(new Dimension(36, 36));
+
+		try {
+			File moveIconFile = new File("images" + File.separator + "movebutton.png");
+			Image img = ImageIO.read(moveIconFile);
+			this.moveButton.setIcon(new ImageIcon(img));
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+
+		this.rotateButton = new JButton();
+		this.rotateButton.setPreferredSize(new Dimension(36, 36));
+
+		try {
+			File rotateIconFile = new File("images" + File.separator + "rotatebutton.png");
+			Image img = ImageIO.read(rotateIconFile);
+			this.rotateButton.setIcon(new ImageIcon(img));
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
 
 		this.noColorLabel = new JTextArea("Error: Missing parameter, please provide a color");
 		this.noOriginLabel = new JTextArea("Error: Missing parameter, please provide both coordinates");
@@ -181,6 +202,8 @@ public class UserInterface {
 		// INSETS: TOP, LEFT, BOTTOM, RIGHT
 		GridBagConstraints constraints = new GridBagConstraints();
 
+		// PAINT PANEL
+
 		// x cord label
 		constraints.insets = new Insets((int) (-7.45 * HEIGHT / 8.0), -UserInterface.WIDTH / 2 + 60, 0, 0);
 		UserInterface.paintPanel.add(this.xCordLabel, constraints);
@@ -190,8 +213,21 @@ public class UserInterface {
 		constraints.insets = new Insets((int) (-7.15 * HEIGHT / 8.0), -UserInterface.WIDTH / 2 + 40, 0, 0);
 		UserInterface.paintPanel.add(this.yCordLabel, constraints);
 
+		// move button
+		constraints.gridy = 2;
+		constraints.insets = new Insets((int) (-7.15 * HEIGHT / 8.0), 0, 0, -UserInterface.WIDTH / 2 + 65);
+		// constraints.fill = GridBagConstraints.VERTICAL;
+		UserInterface.paintPanel.add(this.moveButton, constraints);
+
+		// rotate button
+		constraints.insets = new Insets((int) (-7.15 * HEIGHT / 8.0), 0, 0, -UserInterface.WIDTH / 2 + 145);
+		UserInterface.paintPanel.add(this.rotateButton, constraints);
+
+		// BUTTON PANEL
+
+		constraints = new GridBagConstraints();
+
 		// add button
-		constraints.gridy = 0;
 		constraints.gridwidth = 3;
 		int centerFix = -250;
 		constraints.gridy = 0;
@@ -389,7 +425,7 @@ public class UserInterface {
 		this.frame.setFocusable(true);
 		this.frame.addKeyListener(this.keyboardListener);
 		this.buttonPanel = new JPanel();
-		
+
 		UserInterface.paintPanel = new JPanel() {
 			private static final long serialVersionUID = 1L;
 
@@ -409,11 +445,11 @@ public class UserInterface {
 				java.util.List<Path2D> paths = new ArrayList<Path2D>();
 				Prism selectedPrism = prismManager.getSelectedPrism();
 
-                double xGridOrigin = gridOrigin.getX();
-                double yGridOrigin = gridOrigin.getY();
+				double xGridOrigin = gridOrigin.getX();
+				double yGridOrigin = gridOrigin.getY();
 
 				for (Prism prism : prismManager.getPrisms()) {
-					
+
 					BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 					Matrix3 transform = getTransform(prism);
 
@@ -471,7 +507,7 @@ public class UserInterface {
 										try {
 											img.setRGB(x, y, color.getRGB());
 										} catch (ArrayIndexOutOfBoundsException e) {
-											
+
 										}
 									}
 								}
@@ -598,6 +634,19 @@ public class UserInterface {
 
 		UserInterface.paintPanel.addMouseListener(new PrismMouseListener(this, this.prismManager, this.interfaceActions, this.keyboardListener));
 
+	}
+
+	static void decorate(JTextArea a, final BufferedImage img) {
+		a.setUI(new javax.swing.plaf.basic.BasicTextAreaUI() {
+			@Override
+			protected void paintBackground(Graphics g) {
+				g.drawImage(img, 0, 0, null);
+			}
+		});
+
+		a.setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
+		a.setForeground(Color.white);
+		a.setCaretColor(Color.lightGray);
 	}
 
 	/*
