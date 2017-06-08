@@ -20,91 +20,139 @@ public class PrismMouseListener implements MouseListener {
 	private final UserInterface userInterface;
 	private final PrismManager prismManager;
 	private final InterfaceActions interfaceActions;
+	private final KeyboardListener keyboardListener;
 
 	private final Timer timer = new Timer();
 
 	private boolean mouseDown = false;
-	private Prism movingPrism = null;
 	private TimerTask dragTask = null;
 	private int oldScreenX;
 	private int oldScreenY;
 
-	public PrismMouseListener(final UserInterface userInterface, PrismManager prismManager, InterfaceActions interfaceActions, final KeyboardListener keyboardListener) {
+	public PrismMouseListener(final UserInterface userInterface, final PrismManager prismManager, final InterfaceActions interfaceActions, final KeyboardListener keyboardListener) {
 		this.prismManager = prismManager;
 		this.userInterface = userInterface;
 		this.interfaceActions = interfaceActions;
+		this.keyboardListener = keyboardListener;
 		this.dragTask = new TimerTask() {
 			@Override
 			public void run() {
 				if (mouseDown) {
+					System.out.println("mouse down");
+					Prism selectedPrism = prismManager.getSelectedPrism();
+
 					Point mousePoint = MouseInfo.getPointerInfo().getLocation();
 					int xChange = mousePoint.x - oldScreenX;
 					int yChange = mousePoint.y - oldScreenY;
-					
-					if (keyboardListener.holdingCtrl()) {
-						oldScreenX = mousePoint.x;
-						oldScreenY = mousePoint.y;
-						
-						Vertex gridOrigin = userInterface.getGridOrigin();
-						
-//						int oldXPlaces = String.valueOf((int) Math.abs(gridOrigin.getX())).length();
-//						int oldYPlaces = String.valueOf((int) Math.abs(gridOrigin.getY())).length();
-						gridOrigin.setX(gridOrigin.getX() + xChange);
-						gridOrigin.setY(gridOrigin.getY() + yChange);
-//						int newXPlaces = String.valueOf((int) Math.abs(gridOrigin.getX())).length();
-//						int newYPlaces = String.valueOf((int) Math.abs(gridOrigin.getY())).length();
 
-						userInterface.getXCordLabel().setText("X: " + (int) gridOrigin.getX());
-						userInterface.getYCordLabel().setText("Y: " + (int) gridOrigin.getY());
+					Component selectedComponent = interfaceActions.getSelectedComponent();
+					if (selectedComponent != null && (xChange != 0 || yChange != 0)) {
+						if (selectedComponent.equals(userInterface.getMoveButton())) {
+							System.out.println("move button");
+							if (keyboardListener.holdingCtrl()) {
+								System.out.println("holding ctrl");
+								System.out.println();
+								oldScreenX = mousePoint.x;
+								oldScreenY = mousePoint.y;
 
-/*						System.out.println("oldxPlaces: " + oldXPlaces);
-						System.out.println("newXPlaces: " + newXPlaces);
-						System.out.println("--------------------------------");
+								Vertex gridOrigin = userInterface.getGridOrigin();
 
-						Insets xInsets = userInterface.getXCordLabel().getInsets();
-						Insets yInsets = userInterface.getYCordLabel().getInsets();
-						userInterface.getPaintPanel().remove(userInterface.getXCordLabel());
-						userInterface.getPaintPanel().remove(userInterface.getYCordLabel());
+								// int oldXPlaces = String.valueOf((int)
+								// Math.abs(gridOrigin.getX())).length();
+								// int oldYPlaces = String.valueOf((int)
+								// Math.abs(gridOrigin.getY())).length();
+								gridOrigin.setX(gridOrigin.getX() + xChange);
+								gridOrigin.setY(gridOrigin.getY() + yChange);
+								// int newXPlaces = String.valueOf((int)
+								// Math.abs(gridOrigin.getX())).length();
+								// int newYPlaces = String.valueOf((int)
+								// Math.abs(gridOrigin.getY())).length();
 
-						// INSETS: TOP, LEFT, BOTTOM, RIGHT
-						GridBagConstraints constraints = new GridBagConstraints();
+								userInterface.getXCordLabel().setText("X: " + (int) gridOrigin.getX());
+								userInterface.getYCordLabel().setText("Y: " + (int) gridOrigin.getY());
 
-						constraints.fill = GridBagConstraints.HORIZONTAL;
-						if (oldXPlaces > newXPlaces) {
-							xInsets.set(xInsets.top, xInsets.left + -50, xInsets.bottom, xInsets.right);
-						} else if (oldXPlaces < newXPlaces) {
-							yInsets.set(yInsets.top, yInsets.left, yInsets.bottom, yInsets.right + -50);
-						}
+								/*
+								 * System.out.println("oldxPlaces: " +
+								 * oldXPlaces);
+								 * System.out.println("newXPlaces: " +
+								 * newXPlaces); System
+								 * .out.println("--------------------------------"
+								 * );
+								 * 
+								 * Insets xInsets =
+								 * userInterface.getXCordLabel().getInsets();
+								 * Insets yInsets =
+								 * userInterface.getYCordLabel().getInsets();
+								 * userInterface
+								 * .getPaintPanel().remove(userInterface
+								 * .getXCordLabel());
+								 * userInterface.getPaintPanel().remove
+								 * (userInterface.getYCordLabel());
+								 * 
+								 * // INSETS: TOP, LEFT, BOTTOM, RIGHT
+								 * GridBagConstraints constraints = new
+								 * GridBagConstraints();
+								 * 
+								 * constraints.fill =
+								 * GridBagConstraints.HORIZONTAL; if (oldXPlaces
+								 * > newXPlaces) { xInsets.set(xInsets.top,
+								 * xInsets.left + -50, xInsets.bottom,
+								 * xInsets.right); } else if (oldXPlaces <
+								 * newXPlaces) { yInsets.set(yInsets.top,
+								 * yInsets.left, yInsets.bottom, yInsets.right +
+								 * -50); }
+								 * 
+								 * constraints.insets = xInsets;
+								 * userInterface.getPaintPanel
+								 * ().add(userInterface.getXCordLabel(),
+								 * constraints);
+								 * 
+								 * if (oldYPlaces > newYPlaces) {
+								 * yInsets.set(yInsets.top, yInsets.left + -50,
+								 * yInsets.bottom, yInsets.right); } else if
+								 * (oldYPlaces < newYPlaces) {
+								 * yInsets.set(yInsets.top, yInsets.left,
+								 * yInsets.bottom, yInsets.right + -50); }
+								 * 
+								 * constraints.gridy = 1; constraints.insets =
+								 * yInsets;
+								 * userInterface.getPaintPanel().add(userInterface
+								 * .getYCordLabel(), constraints);
+								 */
 
-						constraints.insets = xInsets;
-						userInterface.getPaintPanel().add(userInterface.getXCordLabel(), constraints);
-
-						if (oldYPlaces > newYPlaces) {
-							yInsets.set(yInsets.top, yInsets.left + -50, yInsets.bottom, yInsets.right);
-						} else if (oldYPlaces < newYPlaces) {
-							yInsets.set(yInsets.top, yInsets.left, yInsets.bottom, yInsets.right + -50);
-						}
-
-						constraints.gridy = 1;
-						constraints.insets = yInsets;
-						userInterface.getPaintPanel().add(userInterface.getYCordLabel(), constraints);*/
-
-					} else if (movingPrism != null) {
-						Vertex origin = movingPrism.getOrigin();
-						if (xChange + origin.getX() < UserInterface.getWidth() / 2 && xChange + origin.getX() >= 0) {
+							} else if (selectedPrism != null) {
+								Vertex origin = selectedPrism.getOrigin();
+								if (xChange + origin.getX() < UserInterface.getWidth() / 2 && xChange + origin.getX() >= 0) {
+									oldScreenX = mousePoint.x;
+									origin.setX(origin.getX() + xChange);
+									userInterface.getXOriginField().setText(" " + (int) origin.getX());
+								}
+								if (yChange + origin.getY() < UserInterface.getHeight() && yChange + origin.getY() >= 0) {
+									oldScreenY = mousePoint.y;
+									origin.setY(origin.getY() + yChange);
+									userInterface.getYOriginField().setText(" " + (int) origin.getY());
+								}
+							} else {
+								return;
+							}
+							UserInterface.repaint();
+						} else if (selectedComponent.equals(userInterface.getRotateButton())) {
 							oldScreenX = mousePoint.x;
-							origin.setX(origin.getX() + xChange);
-							userInterface.getXOriginField().setText(" " + (int) origin.getX());
-						}
-						if (yChange + origin.getY() < UserInterface.getHeight() - 35 && yChange + origin.getY() >= 0) {
 							oldScreenY = mousePoint.y;
-							origin.setY(origin.getY() + yChange);
-							userInterface.getYOriginField().setText(" " + (int) origin.getY());
+							
+							if (keyboardListener.holdingCtrl()) {
+								userInterface.setHeadingValue(userInterface.getHeadingValue() + xChange);
+								userInterface.setPitchValue(userInterface.getPitchValue() + yChange);
+							} else if (selectedPrism != null) {
+								selectedPrism.setHeadingValue(selectedPrism.getHeadingValue() + xChange);
+								selectedPrism.setPitchValue(selectedPrism.getPitchValue() + yChange);
+							} else {
+								return;
+							}
+							
+							UserInterface.repaint();
 						}
-					} else {
-						return;
 					}
-					UserInterface.repaint();
 				}
 			}
 		};
@@ -151,37 +199,26 @@ public class PrismMouseListener implements MouseListener {
 
 					if (path.contains(e.getX(), e.getY())) {
 						if (selectedPrism == null || !selectedPrism.equals(prism)) {
-							this.prismManager.setSelectedPrism(prism);
-							this.userInterface.getHeadingSlider().setValue(prism.getHeadingValue());
-							this.userInterface.getPitchSlider().setValue(prism.getPitchValue());
-							this.userInterface.getHeadingSlider().setVisible(true);
-							this.userInterface.getPitchSlider().setVisible(true);
+							this.prismManager.setSelectedPrism(prism); 
 							this.userInterface.getRemoveButton().setVisible(true);
 							this.interfaceActions.switchToPrismSelected();
-
-							this.movingPrism = prism;
-						} else if (selectedPrism != null) {
-							this.movingPrism = prism;
-						}
+						} 
 						return;
 					}
 				}
 			}
 
-			if (selectedPrism != null) {
-				this.interfaceActions.hideOldComponents();
+			if (selectedPrism != null) { 
 				UserInterface.repaint();
 			}
-			this.interfaceActions.switchToNoPrismSelected();
+			if (!this.keyboardListener.holdingCtrl()) {
+				this.interfaceActions.switchToNoPrismSelected();
+			}
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (this.movingPrism != null) {
-			this.movingPrism = null;
-		}
-
 		if (e.getButton() == MouseEvent.BUTTON1) {
 			this.mouseDown = false;
 		}

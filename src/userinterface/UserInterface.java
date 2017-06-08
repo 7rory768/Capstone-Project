@@ -13,7 +13,6 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class UserInterface {
@@ -25,15 +24,10 @@ public class UserInterface {
 	private static JPanel paintPanel;
 	private final static int WIDTH = 1500;
 	private final static int HEIGHT = 900;
-	private final static int HEADING_DIVIDER = 35;
-	private final static int PITCH_DIVIDER = HEIGHT - HEADING_DIVIDER;
 	int num = 1;
 
 	private JFrame frame;
-	private JPanel buttonPanel, pitchPanel, headingPanel;
-	private JSlider pitchSlider;
-	private JSlider headingSlider;
-	private JSplitPane paintSplit, buttonSplit;
+	private JPanel buttonPanel;
 	private JButton addButton, removeButton, cubeButton, equilateralButton, pentagonalButton, createButton, confirmChangesButton;
 	private JButton moveButton, rotateButton;
 	private JTextArea selectPrismLabel, colorLabel, originLabel, xLabel, yLabel, lengthLabel, radiusLabel, heightLabel;
@@ -43,6 +37,9 @@ public class UserInterface {
 	private TextField lengthField, xOriginField, yOriginField, radiusField, heightField;
 	private List colorList;
 	private Vertex gridOrigin = new Vertex(0, 0, 0);
+	private ImageIcon moveIcon, rotateIcon, selectedMoveIcon, selectedRotateIcon;
+	private int pitchValue = 0, headingValue = 180;
+	
 
 	public UserInterface(PrismManager prismManager) {
 		this.prismManager = prismManager;
@@ -60,12 +57,6 @@ public class UserInterface {
 	}
 
 	private void setupButtons() {
-		this.headingSlider = new JSlider(0, 360, 180);
-		this.pitchSlider = new JSlider(SwingConstants.VERTICAL, -90, 90, 0);
-		this.pitchPanel = new JPanel();
-		this.headingPanel = new JPanel();
-		this.buttonSplit = new JSplitPane();
-		this.paintSplit = new JSplitPane();
 		this.addButton = new JButton("Add Prism");
 		this.removeButton = new JButton("Remove Prism");
 		this.selectPrismLabel = new JTextArea("Select a prism type below");
@@ -106,7 +97,12 @@ public class UserInterface {
 		try {
 			File moveIconFile = new File("images" + File.separator + "movebutton.png");
 			Image img = ImageIO.read(moveIconFile);
-			this.moveButton.setIcon(new ImageIcon(img));
+			this.moveIcon = new ImageIcon(img);
+			this.moveButton.setIcon(this.moveIcon);
+
+			File selectedMoveIconFile = new File("images" + File.separator + "selectedmovebutton.png");
+			Image selectedImg = ImageIO.read(selectedMoveIconFile);
+			this.selectedMoveIcon = new ImageIcon(selectedImg);
 		} catch (Exception ex) {
 			System.out.println(ex);
 		}
@@ -117,7 +113,12 @@ public class UserInterface {
 		try {
 			File rotateIconFile = new File("images" + File.separator + "rotatebutton.png");
 			Image img = ImageIO.read(rotateIconFile);
-			this.rotateButton.setIcon(new ImageIcon(img));
+			this.rotateIcon = new ImageIcon(img);
+			this.rotateButton.setIcon(this.rotateIcon);
+
+			File selectedRotateIconFile = new File("images" + File.separator + "selectedrotatebutton.png");
+			Image selectedImg = ImageIO.read(selectedRotateIconFile);
+			this.selectedRotateIcon = new ImageIcon(selectedImg);
 		} catch (Exception ex) {
 			System.out.println(ex);
 		}
@@ -158,8 +159,6 @@ public class UserInterface {
 											// certain position with ease
 		this.yCordLabel.setEditable(false);
 
-		this.headingSlider.setIgnoreRepaint(true);
-		this.pitchSlider.setIgnoreRepaint(true);
 		this.addButton.setIgnoreRepaint(true);
 		this.removeButton.setIgnoreRepaint(true);
 		this.colorLabel.setIgnoreRepaint(true);
@@ -172,32 +171,24 @@ public class UserInterface {
 
 		this.confirmChangesButton.setIgnoreRepaint(true);
 		this.createButton.setIgnoreRepaint(true);
+		
+		this.moveButton.setFocusable(false);
+		this.rotateButton.setFocusable(false);
+		this.addButton.setFocusable(false);
+		this.removeButton.setFocusable(false);
+		this.createButton.setFocusable(false);
+		this.cubeButton.setFocusable(false);
+		this.equilateralButton.setFocusable(false);
+		this.pentagonalButton.setFocusable(false);
+		this.confirmChangesButton.setFocusable(false);
 	}
 
 	private void addButtons() {
-		this.paintSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		this.paintSplit.setDividerLocation(PITCH_DIVIDER);
-		this.paintSplit.setTopComponent(paintPanel);
-		this.paintSplit.setBottomComponent(this.headingPanel);
-
-		this.buttonSplit.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-		this.buttonSplit.setDividerLocation(HEADING_DIVIDER);
-		this.buttonSplit.setLeftComponent(this.pitchPanel);
-		this.buttonSplit.setRightComponent(this.buttonPanel);
 
 		paintPanel.setLayout(new GridBagLayout());
-
-		paintPanel.setMinimumSize(new Dimension((int) (3 * WIDTH / 5.0), Integer.MAX_VALUE));
+		//paintPanel.setMinimumSize(new Dimension((int) (3 * WIDTH / 5.0), Integer.MAX_VALUE));
 
 		this.buttonPanel.setLayout(new GridBagLayout());
-
-		this.pitchPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
-		this.pitchPanel.add(this.pitchSlider);
-		this.pitchSlider.setVisible(false);
-
-		this.headingPanel.setMaximumSize(new Dimension(20, Integer.MAX_VALUE));
-		this.headingPanel.add(this.headingSlider);
-		this.headingSlider.setVisible(false);
 
 		// INSETS: TOP, LEFT, BOTTOM, RIGHT
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -419,18 +410,14 @@ public class UserInterface {
 		this.frame.setPreferredSize(new Dimension(UserInterface.WIDTH, UserInterface.HEIGHT));
 		this.frame.setResizable(false);
 		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.frame.getContentPane().setLayout(new GridLayout());
-		this.frame.getContentPane().add(this.paintSplit);
-		this.frame.getContentPane().add(this.buttonSplit);
-		this.frame.setFocusable(true);
-		this.frame.addKeyListener(this.keyboardListener);
+		this.frame.setLayout(new GridLayout());
 		this.buttonPanel = new JPanel();
 
 		UserInterface.paintPanel = new JPanel() {
 			private static final long serialVersionUID = 1L;
 
 			public void paintComponent(Graphics g) {
-				System.out.println(num++ + " REPAINT");
+				//System.out.println(num++ + " REPAINT");
 
 				Graphics2D g2 = (Graphics2D) g;
 				g2.setColor(Color.WHITE);
@@ -438,6 +425,13 @@ public class UserInterface {
 				g2.setColor(Color.BLACK);
 
 				this.paintPrisms(g2);
+				g2.setColor(Color.BLACK);
+				
+				Path2D path = new Path2D.Double();
+				path.moveTo(UserInterface.WIDTH/2 - 1, 0);
+				path.lineTo(UserInterface.WIDTH/2 - 1, UserInterface.HEIGHT);
+				g2.draw(path);
+				
 			}
 
 			public void paintPrisms(Graphics2D g2) {
@@ -499,7 +493,7 @@ public class UserInterface {
 							minX = (int) Math.max(0, minX);
 							maxX = (int) Math.min(UserInterface.WIDTH / 2 - 3, maxX);
 							minY = (int) Math.max(0, minY);
-							maxY = (int) Math.min(UserInterface.HEIGHT - UserInterface.HEADING_DIVIDER - 2, maxY);
+							maxY = (int) Math.min(UserInterface.HEIGHT, maxY);
 
 							for (int y = minY; y <= maxY; y++) {
 								for (int x = minX; x <= maxX; x++) {
@@ -625,6 +619,9 @@ public class UserInterface {
 				}
 			}
 		};
+		
+		this.frame.getContentPane().add(UserInterface.paintPanel);
+		this.frame.getContentPane().add(this.buttonPanel);
 
 		MouseListener[] mouseListeners = UserInterface.paintPanel.getMouseListeners();
 
@@ -633,6 +630,8 @@ public class UserInterface {
 		}
 
 		UserInterface.paintPanel.addMouseListener(new PrismMouseListener(this, this.prismManager, this.interfaceActions, this.keyboardListener));
+		this.frame.addKeyListener(this.keyboardListener);
+		this.frame.setFocusable(true);
 
 	}
 
@@ -660,14 +659,6 @@ public class UserInterface {
 	 * blue = (int) Math.pow(blueLinear, 1 / 2.4); return new Color(red, green,
 	 * blue); }
 	 */
-
-	public JSlider getHeadingSlider() {
-		return this.headingSlider;
-	}
-
-	public JSlider getPitchSlider() {
-		return this.pitchSlider;
-	}
 
 	public JButton getAddButton() {
 		return this.addButton;
@@ -800,9 +791,49 @@ public class UserInterface {
 	public Vertex getGridOrigin() {
 		return this.gridOrigin;
 	}
+	
+	public JButton getMoveButton() {
+		return this.moveButton;
+	}
+	
+	public JButton getRotateButton() {
+		return this.rotateButton;
+	}
+	
+	public ImageIcon getMoveIcon() {
+		return this.moveIcon;
+	}
+	
+	public ImageIcon getSelectedMoveIcon() {
+		return this.selectedMoveIcon;
+	}
+	
+	public ImageIcon getRotateIcon() {
+		return this.rotateIcon;
+	}
+	
+	public ImageIcon getSelectedRotateIcon() {
+		return this.selectedRotateIcon;
+	}
 
 	public JPanel getPaintPanel() {
 		return paintPanel;
+	}
+	
+	public int getPitchValue() {
+		return this.pitchValue;
+	}
+	
+	public int getHeadingValue() {
+		return this.headingValue;
+	}
+	
+	public void setPitchValue(int newValue) {
+		this.pitchValue = newValue;
+	}
+	
+	public void setHeadingValue(int newValue) {
+		this.headingValue = newValue;
 	}
 
 	public static int getWidth() {
@@ -814,8 +845,8 @@ public class UserInterface {
 	}
 
 	public Matrix3 getTransform(Prism prism) {
-		int headingValue = prism.getHeadingValue();
-		int pitchValue = prism.getPitchValue();
+		int headingValue = prism.getHeadingValue() + this.headingValue;
+		int pitchValue = prism.getPitchValue() + this.pitchValue;
 
 		double heading = Math.toRadians(headingValue);
 		Matrix3 headingTransform = new Matrix3(new double[] { Math.cos(heading), 0, Math.sin(heading), 0, 1, 0, -Math.sin(heading), 0, Math.cos(heading) });

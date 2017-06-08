@@ -27,22 +27,6 @@ public class InterfaceActions {
 		this.prismManager = prismManager;
 	}
 
-	private void registerSlideEvent(final JSlider jSlider) {
-		jSlider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent arg0) {
-				Prism selectedPrism = prismManager.getSelectedPrism();
-				if (selectedPrism != null) {
-					if (jSlider.equals(userInterface.getHeadingSlider())) {
-						selectedPrism.setHeadingValue(jSlider.getValue());
-					} else {
-						selectedPrism.setPitchValue(jSlider.getValue());
-					}
-				}
-				UserInterface.repaint();
-			}
-		});
-	}
-
 	private void registerButtonEvent(final JButton button) {
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -85,7 +69,7 @@ public class InterfaceActions {
 						}
 						UserInterface.repaint();
 						return;
-					} else {
+					} else if (!(button.equals(userInterface.getMoveButton()) || button.equals(userInterface.getRotateButton()))) {
 						switchToNoPrismSelected();
 						if (component.equals(userInterface.getRemoveButton())) {
 							prismManager.removePrism(selectedPrism);
@@ -107,9 +91,12 @@ public class InterfaceActions {
 
 				if (!displayingWarnings) {
 					setLastSelected(component);
-					hideOldComponents();
-					showNewComponents();
+					if (!(button.equals(userInterface.getMoveButton()) || button.equals(userInterface.getRotateButton()))) {
+						hideOldComponents();
+						showNewComponents();
+					}
 				}
+
 			}
 		});
 	}
@@ -126,19 +113,39 @@ public class InterfaceActions {
 				this.lastSelected = this.userInterface.getAddButton();
 				this.lastSelected.setBackground(Color.CYAN);
 			} else {
+				if (button != null) {
+					if (button.equals(this.userInterface.getMoveButton())) {
+						this.userInterface.getMoveButton().setIcon(this.userInterface.getMoveIcon());
+					} else if (button.equals(this.userInterface.getRotateButton())) {
+						this.userInterface.getRotateButton().setIcon(this.userInterface.getRotateIcon());
+					}
+				}
 				this.lastSelected = null;
 			}
 		}
+
 		if (!sameComponent) {
 			if (button != null) {
-				button.setBackground(Color.CYAN);
+				if (button.equals(this.userInterface.getMoveButton())) {
+					this.userInterface.getMoveButton().setIcon(this.userInterface.getSelectedMoveIcon());
+					this.userInterface.getRotateButton().setIcon(this.userInterface.getRotateIcon());
+				} else if (button.equals(this.userInterface.getRotateButton())) {
+					this.userInterface.getRotateButton().setIcon(this.userInterface.getSelectedRotateIcon());
+					this.userInterface.getMoveButton().setIcon(this.userInterface.getMoveIcon());
+				} else {
+					this.userInterface.getRotateButton().setIcon(this.userInterface.getRotateIcon());
+					this.userInterface.getMoveButton().setIcon(this.userInterface.getMoveIcon());
+					button.setBackground(Color.CYAN);
+				}
 			}
 			this.lastSelected = button;
 		}
 	}
 
 	public void switchToPrismSelected() {
-		this.setLastSelected(null);
+		if (this.lastSelected != null && !(this.lastSelected.equals(this.userInterface.getMoveButton()) || this.lastSelected.equals(this.userInterface.getRotateButton()))) {
+			this.setLastSelected(null);
+		}
 		this.hideAllWarnings();
 		this.hideOldComponents();
 		this.resetFields();
@@ -191,6 +198,7 @@ public class InterfaceActions {
 				this.userInterface.getLengthField().setText(" " + ((Equilateral) prism).getLength());
 			}
 		}
+		UserInterface.repaint();
 	}
 
 	public void updateOriginFields(Prism prism) {
@@ -208,8 +216,6 @@ public class InterfaceActions {
 		this.prismManager.setSelectedPrism(null);
 		this.userInterface.getRemoveButton().setVisible(false);
 		this.userInterface.getConfirmChangesButton().setVisible(false);
-		this.userInterface.getHeadingSlider().setVisible(false);
-		this.userInterface.getPitchSlider().setVisible(false);
 	}
 
 	private void hideAllWarnings() {
@@ -281,7 +287,8 @@ public class InterfaceActions {
 		if (this.lastSelected != null) {
 			Component newComponent = this.lastSelected;
 
-			if (!newComponent.equals(this.userInterface.getRemoveButton())) {
+			if (!(newComponent.equals(this.userInterface.getRemoveButton()) || newComponent.equals(this.userInterface.getMoveButton()) || newComponent.equals(this.userInterface
+					.getRotateButton()))) {
 				this.userInterface.getSelectPrismLabel().setVisible(true);
 			}
 
@@ -405,8 +412,6 @@ public class InterfaceActions {
 	}
 
 	public void registerEvents() {
-		this.registerSlideEvent(this.userInterface.getHeadingSlider());
-		this.registerSlideEvent(this.userInterface.getPitchSlider());
 		this.registerButtonEvent(this.userInterface.getAddButton());
 		this.registerButtonEvent(this.userInterface.getRemoveButton());
 		this.registerButtonEvent(this.userInterface.getCubeButton());
@@ -414,6 +419,12 @@ public class InterfaceActions {
 		this.registerButtonEvent(this.userInterface.getPentagonalButton());
 		this.registerButtonEvent(this.userInterface.getConfirmChangesButton());
 		this.registerButtonEvent(this.userInterface.getCreateButton());
+		this.registerButtonEvent(this.userInterface.getMoveButton());
+		this.registerButtonEvent(this.userInterface.getRotateButton());
+	}
+
+	public Component getSelectedComponent() {
+		return this.lastSelected;
 	}
 
 	private Color parseColor(String arg) {
