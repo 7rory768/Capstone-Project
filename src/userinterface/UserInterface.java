@@ -3,6 +3,7 @@ package userinterface;
 import managers.PrismManager;
 import prisms.Prism;
 import shapes.Shape;
+import tester.Tester;
 import util.Matrix3;
 import util.Vertex;
 
@@ -41,22 +42,24 @@ public class UserInterface {
 	private int pitchValue = 0, headingValue = 180;
 	
 
-	public UserInterface(PrismManager prismManager) {
-		this.prismManager = prismManager;
-		this.interfaceActions = new InterfaceActions(this, this.prismManager);
-		this.keyboardListener = new KeyboardListener();
+	public UserInterface() {
+		this.prismManager = Tester.getPrismManager();
+        this.interfaceActions = new InterfaceActions(this);
+		this.keyboardListener = Tester.getKeyboardListener();
 	}
 
 	public void setupInterface() {
-		this.setupButtons();
+		this.setupComponents();
 		this.setupPanels();
-		this.addButtons();
-		this.interfaceActions.registerEvents();
-		this.frame.pack();
-		this.frame.setVisible(true);
+		this.addComponents();
+        this.frame.pack();
+        this.frame.setVisible(true);
 	}
 
-	private void setupButtons() {
+	public void showFrame() {
+	}
+
+	private void setupComponents() {
 		this.addButton = new JButton("Add Prism");
 		this.removeButton = new JButton("Remove Prism");
 		this.selectPrismLabel = new JTextArea("Select a prism type below");
@@ -92,7 +95,7 @@ public class UserInterface {
 		this.yCordLabel = new JTextArea("Y: " + (int) this.gridOrigin.getY());
 
 		this.moveButton = new JButton();
-		this.moveButton.setPreferredSize(new Dimension(36, 36));
+		this.moveButton.setPreferredSize(new Dimension(35, 35));
 
 		try {
 			//File moveIconFile = new File("images" + File.separator + "movebutton.png");
@@ -110,7 +113,7 @@ public class UserInterface {
 		}
 
 		this.rotateButton = new JButton();
-		this.rotateButton.setPreferredSize(new Dimension(36, 36));
+		this.rotateButton.setPreferredSize(new Dimension(35, 35));
 
 		try {
             //File rotateIconFile = new File("images" + File.separator + "rotatebutton.png");
@@ -128,7 +131,7 @@ public class UserInterface {
 		}
 		
 		this.resizeButton = new JButton();
-		this.resizeButton.setPreferredSize(new Dimension(36, 36));
+		this.resizeButton.setPreferredSize(new Dimension(35, 35));
 
 		try {
 			//File resizeIconFile = new File("images" + File.separator + "resizebutton.png");
@@ -205,7 +208,7 @@ public class UserInterface {
 		this.confirmChangesButton.setFocusable(false);
 	}
 
-	private void addButtons() {
+	private void addComponents() {
 
 		paintPanel.setLayout(new GridBagLayout());
 		//paintPanel.setMinimumSize(new Dimension((int) (3 * WIDTH / 5.0), Integer.MAX_VALUE));
@@ -443,7 +446,6 @@ public class UserInterface {
 			private static final long serialVersionUID = 1L;
 
 			public void paintComponent(Graphics g) {
-				//System.out.println(num++ + " REPAINT");
 
 				Graphics2D g2 = (Graphics2D) g;
 				g2.setColor(Color.WHITE);
@@ -453,14 +455,14 @@ public class UserInterface {
 				this.paintPrisms(g2);
 				g2.setColor(Color.BLACK);
 				
-				Path2D path = new Path2D.Double();
-				path.moveTo(UserInterface.WIDTH/2 - 1, 0);
-				path.lineTo(UserInterface.WIDTH/2 - 1, UserInterface.HEIGHT);
-				g2.draw(path);
-				
+//				Path2D path = new Path2D.Double();
+//				path.moveTo(UserInterface.WIDTH/2 - 1, 0);
+//				path.lineTo(UserInterface.WIDTH/2 - 1, UserInterface.HEIGHT);
+//				g2.draw(path);
 			}
 
 			public void paintPrisms(Graphics2D g2) {
+                System.out.println(" REPAINT " + num++);
 
 				java.util.List<Path2D> paths = new ArrayList<Path2D>();
 				Prism selectedPrism = prismManager.getSelectedPrism();
@@ -469,6 +471,7 @@ public class UserInterface {
 				double yGridOrigin = gridOrigin.getY();
 
 				for (Prism prism : prismManager.getPrisms()) {
+				    System.out.println("prismType: " + prism.getType().name());
 
 					BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 					Matrix3 transform = getTransform(prism);
@@ -483,6 +486,7 @@ public class UserInterface {
 
 					java.util.List<Shape> shapes = prism.getShapes();
 					for (int a = 0; a < shapes.size(); a++) {
+					    System.out.println("shape " + a);
 						Shape shape = shapes.get(a);
 
 						Path2D path = new Path2D.Double();
@@ -500,6 +504,7 @@ public class UserInterface {
 							maxY = (int) firstVertex.getY();
 
 							for (int i = 0; i < shape.getVertices().size(); i++) {
+                                System.out.println("vertex " + i);
 								Vertex vertex = transform.transform(vertices.get(i));
 								vertex.setX(vertex.getX() + xOrigin + xGridOrigin);
 								vertex.setY(vertex.getY() + yOrigin + yGridOrigin);
@@ -516,10 +521,10 @@ public class UserInterface {
 							path.closePath();
 							paths.add(path);
 
-							minX = (int) Math.max(0, minX);
-							maxX = (int) Math.min(UserInterface.WIDTH / 2 - 3, maxX);
-							minY = (int) Math.max(0, minY);
-							maxY = (int) Math.min(UserInterface.HEIGHT, maxY);
+							minX = Math.max(0, minX);
+							maxX = Math.min(UserInterface.WIDTH / 2 - 3, maxX);
+							minY = Math.max(0, minY);
+							maxY = Math.min(UserInterface.HEIGHT, maxY);
 
 							for (int y = minY; y <= maxY; y++) {
 								for (int x = minX; x <= maxX; x++) {
@@ -536,9 +541,10 @@ public class UserInterface {
 						}
 					}
 
-					g2.drawImage(img, 0, 0, null);
+					g2.drawImage(img, 0, 0, this);
 
 					for (Path2D path : paths) {
+					    System.out.println("path draw");
 						if (prism.getColor().equals(Color.BLACK)) {
 							g2.setColor(Color.GRAY);
 						}
@@ -547,100 +553,8 @@ public class UserInterface {
 							g2.setColor(Color.BLACK);
 						}
 					}
-					paths.clear();
 
-					/*
-					 * if (prism.getType() == PrismType.EQUILATERAL) {
-					 * Equilateral equilateral = (Equilateral) prism;
-					 * 
-					 * BufferedImage img = new BufferedImage(getWidth(),
-					 * getHeight(), BufferedImage.TYPE_INT_ARGB);
-					 * 
-					 * for (Shape shape : equilateral.getShapes()) { Triangle t
-					 * = (Triangle) shape;
-					 * 
-					 * Vertex v1 = transform.transform(t.getVertex1()); Vertex
-					 * v2 = transform.transform(t.getVertex2()); Vertex v3 =
-					 * transform.transform(t.getVertex3());
-					 * 
-					 * v1.setX(v1.getX() + xOrigin); v1.setY(v1.getY() +
-					 * yOrigin); v2.setX(v2.getX() + xOrigin); v2.setY(v2.getY()
-					 * + yOrigin); v3.setX(v3.getX() + xOrigin);
-					 * v3.setY(v3.getY() + yOrigin);
-					 * 
-					 * Vertex ab = new Vertex(v2.getX() - v1.getX(), v2.getY() -
-					 * v1.getY(), v2.getZ() - v1.getZ()); Vertex ac = new
-					 * Vertex(v3.getX() - v1.getX(), v3.getY() - v1.getY(),
-					 * v3.getZ() - v1.getZ()); Vertex norm = new
-					 * Vertex(ab.getY() * ac.getZ() - ab.getZ() * ac.getY(),
-					 * ab.getZ() * ac.getX() - ab.getX() * ac.getZ(), ab.getX()
-					 * * ac.getY() - ab.getY() * ac.getX());
-					 * 
-					 * double normalLength = Math.sqrt(norm.getX() * norm.getX()
-					 * + norm.getY() + norm.getZ() * norm.getZ());
-					 * norm.setX(norm.getX() / normalLength);
-					 * norm.setY(norm.getY() / normalLength);
-					 * norm.setZ(norm.getZ() / normalLength);
-					 * 
-					 * double angleCos = Math.abs(norm.getZ());
-					 * 
-					 * Path2D path = new Path2D.Double(); path.moveTo(v1.getX(),
-					 * v1.getY()); path.lineTo(v2.getX(), v2.getY());
-					 * path.lineTo(v3.getX(), v3.getY()); path.closePath();
-					 * paths.add(path);
-					 * 
-					 * // compute rectangular bounds for triangle int minX =
-					 * (int) Math.max(0, Math.ceil(Math.min(v1.getX(),
-					 * Math.min(v2.getX(), v3.getX())))); int maxX = (int)
-					 * Math.min(img.getWidth() - 1,
-					 * Math.floor(Math.max(v1.getX(), Math.max(v2.getX(),
-					 * v3.getX())))); int minY = (int) Math.max(0,
-					 * Math.ceil(Math.min(v1.getY(), Math.min(v2.getY(),
-					 * v3.getY())))); int maxY = (int) Math.min(img.getHeight()
-					 * - 1, Math.floor(Math.max(v1.getY(), Math.max(v2.getY(),
-					 * v3.getY()))));
-					 * 
-					 * for (int y = minY; y <= maxY; y++) { for (int x = minX; x
-					 * <= maxX; x++) { if (path.contains(x, y)) { img.setRGB(x,
-					 * y, prism.getColor().getRGB()); } } }
-					 * 
-					 * double triangleArea = (v1.getY() - v3.getY()) *
-					 * (v2.getX() - v3.getX()) + (v2.getY() - v3.getY()) *
-					 * (v3.getX() - v1.getX()); for (int y = minY; y <= maxY;
-					 * y++) { for (int x = minX; x <= maxX; x++) { double b1 =
-					 * ((y - v3.getY()) * (v2.getX() - v3.getX()) + (v2.getY() -
-					 * v3.getY()) * (v3.getX() - x)) / triangleArea; double b2 =
-					 * ((y - v1.getY()) * (v3.getX() - v1.getX()) + (v3.getY() -
-					 * v1.getY()) * (v1.getX() - x)) / triangleArea; double b3 =
-					 * ((y - v2.getY()) * (v1.getX() - v2.getX()) + (v1.getY() -
-					 * v2.getY()) * (v2.getX() - x)) / triangleArea;
-					 * 
-					 * if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 && b3 >= 0
-					 * && b3 <= 1) { double depth = b1 + v1.getZ() + b2 *
-					 * v2.getZ() + b3 * v3.getZ(); int zIndex = y *
-					 * img.getWidth() + x; if (zBuffer[zIndex] < depth) {
-					 * //img.setRGB(x, y, getShade(t.getColor(),
-					 * angleCos).getRGB()); zBuffer[zIndex] = depth; } } } }
-					 * 
-					 * \* for (int y = minY; y <= maxY; y++) { for (int x =
-					 * minX; x <= maxX; x++) { double b1 = ((y - v3.getY())
-					 * (v2.getX() - v3.getX()) + (v2.getY() - v3 .getY()) *
-					 * (v3.getX() - x)) / triangleArea; double b2 = ((y -
-					 * v1.getY()) (v3.getX() - v1.getX()) + (v3.getY() - v1
-					 * .getY()) * (v1.getX() - x)) / triangleArea; double b3 =
-					 * ((y - v2.getY()) (v1.getX() - v2.getX()) + (v1.getY() -
-					 * v2 .getY()) * (v2.getX() - x)) / triangleArea;
-					 * 
-					 * if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 && b3 >= 0
-					 * && b3 <= 1) { double depth = b1 + v1.getZ() + b2 *
-					 * v2.getZ() + b3 * v3.getZ(); int zIndex = y *
-					 * img.getWidth() + x; if (zBuffer[zIndex] < depth) {
-					 * img.setRGB(x, y, getShade(t.getColor(), angleCos)
-					 * .getRGB()); zBuffer[zIndex] = depth; } } } }
-					 *//*
-						 * 
-						 * g2.drawImage(img, 0, 0, null); } }
-						 */
+					paths.clear();
 
 				}
 			}
@@ -659,20 +573,7 @@ public class UserInterface {
 		UserInterface.paintPanel.addMouseWheelListener(new ScrollListener(this, this.interfaceActions, this.keyboardListener, this.prismManager));
 		this.frame.addKeyListener(this.keyboardListener);
 		this.frame.setFocusable(true);
-
 	}
-
-	/*
-	 * private static Color getShade(Color color, double shade) { double
-	 * redLinear = Math.pow(color.getRed(), 2.4) * shade; double greenLinear =
-	 * Math.pow(color.getGreen(), 2.4) * shade; double blueLinear =
-	 * Math.pow(color.getBlue(), 2.4) * shade;
-	 * 
-	 * int red = (int) Math.pow(redLinear, 1 / 2.4); int green = (int)
-	 * Math.pow(greenLinear, 1 / 2.4); if (green > 255) { green = 255; } int
-	 * blue = (int) Math.pow(blueLinear, 1 / 2.4); return new Color(red, green,
-	 * blue); }
-	 */
 
 	public JButton getAddButton() {
 		return this.addButton;
@@ -841,10 +742,6 @@ public class UserInterface {
     public ImageIcon getSelectedResizeIcon() {
         return this.selectedResizeIcon;
     }
-
-	public JPanel getPaintPanel() {
-		return paintPanel;
-	}
 	
 	public int getPitchValue() {
 		return this.pitchValue;
@@ -882,4 +779,8 @@ public class UserInterface {
 
 		return headingTransform.multiply(pitchTransform);
 	}
+
+	public InterfaceActions getInterfaceActions() {
+	    return this.interfaceActions;
+    }
 }

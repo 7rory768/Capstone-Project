@@ -5,6 +5,7 @@ import prisms.Cube;
 import prisms.Equilateral;
 import prisms.Pentagonal;
 import prisms.Prism;
+import tester.Tester;
 import util.PrismType;
 import util.Vertex;
 
@@ -20,14 +21,20 @@ public class InterfaceActions {
 
     private Component lastSelected;
 
-    public InterfaceActions(UserInterface userInterface, PrismManager prismManager) {
+    public InterfaceActions(UserInterface userInterface) {
         this.userInterface = userInterface;
-        this.prismManager = prismManager;
+        this.prismManager = Tester.getPrismManager();
     }
 
     private void registerButtonEvent(final JButton button) {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+
+                if (button.equals(Tester.getInstructionFrame().getContinueButton())) {
+                    Tester.getInstructionFrame().setVisible(false);
+                    userInterface.showFrame();
+                }
+
                 JButton component = button;
 
                 Prism selectedPrism = prismManager.getSelectedPrism();
@@ -424,6 +431,7 @@ public class InterfaceActions {
         this.registerButtonEvent(this.userInterface.getMoveButton());
         this.registerButtonEvent(this.userInterface.getRotateButton());
         this.registerButtonEvent(this.userInterface.getResizeButton());
+        this.registerButtonEvent(Tester.getInstructionFrame().getContinueButton());
     }
 
     public Component getSelectedComponent() {

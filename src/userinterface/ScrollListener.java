@@ -36,8 +36,18 @@ public class ScrollListener implements MouseWheelListener {
 
         if (scrollAmount != 0) {
             if (this.keyboardListener.holdingCtrl()) {
-                if (selectedComponent.equals(this.userInterface.getMoveButton())) {
-                    // TODO: make a resize factor okay boiiiiiiiiiiiiiiiiiiiiiii
+                for (Prism prism : this.prismManager.getPrisms()) {
+                    if (prism.getType() == PrismType.CUBE) {
+                        Cube cube = (Cube) prism;
+                        cube.setLength(cube.getLength() + scrollAmount);
+                    } else if (prism.getType() == PrismType.EQUILATERAL) {
+                        Equilateral equilateral = (Equilateral) prism;
+                        equilateral.setLength(equilateral.getLength() + scrollAmount);
+                    } else if (prism.getType() == PrismType.PENTAGONAL) {
+                        Pentagonal pentagonal = (Pentagonal) prism;
+                        pentagonal.setHeight(pentagonal.getHeight() + scrollAmount);
+                        pentagonal.setRadius(pentagonal.getRadius() + scrollAmount);
+                    }
                 }
             } else if (selectedPrism != null && selectedComponent != null) {
                 if (selectedComponent.equals(this.userInterface.getResizeButton())) {
@@ -71,10 +81,10 @@ public class ScrollListener implements MouseWheelListener {
                     if (selectedPrism.getType() == PrismType.CUBE) {
                         Cube cube = (Cube) selectedPrism;
                         cube.setRealLength(cube.getRealLength());
-                    } else  if (selectedPrism.getType() == PrismType.EQUILATERAL) {
+                    } else if (selectedPrism.getType() == PrismType.EQUILATERAL) {
                         Equilateral equilateral = (Equilateral) selectedPrism;
                         equilateral.setRealLength(equilateral.getRealLength());
-                    } else  if (selectedPrism.getType() == PrismType.PENTAGONAL) {
+                    } else if (selectedPrism.getType() == PrismType.PENTAGONAL) {
                         Pentagonal pentagonal = (Pentagonal) selectedPrism;
                         pentagonal.setRealRadius(pentagonal.getRealRadius());
                         pentagonal.setRealHeight(pentagonal.getRealHeight());
