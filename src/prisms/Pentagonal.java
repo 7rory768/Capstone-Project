@@ -9,13 +9,15 @@ import java.awt.*;
 
 public class Pentagonal extends Prism {
 
-	private int radius, height;
+	private int radius, height, realRadius, realHeight;
 	private double sideLength;
 
 	public Pentagonal(Vertex origin, int radius, int height, Color color) {
 		super(PrismType.PENTAGONAL, origin, color);
 		this.radius = radius;
 		this.height = height;
+		this.realRadius = radius;
+		this.realHeight = height;
 		this.createShapes();
 	}
 
@@ -35,6 +37,26 @@ public class Pentagonal extends Prism {
 	public void setHeight(int height) {
 		this.height = height;
 		createShapes();
+	}
+
+	public int getRealRadius() {
+		return this.realRadius;
+	}
+
+	public void setRealRadius(int realRadius) {
+		this.realRadius = realRadius;
+		this.setRadius(realRadius + this.getZDisplacement());
+		this.createShapes();
+	}
+
+	public int getRealHeight() {
+		return this.realHeight;
+	}
+
+	public void setRealHeight(int realHeight) {
+		this.realHeight = realHeight;
+		this.setHeight(realHeight + this.getZDisplacement());
+		this.createShapes();
 	}
 
 	// 108 angle between each vertex

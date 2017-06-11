@@ -8,11 +8,12 @@ import java.awt.*;
 
 public class Cube extends Prism {
 	
-	private int length;
+	private int length, realLength;
 
 	public Cube(Vertex origin, int length, Color color) {
 		super (PrismType.CUBE, origin, color);
 		this.length = length;
+		this.realLength = length;
 		this.createShapes();
 
 	}
@@ -25,20 +26,27 @@ public class Cube extends Prism {
 		this.length = length;
 		this.createShapes();
 	}
+
+    public int getRealLength() {
+        return this.realLength;
+    }
+
+	public void setRealLength(int realLength) {
+        this.realLength = realLength;
+        this.setLength(realLength + this.getZDisplacement());
+        this.createShapes();
+	}
 	
 	public void createShapes() {
 		super.clearShapes();
 		int biggerHalf = (int) Math.ceil((double) this.length / 2.0);
 		int smallHalf = (int) Math.ceil((double) this.length / 2.0);
-		int middleX = 0;
-		int middleY = 0;
-		int middleZ = 0;
-		int largeXCord = middleX + biggerHalf;
-		int largeYCord = middleY + biggerHalf;
-		int largeZCord = middleZ + biggerHalf;
-		int smallXCord = middleX - smallHalf;
-		int smallYCord = middleY - smallHalf;
-		int smallZCord = middleZ - smallHalf;
+		int largeXCord = biggerHalf;
+		int largeYCord = biggerHalf;
+		int largeZCord = biggerHalf;
+		int smallXCord = smallHalf;
+		int smallYCord = smallHalf;
+		int smallZCord = smallHalf;
 
 		Vertex v1 = new Vertex(largeXCord, largeYCord, largeZCord);
 		Vertex v2 = new Vertex(smallXCord, largeYCord, largeZCord);

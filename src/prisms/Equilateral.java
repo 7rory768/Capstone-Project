@@ -8,20 +8,31 @@ import java.awt.*;
 
 public class Equilateral extends Prism {
 
-	private int length;
+	private int length, realLength;
 	
 	public Equilateral(Vertex origin, int length, Color color) {
 		super(PrismType.EQUILATERAL, origin, color);
 		this.length = length;
+		this.realLength = length;
 		this.createShapes();
 	}
-	
+
 	public int getLength() {
 		return this.length;
 	}
 	
 	public void setLength(int length) {
 		this.length = length;
+		this.createShapes();
+	}
+
+	public int getRealLength() {
+		return this.realLength;
+	}
+
+	public void setRealLength(int realLength) {
+		this.realLength = realLength;
+		this.setLength(realLength + this.getZDisplacement());
 		this.createShapes();
 	}
 	

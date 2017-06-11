@@ -29,7 +29,7 @@ public class UserInterface {
 	private JFrame frame;
 	private JPanel buttonPanel;
 	private JButton addButton, removeButton, cubeButton, equilateralButton, pentagonalButton, createButton, confirmChangesButton;
-	private JButton moveButton, rotateButton;
+	private JButton moveButton, rotateButton, resizeButton;
 	private JTextArea selectPrismLabel, colorLabel, originLabel, xLabel, yLabel, lengthLabel, radiusLabel, heightLabel;
 	private JTextArea noColorLabel, noOriginLabel, noLengthLabel, noRadiusLabel, noHeightLabel;
 	private JTextArea invalidOriginLabel, invalidLengthLabel, invalidRadiusLabel, invalidHeightLabel;
@@ -37,7 +37,7 @@ public class UserInterface {
 	private TextField lengthField, xOriginField, yOriginField, radiusField, heightField;
 	private List colorList;
 	private Vertex gridOrigin = new Vertex(0, 0, 0);
-	private ImageIcon moveIcon, rotateIcon, selectedMoveIcon, selectedRotateIcon;
+	private ImageIcon moveIcon, rotateIcon, selectedMoveIcon, selectedRotateIcon, resizeIcon, selectedResizeIcon;
 	private int pitchValue = 0, headingValue = 180;
 	
 
@@ -95,12 +95,14 @@ public class UserInterface {
 		this.moveButton.setPreferredSize(new Dimension(36, 36));
 
 		try {
-			File moveIconFile = new File("images" + File.separator + "movebutton.png");
+			//File moveIconFile = new File("images" + File.separator + "movebutton.png");
+            File moveIconFile = new File("Capstone-Project" + File.separator + "images" + File.separator + "movebutton.png");
 			Image img = ImageIO.read(moveIconFile);
 			this.moveIcon = new ImageIcon(img);
 			this.moveButton.setIcon(this.moveIcon);
 
-			File selectedMoveIconFile = new File("images" + File.separator + "selectedmovebutton.png");
+			//File selectedMoveIconFile = new File("images" + File.separator + "selectedmovebutton.png");
+            File selectedMoveIconFile = new File("Capstone-Project" + File.separator + "images" + File.separator + "selectedmovebutton.png");
 			Image selectedImg = ImageIO.read(selectedMoveIconFile);
 			this.selectedMoveIcon = new ImageIcon(selectedImg);
 		} catch (Exception ex) {
@@ -111,18 +113,38 @@ public class UserInterface {
 		this.rotateButton.setPreferredSize(new Dimension(36, 36));
 
 		try {
-			File rotateIconFile = new File("images" + File.separator + "rotatebutton.png");
+            //File rotateIconFile = new File("images" + File.separator + "rotatebutton.png");
+            File rotateIconFile = new File("Capstone-Project" + File.separator + "images" + File.separator + "rotatebutton.png");
 			Image img = ImageIO.read(rotateIconFile);
 			this.rotateIcon = new ImageIcon(img);
 			this.rotateButton.setIcon(this.rotateIcon);
 
-			File selectedRotateIconFile = new File("images" + File.separator + "selectedrotatebutton.png");
+           // File selectedRotateIconFile = new File("images" + File.separator + "selectedrotatebutton.png");
+			File selectedRotateIconFile = new File("Capstone-Project" + File.separator + "images" + File.separator + "selectedrotatebutton.png");
 			Image selectedImg = ImageIO.read(selectedRotateIconFile);
 			this.selectedRotateIcon = new ImageIcon(selectedImg);
 		} catch (Exception ex) {
 			System.out.println(ex);
 		}
+		
+		this.resizeButton = new JButton();
+		this.resizeButton.setPreferredSize(new Dimension(36, 36));
 
+		try {
+			//File resizeIconFile = new File("images" + File.separator + "resizebutton.png");
+            File resizeIconFile = new File("Capstone-Project" + File.separator + "images" + File.separator + "resizebutton.png");
+			Image img = ImageIO.read(resizeIconFile);
+			this.resizeIcon = new ImageIcon(img);
+			this.resizeButton.setIcon(this.resizeIcon);
+
+            //File selectedResizeIconFile = new File("images" + File.separator + "selectedresizebutton.png");
+			File selectedResizeIconFile = new File("Capstone-Project" + File.separator + "images" + File.separator + "selectedresizebutton.png");
+			Image selectedImg = ImageIO.read(selectedResizeIconFile);
+			this.selectedResizeIcon = new ImageIcon(selectedImg);
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
 		this.noColorLabel = new JTextArea("Error: Missing parameter, please provide a color");
 		this.noOriginLabel = new JTextArea("Error: Missing parameter, please provide both coordinates");
 		this.noLengthLabel = new JTextArea("Error: Missing parameter, please provide a length");
@@ -214,6 +236,10 @@ public class UserInterface {
 		constraints.insets = new Insets((int) (-7.15 * HEIGHT / 8.0), 0, 0, -UserInterface.WIDTH / 2 + 145);
 		UserInterface.paintPanel.add(this.rotateButton, constraints);
 
+        // resize button
+        constraints.insets = new Insets((int) (-7.15 * HEIGHT / 8.0), 0, 0, -UserInterface.WIDTH / 2 + 225);
+        UserInterface.paintPanel.add(this.resizeButton, constraints);
+
 		// BUTTON PANEL
 
 		constraints = new GridBagConstraints();
@@ -279,7 +305,7 @@ public class UserInterface {
 		this.originLabel.setVisible(false);
 
 		// x label
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -400, 0, 0 + centerFix);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -425, 0, 0 + centerFix);
 		this.buttonPanel.add(this.xLabel, constraints);
 		this.xLabel.setVisible(false);
 
@@ -295,12 +321,12 @@ public class UserInterface {
 		this.invalidOriginLabel.setVisible(false);
 
 		// x origin field
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -325, 0, 0 + centerFix);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -335, 0, 0 + centerFix);
 		this.buttonPanel.add(this.xOriginField, constraints);
 		this.xOriginField.setVisible(false);
 
 		// y label
-		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -220, 0, 0 + centerFix);
+		constraints.insets = new Insets((int) (-3 * HEIGHT / 8.0) + spacing, -245, 0, 0 + centerFix);
 		this.buttonPanel.add(this.yLabel, constraints);
 		this.yLabel.setVisible(false);
 
@@ -359,7 +385,7 @@ public class UserInterface {
 		constraints.gridx = 1;
 
 		// height label
-		constraints.insets = new Insets(-spacing + 80, -800, 0, 0 + centerFix);
+		constraints.insets = new Insets(-spacing + 70, -800, 0, 0 + centerFix);
 		constraints.fill = GridBagConstraints.NONE;
 		this.buttonPanel.add(this.heightLabel, constraints);
 		this.heightLabel.setVisible(false);
@@ -367,7 +393,7 @@ public class UserInterface {
 		constraints.gridx = 2;
 
 		// no height label
-		constraints.insets = new Insets(-spacing + 30, -200, 0, 0 + centerFix);
+		constraints.insets = new Insets(-spacing + 25, -200, 0, 0 + centerFix);
 		this.buttonPanel.add(this.noHeightLabel, constraints);
 		this.noHeightLabel.setVisible(false);
 
@@ -376,7 +402,7 @@ public class UserInterface {
 		this.invalidHeightLabel.setVisible(false);
 
 		// height field
-		constraints.insets = new Insets(-spacing + 80, -200, 0, 0 + centerFix);
+		constraints.insets = new Insets(-spacing + 70, -200, 0, 0 + centerFix);
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		this.buttonPanel.add(this.heightField, constraints);
 		this.heightField.setVisible(false);
@@ -630,22 +656,10 @@ public class UserInterface {
 		}
 
 		UserInterface.paintPanel.addMouseListener(new PrismMouseListener(this, this.prismManager, this.interfaceActions, this.keyboardListener));
+		UserInterface.paintPanel.addMouseWheelListener(new ScrollListener(this, this.interfaceActions, this.keyboardListener, this.prismManager));
 		this.frame.addKeyListener(this.keyboardListener);
 		this.frame.setFocusable(true);
 
-	}
-
-	static void decorate(JTextArea a, final BufferedImage img) {
-		a.setUI(new javax.swing.plaf.basic.BasicTextAreaUI() {
-			@Override
-			protected void paintBackground(Graphics g) {
-				g.drawImage(img, 0, 0, null);
-			}
-		});
-
-		a.setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
-		a.setForeground(Color.white);
-		a.setCaretColor(Color.lightGray);
 	}
 
 	/*
@@ -799,22 +813,34 @@ public class UserInterface {
 	public JButton getRotateButton() {
 		return this.rotateButton;
 	}
+
+    public JButton getResizeButton() {
+        return this.resizeButton;
+    }
 	
 	public ImageIcon getMoveIcon() {
 		return this.moveIcon;
 	}
 	
-	public ImageIcon getSelectedMoveIcon() {
-		return this.selectedMoveIcon;
-	}
-	
 	public ImageIcon getRotateIcon() {
 		return this.rotateIcon;
 	}
+
+    public ImageIcon getResizeIcon() {
+        return this.resizeIcon;
+    }
+
+    public ImageIcon getSelectedMoveIcon() {
+        return this.selectedMoveIcon;
+    }
 	
 	public ImageIcon getSelectedRotateIcon() {
 		return this.selectedRotateIcon;
 	}
+
+    public ImageIcon getSelectedResizeIcon() {
+        return this.selectedResizeIcon;
+    }
 
 	public JPanel getPaintPanel() {
 		return paintPanel;
