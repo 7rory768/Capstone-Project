@@ -10,7 +10,6 @@ public class KeyboardListener implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		this.holdingCtrl = e.isControlDown();
-		System.out.println("key press");
 	}
 
 	@Override

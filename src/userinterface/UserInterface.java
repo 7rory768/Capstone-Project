@@ -25,7 +25,6 @@ public class UserInterface {
 	private static JPanel paintPanel;
 	private final static int WIDTH = 1500;
 	private final static int HEIGHT = 900;
-	int num = 1;
 
 	private JFrame frame;
 	private JPanel buttonPanel;
@@ -212,7 +211,6 @@ public class UserInterface {
 	private void addComponents() {
 
 		paintPanel.setLayout(new GridBagLayout());
-		//paintPanel.setMinimumSize(new Dimension((int) (3 * WIDTH / 5.0), Integer.MAX_VALUE));
 
 		this.buttonPanel.setLayout(new GridBagLayout());
 
@@ -454,16 +452,15 @@ public class UserInterface {
 				g2.setColor(Color.BLACK);
 
 				this.paintPrisms(g2);
+
 				g2.setColor(Color.BLACK);
-				
-//				Path2D path = new Path2D.Double();
-//				path.moveTo(UserInterface.WIDTH/2 - 1, 0);
-//				path.lineTo(UserInterface.WIDTH/2 - 1, UserInterface.HEIGHT);
-//				g2.draw(path);
+				Path2D path = new Path2D.Double();
+				path.moveTo(UserInterface.WIDTH/2 - 5, 0);
+				path.lineTo(UserInterface.WIDTH/2 - 5, UserInterface.HEIGHT);
+				g2.draw(path);
 			}
 
 			public void paintPrisms(Graphics2D g2) {
-
 				java.util.List<Path2D> paths = new ArrayList<Path2D>();
 				Prism selectedPrism = prismManager.getSelectedPrism();
 
