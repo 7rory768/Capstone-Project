@@ -45,9 +45,9 @@ public class Equilateral extends Prism {
             int largeXCord = biggerHalf;
             int largeYCord = biggerHalf;
             int largeZCord = biggerHalf;
-            int smallXCord = smallHalf;
-            int smallYCord = smallHalf;
-            int smallZCord = smallHalf;
+            int smallXCord = -smallHalf;
+            int smallYCord = -smallHalf;
+            int smallZCord = -smallHalf;
 
             Vertex v1, v2, v3;
 

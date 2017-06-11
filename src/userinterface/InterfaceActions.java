@@ -33,6 +33,7 @@ public class InterfaceActions {
                 if (button.equals(Tester.getInstructionFrame().getContinueButton())) {
                     Tester.getInstructionFrame().setVisible(false);
                     userInterface.showFrame();
+                    return;
                 }
 
                 JButton component = button;

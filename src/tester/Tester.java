@@ -20,8 +20,7 @@ public class Tester {
         Tester.userInterface.setupInterface();
         Tester.instructionFrame.setup();
         Tester.interfaceActions.registerEvents();
-        userInterface.showFrame();
-	    //Tester.instructionFrame.setVisible(true);
+	    Tester.instructionFrame.setVisible(true);
 	}
 	
 	public static void main(String[] args) {
@@ -35,14 +34,6 @@ public class Tester {
 	public static KeyboardListener getKeyboardListener() {
 		return Tester.keyboardListener;
 	}
-
-    public static InterfaceActions getInterfaceActions() {
-        return interfaceActions;
-    }
-
-    public static UserInterface getUserInterface() {
-        return userInterface;
-    }
 
     public static InstructionFrame getInstructionFrame() {
 	    return Tester.instructionFrame;

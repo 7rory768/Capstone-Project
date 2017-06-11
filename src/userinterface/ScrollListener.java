@@ -36,6 +36,7 @@ public class ScrollListener implements MouseWheelListener {
 
         if (scrollAmount != 0) {
             if (this.keyboardListener.holdingCtrl()) {
+                scrollAmount *= -1;
                 for (Prism prism : this.prismManager.getPrisms()) {
                     if (prism.getType() == PrismType.CUBE) {
                         Cube cube = (Cube) prism;
@@ -49,6 +50,7 @@ public class ScrollListener implements MouseWheelListener {
                         pentagonal.setRadius(pentagonal.getRadius() + scrollAmount);
                     }
                 }
+                UserInterface.repaint();
             } else if (selectedPrism != null && selectedComponent != null) {
                 if (selectedComponent.equals(this.userInterface.getResizeButton())) {
                     if (selectedPrism.getType() == PrismType.CUBE) {

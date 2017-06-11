@@ -49,142 +49,110 @@ public class PrismMouseListener implements MouseListener {
                     int yChange = mousePoint.y - oldScreenY;
 
                     Component selectedComponent = interfaceActions.getSelectedComponent();
-                    if (selectedComponent != null && (xChange != 0 || yChange != 0)) {
-                        if (selectedComponent.equals(userInterface.getMoveButton())) {
-                            if (keyboardListener.holdingCtrl()) {
-                                System.out.println();
+                    if ((xChange != 0 || yChange != 0)) {
+                        if (selectedComponent == null && keyboardListener.holdingCtrl()) {
+                            System.out.println();
+                            oldScreenX = mousePoint.x;
+                            oldScreenY = mousePoint.y;
+
+                            Vertex gridOrigin = userInterface.getGridOrigin();
+
+                            gridOrigin.setX(gridOrigin.getX() + xChange);
+                            gridOrigin.setY(gridOrigin.getY() + yChange);
+
+                            userInterface.getXCordLabel().setText("X: " + (int) gridOrigin.getX());
+                            userInterface.getYCordLabel().setText("Y: " + (int) gridOrigin.getY());
+                            UserInterface.repaint();
+                        } else if (selectedComponent != null) {
+                            if (selectedComponent.equals(userInterface.getMoveButton())) {
+                                if (keyboardListener.holdingCtrl()) {
+                                    oldScreenX = mousePoint.x;
+                                    oldScreenY = mousePoint.y;
+
+                                    Vertex gridOrigin = userInterface.getGridOrigin();
+
+                                    gridOrigin.setX(gridOrigin.getX() + xChange);
+                                    gridOrigin.setY(gridOrigin.getY() + yChange);
+
+                                    userInterface.getXCordLabel().setText("X: " + (int) gridOrigin.getX());
+                                    userInterface.getYCordLabel().setText("Y: " + (int) gridOrigin.getY());
+                                } else if (selectedPrism != null) {
+                                    Vertex origin = selectedPrism.getOrigin();
+                                    if (xChange + origin.getX() < UserInterface.getWidth() / 2 && xChange + origin.getX() >= 0) {
+                                        oldScreenX = mousePoint.x;
+                                        origin.setX(origin.getX() + xChange);
+                                        userInterface.getXOriginField().setText(" " + (int) origin.getX());
+                                    }
+                                    if (yChange + origin.getY() < UserInterface.getHeight() && yChange + origin.getY() >= 0) {
+                                        oldScreenY = mousePoint.y;
+                                        origin.setY(origin.getY() + yChange);
+                                        userInterface.getYOriginField().setText(" " + (int) origin.getY());
+                                    }
+                                } else {
+                                    return;
+                                }
+                                UserInterface.repaint();
+                            } else if (selectedComponent.equals(userInterface.getRotateButton())) {
+                                oldScreenX = mousePoint.x;
+                                oldScreenY = mousePoint.y;
+
+                                if (keyboardListener.holdingCtrl()) {
+                                    userInterface.setHeadingValue(userInterface.getHeadingValue() + xChange);
+                                    userInterface.setPitchValue(userInterface.getPitchValue() + yChange);
+                                } else if (selectedPrism != null) {
+                                    selectedPrism.setHeadingValue(selectedPrism.getHeadingValue() + xChange);
+                                    selectedPrism.setPitchValue(selectedPrism.getPitchValue() + yChange);
+                                } else {
+                                    return;
+                                }
+
+                                UserInterface.repaint();
+                            } else if (selectedComponent.equals(userInterface.getResizeButton())) {
+                                oldScreenX = mousePoint.x;
+                                oldScreenY = mousePoint.y;
+
+                                if (selectedPrism != null) {
+                                    int averageChange = (xChange - yChange) / 2;
+                                    if (selectedPrism.getType() == PrismType.CUBE) {
+                                        Cube cube = (Cube) selectedPrism;
+                                        if (cube.getRealLength() + averageChange >= 10) {
+                                            cube.setRealLength(cube.getRealLength() + averageChange);
+                                            userInterface.getLengthField().setText("" + (cube.getRealLength() + averageChange));
+                                        }
+                                    } else if (selectedPrism.getType() == PrismType.EQUILATERAL) {
+                                        Equilateral equilateral = (Equilateral) selectedPrism;
+                                        if (equilateral.getRealLength() + averageChange >= 10) {
+                                            equilateral.setRealLength(equilateral.getRealLength() + averageChange);
+                                            userInterface.getLengthField().setText("" + (equilateral.getRealLength() + averageChange));
+                                        }
+                                    } else if (selectedPrism.getType() == PrismType.PENTAGONAL) {
+                                        Pentagonal pentagonal = (Pentagonal) selectedPrism;
+                                        if (pentagonal.getRealRadius() + averageChange >= 10) {
+                                            pentagonal.setRadius(pentagonal.getRealRadius() + averageChange);
+                                            userInterface.getRadiusField().setText("" + (pentagonal.getRealRadius() + averageChange));
+                                        }
+                                        if (pentagonal.getRealHeight() + averageChange >= 10) {
+                                            pentagonal.setRealHeight(pentagonal.getRealHeight() + averageChange);
+                                            userInterface.getHeightField().setText("" + (pentagonal.getRealHeight() + averageChange));
+                                        }
+                                    }
+
+                                    UserInterface.repaint();
+                                }
+
+                            } else if (keyboardListener.holdingCtrl()) {
                                 oldScreenX = mousePoint.x;
                                 oldScreenY = mousePoint.y;
 
                                 Vertex gridOrigin = userInterface.getGridOrigin();
 
-                                // int oldXPlaces = String.valueOf((int)
-                                // Math.abs(gridOrigin.getX())).length();
-                                // int oldYPlaces = String.valueOf((int)
-                                // Math.abs(gridOrigin.getY())).length();
                                 gridOrigin.setX(gridOrigin.getX() + xChange);
                                 gridOrigin.setY(gridOrigin.getY() + yChange);
-                                // int newXPlaces = String.valueOf((int)
-                                // Math.abs(gridOrigin.getX())).length();
-                                // int newYPlaces = String.valueOf((int)
-                                // Math.abs(gridOrigin.getY())).length();
 
                                 userInterface.getXCordLabel().setText("X: " + (int) gridOrigin.getX());
                                 userInterface.getYCordLabel().setText("Y: " + (int) gridOrigin.getY());
-
-								/*
-                                 * System.out.println("oldxPlaces: " +
-								 * oldXPlaces);
-								 * System.out.println("newXPlaces: " +
-								 * newXPlaces); System
-								 * .out.println("--------------------------------"
-								 * );
-								 * 
-								 * Insets xInsets =
-								 * userInterface.getXCordLabel().getInsets();
-								 * Insets yInsets =
-								 * userInterface.getYCordLabel().getInsets();
-								 * userInterface
-								 * .getPaintPanel().remove(userInterface
-								 * .getXCordLabel());
-								 * userInterface.getPaintPanel().remove
-								 * (userInterface.getYCordLabel());
-								 * 
-								 * // INSETS: TOP, LEFT, BOTTOM, RIGHT
-								 * GridBagConstraints constraints = new
-								 * GridBagConstraints();
-								 * 
-								 * constraints.fill =
-								 * GridBagConstraints.HORIZONTAL; if (oldXPlaces
-								 * > newXPlaces) { xInsets.set(xInsets.top,
-								 * xInsets.left + -50, xInsets.bottom,
-								 * xInsets.right); } else if (oldXPlaces <
-								 * newXPlaces) { yInsets.set(yInsets.top,
-								 * yInsets.left, yInsets.bottom, yInsets.right +
-								 * -50); }
-								 * 
-								 * constraints.insets = xInsets;
-								 * userInterface.getPaintPanel
-								 * ().add(userInterface.getXCordLabel(),
-								 * constraints);
-								 * 
-								 * if (oldYPlaces > newYPlaces) {
-								 * yInsets.set(yInsets.top, yInsets.left + -50,
-								 * yInsets.bottom, yInsets.right); } else if
-								 * (oldYPlaces < newYPlaces) {
-								 * yInsets.set(yInsets.top, yInsets.left,
-								 * yInsets.bottom, yInsets.right + -50); }
-								 * 
-								 * constraints.gridy = 1; constraints.insets =
-								 * yInsets;
-								 * userInterface.getPaintPanel().add(userInterface
-								 * .getYCordLabel(), constraints);
-								 */
-
-                            } else if (selectedPrism != null) {
-                                Vertex origin = selectedPrism.getOrigin();
-                                if (xChange + origin.getX() < UserInterface.getWidth() / 2 && xChange + origin.getX() >= 0) {
-                                    oldScreenX = mousePoint.x;
-                                    origin.setX(origin.getX() + xChange);
-                                    userInterface.getXOriginField().setText(" " + (int) origin.getX());
-                                }
-                                if (yChange + origin.getY() < UserInterface.getHeight() && yChange + origin.getY() >= 0) {
-                                    oldScreenY = mousePoint.y;
-                                    origin.setY(origin.getY() + yChange);
-                                    userInterface.getYOriginField().setText(" " + (int) origin.getY());
-                                }
-                            } else {
-                                return;
-                            }
-                            UserInterface.repaint();
-                        } else if (selectedComponent.equals(userInterface.getRotateButton())) {
-                            oldScreenX = mousePoint.x;
-                            oldScreenY = mousePoint.y;
-
-                            if (keyboardListener.holdingCtrl()) {
-                                userInterface.setHeadingValue(userInterface.getHeadingValue() + xChange);
-                                userInterface.setPitchValue(userInterface.getPitchValue() + yChange);
-                            } else if (selectedPrism != null) {
-                                selectedPrism.setHeadingValue(selectedPrism.getHeadingValue() + xChange);
-                                selectedPrism.setPitchValue(selectedPrism.getPitchValue() + yChange);
-                            } else {
-                                return;
-                            }
-
-                            UserInterface.repaint();
-                        } else if (selectedComponent.equals(userInterface.getResizeButton())) {
-                            oldScreenX = mousePoint.x;
-                            oldScreenY = mousePoint.y;
-
-                            if (selectedPrism != null) {
-                                int averageChange = (xChange - yChange) / 2;
-                                if (selectedPrism.getType() == PrismType.CUBE) {
-                                    Cube cube = (Cube) selectedPrism;
-                                    if (cube.getRealLength() + averageChange >= 10) {
-                                        cube.setRealLength(cube.getRealLength() + averageChange);
-                                        userInterface.getLengthField().setText("" + (cube.getRealLength() + averageChange));
-                                    }
-                                } else if (selectedPrism.getType() == PrismType.EQUILATERAL) {
-                                    Equilateral equilateral = (Equilateral) selectedPrism;
-                                    if (equilateral.getRealLength() + averageChange >= 10) {
-                                        equilateral.setRealLength(equilateral.getRealLength() + averageChange);
-                                        userInterface.getLengthField().setText("" + (equilateral.getRealLength() + averageChange));
-                                    }
-                                } else if (selectedPrism.getType() == PrismType.PENTAGONAL) {
-                                    Pentagonal pentagonal = (Pentagonal) selectedPrism;
-                                    if (pentagonal.getRealRadius() + averageChange >= 10) {
-                                        pentagonal.setRadius(pentagonal.getRealRadius() + averageChange);
-                                        userInterface.getRadiusField().setText("" + (pentagonal.getRealRadius() + averageChange));
-                                    }
-                                    if (pentagonal.getRealHeight() + averageChange >= 10) {
-                                        pentagonal.setRealHeight(pentagonal.getRealHeight() + averageChange);
-                                        userInterface.getHeightField().setText("" + (pentagonal.getRealHeight() + averageChange));
-                                    }
-                                }
-
                                 UserInterface.repaint();
                             }
-
                         }
                     }
                 }
@@ -208,7 +176,7 @@ public class PrismMouseListener implements MouseListener {
 
             if (!prisms.isEmpty()) {
                 prismloop:
-                for (int prismIndex = prisms.size() - 1; prismIndex >= 0; prismIndex--)   {
+                for (int prismIndex = prisms.size() - 1; prismIndex >= 0; prismIndex--) {
                     Prism prism = prisms.get(prismIndex);
                     Matrix3 transform = this.userInterface.getTransform(prism);
 

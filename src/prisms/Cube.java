@@ -39,18 +39,16 @@ public class Cube extends Prism {
 
     public void createShapes() {
         super.clearShapes();
-        System.out.println("create shapes");
 
         if (this.length > 1) {
-            System.out.println("length > 1");
             int biggerHalf = (int) Math.ceil((double) this.length / 2.0);
             int smallHalf = (int) Math.ceil((double) this.length / 2.0);
             int largeXCord = biggerHalf;
             int largeYCord = biggerHalf;
             int largeZCord = biggerHalf;
-            int smallXCord = smallHalf;
-            int smallYCord = smallHalf;
-            int smallZCord = smallHalf;
+            int smallXCord = -smallHalf;
+            int smallYCord = -smallHalf;
+            int smallZCord = -smallHalf;
 
             Vertex v1 = new Vertex(largeXCord, largeYCord, largeZCord);
             Vertex v2 = new Vertex(smallXCord, largeYCord, largeZCord);

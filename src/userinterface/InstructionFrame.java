@@ -32,6 +32,7 @@ public class InstructionFrame extends JFrame {
         this.addComponents();
 
         this.pack();
+        this.setFocusable(false);
     }
 
     public void createComponents() {

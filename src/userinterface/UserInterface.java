@@ -52,11 +52,11 @@ public class UserInterface {
 		this.setupComponents();
 		this.setupPanels();
 		this.addComponents();
-        this.frame.pack();
-        this.frame.setVisible(true);
 	}
 
 	public void showFrame() {
+        this.frame.pack();
+        this.frame.setVisible(true);
 	}
 
 	private void setupComponents() {
@@ -199,6 +199,7 @@ public class UserInterface {
 		
 		this.moveButton.setFocusable(false);
 		this.rotateButton.setFocusable(false);
+		this.resizeButton.setFocusable(false);
 		this.addButton.setFocusable(false);
 		this.removeButton.setFocusable(false);
 		this.createButton.setFocusable(false);
@@ -462,7 +463,6 @@ public class UserInterface {
 			}
 
 			public void paintPrisms(Graphics2D g2) {
-                System.out.println(" REPAINT " + num++);
 
 				java.util.List<Path2D> paths = new ArrayList<Path2D>();
 				Prism selectedPrism = prismManager.getSelectedPrism();
@@ -471,7 +471,6 @@ public class UserInterface {
 				double yGridOrigin = gridOrigin.getY();
 
 				for (Prism prism : prismManager.getPrisms()) {
-				    System.out.println("prismType: " + prism.getType().name());
 
 					BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 					Matrix3 transform = getTransform(prism);
@@ -486,7 +485,6 @@ public class UserInterface {
 
 					java.util.List<Shape> shapes = prism.getShapes();
 					for (int a = 0; a < shapes.size(); a++) {
-					    System.out.println("shape " + a);
 						Shape shape = shapes.get(a);
 
 						Path2D path = new Path2D.Double();
@@ -504,7 +502,6 @@ public class UserInterface {
 							maxY = (int) firstVertex.getY();
 
 							for (int i = 0; i < shape.getVertices().size(); i++) {
-                                System.out.println("vertex " + i);
 								Vertex vertex = transform.transform(vertices.get(i));
 								vertex.setX(vertex.getX() + xOrigin + xGridOrigin);
 								vertex.setY(vertex.getY() + yOrigin + yGridOrigin);
@@ -513,6 +510,7 @@ public class UserInterface {
 								} else {
 									path.lineTo(vertex.getX(), vertex.getY());
 								}
+
 								minX = (int) Math.min(minX, vertex.getX());
 								maxX = (int) Math.max(maxX, vertex.getX());
 								minY = (int) Math.min(minY, vertex.getY());
@@ -544,7 +542,6 @@ public class UserInterface {
 					g2.drawImage(img, 0, 0, this);
 
 					for (Path2D path : paths) {
-					    System.out.println("path draw");
 						if (prism.getColor().equals(Color.BLACK)) {
 							g2.setColor(Color.GRAY);
 						}
