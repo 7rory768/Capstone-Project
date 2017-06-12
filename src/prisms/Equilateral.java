@@ -1,6 +1,7 @@
 package prisms;
 
 import shapes.Triangle;
+import userinterface.UserInterface;
 import util.PrismType;
 import util.Vertex;
 
@@ -12,8 +13,7 @@ public class Equilateral extends Prism {
 
     public Equilateral(Vertex origin, int length, Color color) {
         super(PrismType.EQUILATERAL, origin, color);
-        this.length = length;
-        this.realLength = length;
+        this.setRealLength(length);
         this.createShapes();
     }
 
@@ -32,7 +32,7 @@ public class Equilateral extends Prism {
 
     public void setRealLength(int realLength) {
         this.realLength = realLength;
-        this.setLength(realLength + this.getZDisplacement());
+        this.setLength(realLength + this.getZDisplacement() + UserInterface.getZoomFactor());
         this.createShapes();
     }
 

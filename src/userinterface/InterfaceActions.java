@@ -394,15 +394,24 @@ public class InterfaceActions {
 
         String lengthText = this.userInterface.getLengthField().getText();
         if (this.lastSelected.equals(this.userInterface.getCubeButton()) || this.lastSelected.equals(this.userInterface.getEquilateralButton())) {
-            length = Integer.parseInt(lengthText.trim());
+            length = Math.abs(Integer.parseInt(lengthText.trim()));
+            if (length == 0) {
+                length = 10;
+            }
         }
 
         if (this.lastSelected.equals(this.userInterface.getPentagonalButton())) {
             String radiusString = this.userInterface.getRadiusField().getText().trim();
-            radius = Integer.parseInt(radiusString.trim());
+            radius = Math.abs(Integer.parseInt(radiusString.trim()));
+            if (radius == 0) {
+                 radius = 10;
+            }
 
             String heightString = this.userInterface.getHeightField().getText().trim();
-            height = Integer.parseInt(heightString.trim());
+            height = Math.abs(Integer.parseInt(heightString.trim()));
+            if (height == 0) {
+                height = 10;
+            }
         }
 
         Prism prism = null;

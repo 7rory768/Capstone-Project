@@ -39,6 +39,7 @@ public class UserInterface {
 	private Vertex gridOrigin = new Vertex(0, 0, 0);
 	private ImageIcon moveIcon, rotateIcon, selectedMoveIcon, selectedRotateIcon, resizeIcon, selectedResizeIcon;
 	private int pitchValue = 0, headingValue = 180;
+	private static int zoomFactor = 0;
 	
 
 	public UserInterface() {
@@ -776,5 +777,13 @@ public class UserInterface {
 
 	public InterfaceActions getInterfaceActions() {
 	    return this.interfaceActions;
+    }
+
+    public static int getZoomFactor() {
+	    return UserInterface.zoomFactor;
+    }
+
+    public static void changeZoonFactor(int add) {
+        UserInterface.zoomFactor += add;
     }
 }

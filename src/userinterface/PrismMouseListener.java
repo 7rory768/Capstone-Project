@@ -128,7 +128,7 @@ public class PrismMouseListener implements MouseListener {
                                     } else if (selectedPrism.getType() == PrismType.PENTAGONAL) {
                                         Pentagonal pentagonal = (Pentagonal) selectedPrism;
                                         if (pentagonal.getRealRadius() + averageChange >= 10) {
-                                            pentagonal.setRadius(pentagonal.getRealRadius() + averageChange);
+                                            pentagonal.setRealRadius(pentagonal.getRealRadius() + averageChange);
                                             userInterface.getRadiusField().setText("" + (pentagonal.getRealRadius() + averageChange));
                                         }
                                         if (pentagonal.getRealHeight() + averageChange >= 10) {

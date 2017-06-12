@@ -2,6 +2,7 @@ package prisms;
 
 import shapes.Pentagon;
 import shapes.Rectangle;
+import userinterface.UserInterface;
 import util.PrismType;
 import util.Vertex;
 
@@ -14,10 +15,8 @@ public class Pentagonal extends Prism {
 
     public Pentagonal(Vertex origin, int radius, int height, Color color) {
         super(PrismType.PENTAGONAL, origin, color);
-        this.radius = radius;
-        this.height = height;
-        this.realRadius = radius;
-        this.realHeight = height;
+        this.setRealRadius(radius);
+        this.setRealHeight(height);
         this.createShapes();
     }
 
@@ -45,7 +44,7 @@ public class Pentagonal extends Prism {
 
     public void setRealRadius(int realRadius) {
         this.realRadius = realRadius;
-        this.setRadius(realRadius + this.getZDisplacement());
+        this.setRadius(realRadius + this.getZDisplacement() + UserInterface.getZoomFactor());
         this.createShapes();
     }
 
@@ -55,7 +54,7 @@ public class Pentagonal extends Prism {
 
     public void setRealHeight(int realHeight) {
         this.realHeight = realHeight;
-        this.setHeight(realHeight + this.getZDisplacement());
+        this.setHeight(realHeight + this.getZDisplacement() + UserInterface.getZoomFactor());
         this.createShapes();
     }
 

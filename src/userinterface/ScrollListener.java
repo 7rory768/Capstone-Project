@@ -37,6 +37,7 @@ public class ScrollListener implements MouseWheelListener {
         if (scrollAmount != 0) {
             if (this.keyboardListener.holdingCtrl()) {
                 scrollAmount *= -1;
+                UserInterface.changeZoonFactor(scrollAmount);
                 for (Prism prism : this.prismManager.getPrisms()) {
                     if (prism.getType() == PrismType.CUBE) {
                         Cube cube = (Cube) prism;
