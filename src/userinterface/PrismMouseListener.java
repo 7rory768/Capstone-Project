@@ -219,9 +219,12 @@ public class PrismMouseListener implements MouseListener {
             if (selectedPrism != null) {
                 UserInterface.repaint();
             }
-//            if (!this.keyboardListener.holdingCtrl()) {
-//                this.interfaceActions.switchToNoPrismSelected();
-//            }
+
+            Component selectedComponent = this.interfaceActions.getSelectedComponent();
+
+            if (selectedComponent == null || !(selectedComponent.equals(this.userInterface.getMoveButton()) || selectedComponent.equals(this.userInterface.getRotateButton()) || selectedComponent.equals(this.userInterface.getResizeButton()))) {
+                this.interfaceActions.switchToNoPrismSelected();
+            }
         }
     }
 
